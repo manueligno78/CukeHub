@@ -40,6 +40,13 @@ Install Node.js using your distribution's package manager. For example, on Ubunt
 sudo apt-get install nodejs
 ```
 
+### Installing required dependencies
+In order to run the application, dependencies needs to be installed:
+```bash
+npm install
+```
+This will start the server of CukeHub application on localhost:3000.
+
 ### Running
 To run the application, navigate to the project directory in your terminal and execute the following command:
 ```bash
