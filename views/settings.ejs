@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settings</title>
+    <link rel="stylesheet" type="text/css" href="/main.css">
+</head>
+<body>
+    <h1>Settings</h1>
+
+    <form action="/save-settings" method="POST">
+        <label for="directoryPath">Directory Path:</label>
+        <input type="text" id="directoryPath" name="directoryPath" value="<%= directoryPath %>">
+        <label for="testCommand">Test Command:</label>
+        <input type="text" id="testCommand" name="testCommand" value="<%= testCommand %>">
+        <input type="submit" value="Save">
+    </form>
+
+    <a href="/">Back to home</a>
+</body>
+</html>

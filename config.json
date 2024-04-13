@@ -1,0 +1,4 @@
+{
+  "directoryPath": "",
+  "testCommand": "./gradlew clean test '-DrunnerName=local.xml' '-Dcucumber.filter.tags=@yourTag'"
+}
