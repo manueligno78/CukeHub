@@ -39,7 +39,7 @@ body {
   }
 
   /* Stilizza la paginazione */
-  .dataTables_paginate a {
+  a, .dataTables_paginate a {
       display: inline-block;
       padding: 5px;
       margin-right: 4px;
@@ -47,12 +47,12 @@ body {
       text-decoration: none;
   }
 
-  .dataTables_paginate a.current {
+  a.current, .dataTables_paginate a.current {
       background-color: #333;
       color: #fff;
   }
 
-  .dataTables_paginate a:hover {
+  a:hover, .dataTables_paginate a:hover {
       background-color: #ddd;
   }
 
@@ -127,7 +127,7 @@ body {
   }
 
   /* Stile per il box di input */
-  #tagsInput {
+  #tagsInput, input{
     width: 60%; /* Larghezza */
     padding: 10px; /* Spazio intorno al testo */
     font-size: 1.0em; /* Dimensione del testo */
@@ -135,7 +135,7 @@ body {
   }
 
   /* Stile per il pulsante "Run test" */
-  #run-test-button, #operatorSelect{
+  button, #run-test-button, #operatorSelect{
     background-color: #136a28; /* Colore di sfondo */
     color: white; /* Colore del testo */
     padding: 15px 30px; /* Spazio intorno al testo */

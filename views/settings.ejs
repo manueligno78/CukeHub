@@ -6,11 +6,12 @@
 </head>
 <body>
     <h1>Settings</h1>
-
     <form action="/save-settings" method="POST">
         <label for="directoryPath">Directory Path:</label>
         <input type="text" id="directoryPath" name="directoryPath" value="<%= directoryPath %>">
-        <label for="testCommand">Test Command:</label>
+        <br/>
+        <p>This is the command executed when you press Run Test button. The command should be the same you run from the root of your system (not relative path), <b>@yourTag</b> is a placeholder and will be replaced by the tag selected by the user</p>
+        <label for="testCommand">Run command:</label>
         <input type="text" id="testCommand" name="testCommand" value="<%= testCommand %>">
         <input type="submit" value="Save">
     </form>
