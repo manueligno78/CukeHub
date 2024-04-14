@@ -19,4 +19,13 @@ describe('Express Server Test', () => {
             done();
         });
     });
+
+    it('Should return a 200 response for the route /settings', (done) => {
+        request.get('/settings')
+        .expect(200)
+        .end((err, res) => {
+            if (err) return done(err);
+            done();
+        });
+    });
 });
