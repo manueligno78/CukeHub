@@ -18,6 +18,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+module.exports = server;
+
 function getScenarios(filePath) {
   try {
     const fileContent = fs.readFileSync(filePath, 'utf-8');
