@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "mocha"
     },
     "dependencies": {
         "@cucumber/gherkin": "^28.0.0",
@@ -16,6 +16,7 @@
         "ws": "^7.4.6"
     },
     "devDependencies": {
-        "mocha": "^10.4.0"
+        "mocha": "^10.4.0",
+        "supertest": "^6.3.4"
     }
 }
