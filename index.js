@@ -12,7 +12,6 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
-//const directoryPath = config.directoryPath;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -38,14 +37,14 @@ function getScenarios(filePath) {
           name: tag.name,
           color: hashCode(tag.name)
         })),
-        isOutline: isOutline // Add the new field here
+        isOutline: isOutline
       };
     });
     const allTags = pickles.flatMap(pickle => pickle.tags.map(tag => ({
       name: tag.name,
       color: hashCode(tag.name)
     })));
-    const uniqueTags = [...new Set(allTags.map(tag => tag.name))]; // remove duplicates
+    const uniqueTags = [...new Set(allTags.map(tag => tag.name))];
     const featureTitle = gherkinDocument.feature.name;
     return {
       featureTitle: featureTitle,
