@@ -1,20 +1,21 @@
 {
-    "name": "scenarino",
+    "name": "CukeHub",
     "version": "1.0.0",
-    "description": "this is a nodejs based console for test scenarios and tag management",
+    "description": "This is a nodejs based console for test scenarios and tag management",
     "main": "index.js",
     "scripts": {
-      "start": "node index.js",
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "node index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "dependencies": {
-        "express": "^4.17.1",
         "@cucumber/gherkin": "^28.0.0",
         "@cucumber/messages": "^13.1.0",
         "body-parser": "^1.19.0",
         "ejs": "^3.1.6",
+        "express": "^4.17.1",
         "ws": "^7.4.6"
     },
     "devDependencies": {
+        "mocha": "^10.4.0"
     }
-  }
+}
