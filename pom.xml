@@ -3,12 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example</groupId>
+    <groupId>com.github.manueligno78</groupId>
     <artifactId>CukeHub</artifactId>
     <version>1.0.0</version>
 
     <properties>
-        <node.version>v16.13.0</node.version> <!-- Sostituisci con la versione specifica di Node 16.x che desideri -->
+        <node.version>16.13.0</node.version> <!-- Sostituisci con la versione specifica di Node 16.x che desideri -->
         <npm.version>8.1.0</npm.version> <!-- Sostituisci con la versione specifica di npm che desideri -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
