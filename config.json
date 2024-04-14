@@ -1,4 +1,5 @@
 {
   "directoryPath": "",
-  "testCommand": "./gradlew clean test '-DrunnerName=local.xml' '-Dcucumber.filter.tags=@yourTag'"
+  "testCommand": "",
+  "folderToExclude": "*target*, *resource2s*"
 }

@@ -11,10 +11,7 @@ const http = require('http');
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
-
-const directoryPath = config.directoryPath;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -30,30 +27,25 @@ function getScenarios(filePath) {
     const parser = new Gherkin.Parser(builder, matcher);
     const gherkinDocument = parser.parse(fileContent);
     const pickles = Gherkin.compile(gherkinDocument, filePath, uuidFn);
-
     const scenarios = pickles.map(pickle => {
-      // Check if the scenario is an outline by looking for examples in the AST
       const isOutline = gherkinDocument.feature.children.some(child => 
         child.scenario && child.scenario.examples && child.scenario.examples.length > 0 && child.scenario.name === pickle.name
       );
-
       return {
         name: pickle.name,
         tags: pickle.tags.map(tag => ({
           name: tag.name,
           color: hashCode(tag.name)
         })),
-        isOutline: isOutline // Add the new field here
+        isOutline: isOutline
       };
     });
-
     const allTags = pickles.flatMap(pickle => pickle.tags.map(tag => ({
       name: tag.name,
       color: hashCode(tag.name)
     })));
-    const uniqueTags = [...new Set(allTags.map(tag => tag.name))]; // remove duplicates
+    const uniqueTags = [...new Set(allTags.map(tag => tag.name))];
     const featureTitle = gherkinDocument.feature.name;
-
     return {
       featureTitle: featureTitle,
       scenarioCount: scenarios.length,
@@ -68,9 +60,16 @@ function getScenarios(filePath) {
 
 function getFiles(dirPath, arrayOfFiles = []) {
   const files = fs.readdirSync(dirPath);
-
+  const foldersToExclude = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8')).folderToExclude;
+  const excludePatterns = foldersToExclude.split(',').map(folder => 
+    new RegExp('^' + folder.trim().replace(/\*/g, '.*') + '$')
+  );
   files.forEach(file => {
     const fullPath = path.join(dirPath, "/", file);
+    const isExcluded = excludePatterns.some(pattern => pattern.test(fullPath));
+    if (isExcluded) {
+      return;
+    }
     if (fs.statSync(fullPath).isDirectory()) {
       arrayOfFiles = getFiles(fullPath, arrayOfFiles);
     } else if (file.endsWith('.feature')) {
@@ -84,9 +83,9 @@ function getFiles(dirPath, arrayOfFiles = []) {
       }
     }
   });
-
   return arrayOfFiles;
 }
+
 
 function hashCode(str) {
   var hash = 0;
@@ -116,7 +115,7 @@ app.get('/', (req, res) => {
     res.redirect('/settings');
   } else {
     let featureFiles = getFiles(directoryPath);
-    res.render('table', { featureFiles: featureFiles });
+    res.render('table', { featureFiles: featureFiles, runCommand: !!config.testCommand });
   }
 });
 
@@ -124,21 +123,21 @@ app.get('/settings', (req, res) => {
   const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   res.render('settings', {
     directoryPath: config.directoryPath,
-    testCommand: config.testCommand
+    testCommand: config.testCommand,
+    folderToExclude: config.folderToExclude
   });
 });
-
 
 app.post('/save-settings', (req, res) => {
   const newDirectoryPath = req.body.directoryPath;
   const newTestCommand = req.body.testCommand;
+  const newFolderToExclude = req.body.folderToExclude;
   const newConfig = {
       directoryPath: newDirectoryPath,
-      testCommand: newTestCommand
+      testCommand: newTestCommand,
+      folderToExclude: newFolderToExclude
   };
-  
   fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(newConfig, null, 2), 'utf-8');
-  
   res.redirect('/settings');
 });
 

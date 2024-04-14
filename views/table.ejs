@@ -22,8 +22,10 @@ featureFiles.forEach(function(file) {
 
 <body>
   <div class="header">
+    <div>Console</div>
+    <div><a href="/settings">Settings</a></div>
+    <% if (runCommand) { %>
     <div id="messages"></div>
-    <a href="/settings">Settings</a>
     <form style="margin: 0 10px;" onsubmit="showLoader()">
       <p>Execute by tag: 
         <input type="text" id="tagsInput" name="tags" placeholder="Enter tags to execute" data-tags='<%- uniqueTags.join(",") %>'>
@@ -33,6 +35,7 @@ featureFiles.forEach(function(file) {
       </select>
       <button id="run-test-button" type="submit">Run Tests</button></p>
     </form>
+    <% } %>
   </div>
   <div class="content">
     <div class="tag-box">
