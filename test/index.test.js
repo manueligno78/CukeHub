@@ -3,12 +3,20 @@ const server = require('../index.js'); // Assicurati che questo percorso sia cor
 const request = require('supertest')(server);
 
 describe('Express Server Test', () => {
-  it('Should return a 302 response for the route /', (done) => {
-    request.get('/')
-      .expect(302)
-      .end((err, res) => {
-        if (err) return done(err);
-        done();
-      });
-  });
+
+    after((done) => {
+        server.close(() => {
+            console.log('Server chiuso');
+            done();
+        });
+    });
+
+    it('Should return a 302 response for the route /', (done) => {
+        request.get('/')
+        .expect(302)
+        .end((err, res) => {
+            if (err) return done(err);
+            done();
+        });
+    });
 });
