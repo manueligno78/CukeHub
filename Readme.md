@@ -2,6 +2,10 @@
 
 The CukeHub project is a Node.js based application.
 
+[![Node.js CI](https://github.com/manueligno78/CukeHub/actions/workflows/node.js.yml/badge.svg?branch=main)](https://github.com/manueligno78/CukeHub/actions/workflows/node.js.yml)
+
+[![Java CI with Maven](https://github.com/manueligno78/CukeHub/actions/workflows/maven.yml/badge.svg)](https://github.com/manueligno78/CukeHub/actions/workflows/maven.yml)
+
 ## Prerequisites
 
 - Node.js 16.13.0
