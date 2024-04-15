@@ -4,14 +4,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.manueligno78</groupId>
-    <artifactId>CukeHub</artifactId>
+    <artifactId>cukehub</artifactId>
     <version>1.0.0</version>
 
     <properties>
-        <node.version>v16.13.0</node.version> <!-- Sostituisci con la versione specifica di Node 16.x che desideri -->
-        <npm.version>8.1.0</npm.version> <!-- Sostituisci con la versione specifica di npm che desideri -->
+        <node.version>v16.13.0</node.version>
+        <npm.version>8.1.0</npm.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/manueligno78/CukeHub</url>
+    </repository>
+  </distributionManagement>
 
     <build>
         <plugins>
