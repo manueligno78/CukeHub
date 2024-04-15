@@ -3,9 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.manueligno78</groupId>
+    <groupId>io.github.manueligno78</groupId>
     <artifactId>cukehub</artifactId>
     <version>1.0.0</version>
+    <url>https://github.com/manueligno78/CukeHub</url>
+    <description>A nodejs app to easly manage cucumber test features, scnarios and tags</description>
 
     <properties>
         <node.version>v16.13.0</node.version>
@@ -17,12 +19,81 @@
     <repository>
       <id>github</id>
       <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/manueligno78/CukeHub</url>
+      <url>https://maven.pkg.github.com/manueligno78/cukehub</url>
     </repository>
   </distributionManagement>
 
+  <licenses>
+    <license>
+        <name>GNU General Public License v3.0</name>
+        <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+    </license>
+</licenses>
+<developers>
+    <developer>
+        <name>Emanuele Pintaldi</name>
+        <email>manuelpintaldi@gmail.com</email>
+    </developer>
+</developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/manueligno78/cukehub.git</connection>
+        <developerConnection>scm:git:ssh://github.com/manueligno78/cukehub.git</developerConnection>
+        <url>https://github.com/manueligno78/cukehub</url>
+    </scm>
+
     <build>
         <plugins>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.4.0</version>
+          <extensions>true</extensions>
+          <configuration>
+            <publishingServerId>ossrh</publishingServerId>
+            <tokenAuth>true</tokenAuth>
+          </configuration>
+        </plugin>
+                <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+                <execution>
+                    <id>attach-javadocs</id>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.2.1</version>
+            <executions>
+                <execution>
+                    <id>attach-sources</id>
+                    <goals>
+                        <goal>jar-no-fork</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+                <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+                <execution>
+                    <id>sign-artifacts</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>sign</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
