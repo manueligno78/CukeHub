@@ -1,5 +1,5 @@
 {
-  "directoryPath": "",
+  "directoryPath": "C:\\Users\\manue\\Desktop\\repositories\\selenium-cucumber-sample-project",
   "testCommand": "",
-  "folderToExclude": "*target*, *resource2s*"
+  "folderToExclude": "*target*, *resource2s*, *Departure*, *gherkinRef*"
 }

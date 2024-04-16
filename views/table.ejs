@@ -68,9 +68,10 @@ featureFiles.forEach(function(file) {
       <% featureFiles.forEach(function(file) { %>
         <tr>
           <td>
-            <p class = "featureTitle"><%= file.featureTitle %></p><br/>
+            <p class = "featureTitle"><%= file.featureTitle %></p>
+            <p class = "featureDescription"><%= file.featureDescription %></p>
             <p class = "scenarioCount"><%= file.scenarioCount %> scenarios contained</p>
-            <p class = "featureFilePath"><%= file.path %></p>
+            <p class = "featureFilePath">Location: <%= file.path %></p>
           </td>
           <td>
             <ul class = "tag-list">

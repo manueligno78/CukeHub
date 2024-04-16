@@ -23,7 +23,7 @@ body {
   th,
   td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 3px;
     text-align: left;
   }
 
@@ -74,7 +74,14 @@ body {
     margin: 10px 0;
   }
 
+  .featureDescription {
+    font-size: 0.9em;
+    color: #888;
+    margin: 0px 0 10px 0;
+  }
+
   .featureFilePath {
+    font-size: 0.9em;
     color: #888;
   }
 

@@ -28,30 +28,31 @@ function getScenarios(filePath) {
     const matcher = new Gherkin.GherkinClassicTokenMatcher();
     const parser = new Gherkin.Parser(builder, matcher);
     const gherkinDocument = parser.parse(fileContent);
-    console.log(JSON.stringify(gherkinDocument, null, 2));
-    console.log(gherkinDocumentToString(gherkinDocument));
-    const pickles = Gherkin.compile(gherkinDocument, filePath, uuidFn);
-    const scenarios = pickles.map(pickle => {
-      const isOutline = gherkinDocument.feature.children.some(child => 
-        child.scenario && child.scenario.examples && child.scenario.examples.length > 0 && child.scenario.name === pickle.name
-      );
+
+    const scenarios = gherkinDocument.feature.children.map(child => {
+      const isOutline = child.scenario && child.scenario.examples && child.scenario.examples.length > 0;
       return {
-        name: pickle.name,
-        tags: pickle.tags.map(tag => ({
+        name: child.scenario.name,
+        tags: child.scenario.tags.map(tag => ({
           name: tag.name,
           color: hashCode(tag.name)
         })),
         isOutline: isOutline
       };
     });
-    const allTags = pickles.flatMap(pickle => pickle.tags.map(tag => ({
+
+    const allTags = gherkinDocument.feature.children.flatMap(child => child.scenario.tags.map(tag => ({
       name: tag.name,
       color: hashCode(tag.name)
     })));
     const uniqueTags = [...new Set(allTags.map(tag => tag.name))];
+
     const featureTitle = gherkinDocument.feature.name;
+    const featureDescription = gherkinDocument.feature.description;
+
     return {
       featureTitle: featureTitle,
+      featureDescription: featureDescription,
       scenarioCount: scenarios.length,
       scenarios: scenarios,
       tags: uniqueTags
@@ -92,8 +93,6 @@ function gherkinDocumentToString(gherkinDocument) {
       // Add a blank line after the background
       gherkinText += '\n';
     } else if (child.scenario) {
-
-
 
       // Add the scenario tags, if any
       if (child.scenario.tags && child.scenario.tags.length > 0) {
