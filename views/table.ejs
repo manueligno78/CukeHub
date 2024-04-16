@@ -88,6 +88,13 @@ featureFiles.forEach(function(file) {
             <ul>
               <% file.scenarios.forEach(function(scenario) { %>
                 <li>
+                  <span class="tags">
+                    <% scenario.tags.forEach(function(tag) { %>
+                      <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')" >
+                        <%= tag.name %>
+                      </a> 
+                    <% }); %>             
+                  </span>
                   <a href="#" class="scenario-link" data-tags='<%= JSON.stringify(scenario.tags.map(function(tag) { return tag.name; })) %>'
                      title='<%= JSON.stringify(scenario.tags.map(function(tag) { return tag.name; })) %>'>
                     <%- scenario.name %>
@@ -100,13 +107,6 @@ featureFiles.forEach(function(file) {
                     <span><%= scenario.description %></span>
                     <% } %>
                   </p>
-                  <span class="tags">
-                    <% scenario.tags.forEach(function(tag) { %>
-                      <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')" >
-                        <%= tag.name %>
-                      </a> 
-                    <% }); %>             
-                  </span>
                 </li>
               <% }); %>
             </ul>
