@@ -93,6 +93,8 @@ function gherkinDocumentToString(gherkinDocument) {
       gherkinText += '\n';
     } else if (child.scenario) {
 
+
+
       // Add the scenario tags, if any
       if (child.scenario.tags && child.scenario.tags.length > 0) {
         const tags = child.scenario.tags.map(tag => tag.name).join(' ');
@@ -100,6 +102,11 @@ function gherkinDocumentToString(gherkinDocument) {
       }
 
       gherkinText += `  Scenario: ${child.scenario.name}\n`;
+
+      // Add the scenario description, if any
+      if (child.scenario.description) {
+        gherkinText += `\n${child.scenario.description}\n\n`;
+      }
 
       // Add each step of the scenario
       child.scenario.steps.forEach(step => {
