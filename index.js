@@ -72,7 +72,12 @@ function gherkinDocumentToString(gherkinDocument) {
   }
 
   // Add the feature title
-  gherkinText += `Feature: ${gherkinDocument.feature.name}\n`;
+  gherkinText += `Feature: ${gherkinDocument.feature.name}\n\n`;
+
+  // Add the feature description, if any
+  if (gherkinDocument.feature.description) {
+    gherkinText += `${gherkinDocument.feature.description}\n\n`;
+  }
 
   // Add each scenario or background
   gherkinDocument.feature.children.forEach((child, index, array) => {
@@ -87,6 +92,7 @@ function gherkinDocumentToString(gherkinDocument) {
       // Add a blank line after the background
       gherkinText += '\n';
     } else if (child.scenario) {
+
       // Add the scenario tags, if any
       if (child.scenario.tags && child.scenario.tags.length > 0) {
         const tags = child.scenario.tags.map(tag => tag.name).join(' ');
@@ -97,7 +103,7 @@ function gherkinDocumentToString(gherkinDocument) {
 
       // Add each step of the scenario
       child.scenario.steps.forEach(step => {
-        gherkinText += `    ${step.keyword} ${step.text}\n`;
+        gherkinText += `    ${step.keyword}${step.text}\n`;
       });
 
       // Add the Examples, if any
