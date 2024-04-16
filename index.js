@@ -28,6 +28,8 @@ function getScenarios(filePath) {
     const matcher = new Gherkin.GherkinClassicTokenMatcher();
     const parser = new Gherkin.Parser(builder, matcher);
     const gherkinDocument = parser.parse(fileContent);
+    console.log(JSON.stringify(gherkinDocument, null, 2));
+    console.log(gherkinDocumentToString(gherkinDocument));
     const pickles = Gherkin.compile(gherkinDocument, filePath, uuidFn);
     const scenarios = pickles.map(pickle => {
       const isOutline = gherkinDocument.feature.children.some(child => 
@@ -59,6 +61,72 @@ function getScenarios(filePath) {
     return null;
   }
 }
+
+function gherkinDocumentToString(gherkinDocument) {
+  let gherkinText = '';
+
+  // Add the feature tags, if any
+  if (gherkinDocument.feature.tags && gherkinDocument.feature.tags.length > 0) {
+    const tags = gherkinDocument.feature.tags.map(tag => tag.name).join(' ');
+    gherkinText += `${tags}\n`;
+  }
+
+  // Add the feature title
+  gherkinText += `Feature: ${gherkinDocument.feature.name}\n`;
+
+  // Add each scenario or background
+  gherkinDocument.feature.children.forEach((child, index, array) => {
+    if (child.background) {
+      gherkinText += `\n  Background:\n`;
+
+      // Add each step of the background
+      child.background.steps.forEach(step => {
+        gherkinText += `    ${step.keyword} ${step.text}\n`;
+      });
+
+      // Add a blank line after the background
+      gherkinText += '\n';
+    } else if (child.scenario) {
+      // Add the scenario tags, if any
+      if (child.scenario.tags && child.scenario.tags.length > 0) {
+        const tags = child.scenario.tags.map(tag => tag.name).join(' ');
+        gherkinText += `  ${tags}\n`;
+      }
+
+      gherkinText += `  Scenario: ${child.scenario.name}\n`;
+
+      // Add each step of the scenario
+      child.scenario.steps.forEach(step => {
+        gherkinText += `    ${step.keyword} ${step.text}\n`;
+      });
+
+      // Add the Examples, if any
+      if (child.scenario.examples && child.scenario.examples.length > 0) {
+        child.scenario.examples.forEach(example => {
+          gherkinText += `\n    Examples:\n`;
+
+          // Add the table header
+          const header = example.tableHeader.cells.map(cell => cell.value).join(' | ');
+          gherkinText += `      | ${header} |\n`;
+
+          // Add the table rows
+          example.tableBody.forEach(row => {
+            const rowText = row.cells.map(cell => cell.value).join(' | ');
+            gherkinText += `      | ${rowText} |\n`;
+          });
+        });
+      }
+
+      // Add a blank line after each scenario, except the last one
+      if (index < array.length - 1) {
+        gherkinText += '\n';
+      }
+    }
+  });
+
+  return gherkinText;
+}
+
 
 function getFiles(dirPath, arrayOfFiles = []) {
   const files = fs.readdirSync(dirPath);
