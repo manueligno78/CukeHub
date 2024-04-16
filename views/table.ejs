@@ -95,6 +95,11 @@ featureFiles.forEach(function(file) {
                       <span>(Outline)</span>
                     <% } %>
                   </a> 
+                  <p>
+                    <% if (scenario.description) { %>
+                    <span><%= scenario.description %></span>
+                    <% } %>
+                  </p>
                   <span class="tags">
                     <% scenario.tags.forEach(function(tag) { %>
                       <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')" >

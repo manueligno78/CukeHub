@@ -33,6 +33,7 @@ function getScenarios(filePath) {
       const isOutline = child.scenario && child.scenario.examples && child.scenario.examples.length > 0;
       return {
         name: child.scenario.name,
+        description: child.scenario.description,
         tags: child.scenario.tags.map(tag => ({
           name: tag.name,
           color: hashCode(tag.name)
@@ -182,6 +183,8 @@ function hashCode(str) {
   return color;
 }
 
+/// SERVER and WEBSOCKETS
+
 function notifyClients(message) {
   wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
@@ -244,7 +247,6 @@ wss.on('connection', ws => {
     }
   });
 });
-
 
 server.listen(3000, () => {
   console.log('App listening on http://localhost:3000');
