@@ -1,7 +1,7 @@
 <% 
 var uniqueTags = [];
-featureFiles.forEach(function(file) {
-  file.tags.forEach(function(tag) {
+featureFiles.forEach(function(featureFile) {
+  featureFile.tags.forEach(function(tag) {
     if (!uniqueTags.includes(tag)) {
       uniqueTags.push(tag);
     }
@@ -65,54 +65,56 @@ featureFiles.forEach(function(file) {
         </tr>
       </thead>
       <tbody>
-      <% featureFiles.forEach(function(file) { %>
-        <tr>
-          <td>
-            <p class = "featureTitle"><%= file.featureTitle %></p>
-            <p class = "featureDescription"><%= file.featureDescription %></p>
-            <p class = "scenarioCount"><%= file.scenarioCount %> scenarios contained</p>
-            <p class = "featureFilePath">Location: <%= file.path %></p>
-          </td>
-          <td>
-            <ul class = "tag-list">
-              <% file.tags.forEach(function(tag) { %>
-                <li>
-                  <a href="#" class="tag-label" onclick="addTagToInput('<%= tag %>')" >
-                    <%= tag %>
-                  </a>
-                </li>
-              <% }); %>
-            </ul>
-          </td>
-          <td>
-            <ul>
-              <% file.scenarios.forEach(function(scenario) { %>
-                <li>
-                  <span class="tags">
-                    <% scenario.tags.forEach(function(tag) { %>
-                      <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')" >
-                        <%= tag.name %>
-                      </a> 
-                    <% }); %>             
-                  </span>
-                  <a href="#" class="scenario-link" data-tags='<%= JSON.stringify(scenario.tags.map(function(tag) { return tag.name; })) %>'
-                     title='<%= JSON.stringify(scenario.tags.map(function(tag) { return tag.name; })) %>'>
-                    <%- scenario.name %>
-                    <% if (scenario.isOutline) { %>
-                      <span>(Outline)</span>
-                    <% } %>
-                  </a> 
-                  <p>
-                    <% if (scenario.description) { %>
-                    <span><%= scenario.description %></span>
-                    <% } %>
-                  </p>
-                </li>
-              <% }); %>
-            </ul>
-          </td>
-        </tr>
-      <% }); %>
+        <% featureFiles.forEach(function(featureFile) { %>
+          <% if (featureFile && featureFile.path) { %>
+          <tr id="<%= featureFile.featureId %>">
+            <td>
+              <p class="featureTitle" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'featureTitle', this.innerText)"><%= featureFile.featureTitle %></p>
+              <p class="featureDescription" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'featureDescription', this.innerText)"><%= featureFile.featureDescription %></p>
+              <p class="scenarioCount"><%= featureFile.scenarioCount %> scenarios contained</p>
+              <p class="featureFilePath">Location: <%= featureFile.path %></p>
+            </td>
+            <td>
+              <ul class="tag-list">
+                <% featureFile.tags.forEach(function(tag) { %>
+                  <li>
+                    <a href="#" class="tag-label" onclick="addTagToInput('<%= tag %>')" >
+                      <%= tag %>
+                    </a>
+                  </li>
+                <% }); %>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <% featureFile.scenarios.forEach(function(scenario) { %>
+                  <li>
+                    <span class="tags">
+                      <% scenario.tags.forEach(function(tag) { %>
+                        <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')" >
+                          <%= tag.name %>
+                        </a> 
+                      <% }); %>             
+                    </span>
+                    <a href="#" class="scenario-link" data-tags='<%= JSON.stringify(scenario.tags.map(function(tag) { return tag.name; })) %>'
+                       title='<%= JSON.stringify(scenario.tags.map(function(tag) { return tag.name; })) %>'>
+                      <%- scenario.name %>
+                      <% if (scenario.isOutline) { %>
+                        <span>(Outline)</span>
+                      <% } %>
+                    </a> 
+                    <p>
+                      <% if (scenario.description) { %>
+                      <span><%= scenario.description %></span>
+                      <% } %>
+                    </p>
+                  </li>
+                <% }); %>
+              </ul>
+            </td>
+          </tr>
+          <% } %>
+        <% }); %>
       </tbody>
     </table>
   </div>

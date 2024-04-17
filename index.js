@@ -20,6 +20,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 module.exports = server;
 
+let featureFilesCopy = [];
+
 function getScenarios(filePath) {
   try {
     const fileContent = fs.readFileSync(filePath, 'utf-8');
@@ -28,7 +30,6 @@ function getScenarios(filePath) {
     const matcher = new Gherkin.GherkinClassicTokenMatcher();
     const parser = new Gherkin.Parser(builder, matcher);
     const gherkinDocument = parser.parse(fileContent);
-
     const scenarios = gherkinDocument.feature.children.map(child => {
       const isOutline = child.scenario && child.scenario.examples && child.scenario.examples.length > 0;
       return {
@@ -52,6 +53,7 @@ function getScenarios(filePath) {
     const featureDescription = gherkinDocument.feature.description;
 
     return {
+      featureId: uuidFn(),
       featureTitle: featureTitle,
       featureDescription: featureDescription,
       scenarioCount: scenarios.length,
@@ -200,7 +202,9 @@ app.get('/', (req, res) => {
     res.redirect('/settings');
   } else {
     let featureFiles = getFiles(directoryPath);
-    res.render('table', { featureFiles: featureFiles, runCommand: !!config.testCommand });
+    featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
+    console.log('featureFilesCopy', featureFilesCopy);
+    res.render('table', { featureFiles: featureFilesCopy, runCommand: !!config.testCommand });
   }
 });
 
@@ -229,8 +233,6 @@ app.post('/save-settings', (req, res) => {
 
 wss.on('connection', ws => {
   ws.on('message', message => {
-    console.log(`Received message => ${message}`);
-    
     const data = JSON.parse(message);
     if (data.action === 'run-tests') {
       const tags = data.tags;
@@ -244,6 +246,14 @@ wss.on('connection', ws => {
       exec(testCommand, (error, stdout, stderr) => {
         // ... gestione dell'output come prima ...
       });
+    }
+    if (data.action === 'updateFeature') {
+      let featureFile = featureFilesCopy.find(file => file.featureId === data.featureId);
+      if (featureFile && featureFile.hasOwnProperty(data.field)) {
+        featureFile[data.field] = data.newValue;
+      }
+      console.log('OnUpdateFeature -> featureFilesCopy: ', featureFilesCopy);
+      notifyClients(JSON.stringify({ action: 'featureUpdated', filePath: data.filePath, field: data.field, newValue: data.newValue }));
     }
   });
 });

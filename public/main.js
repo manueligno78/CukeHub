@@ -7,6 +7,10 @@ socket.addEventListener('message', function (event) {
     const data = JSON.parse(event.data);
     if (typeof data === 'object') {
       messages.textContent += JSON.stringify(data, null, 2) + '\n';
+      if (data.action === 'featureUpdated') {
+        // Aggiorna la visualizzazione su table.ejs
+        updateFeatureInView(data.featureId, data.field, data.newValue);
+      }
     } else {
       messages.textContent += data + '\n';
     }
@@ -31,6 +35,19 @@ socket.addEventListener('error', function (event) {
 socket.addEventListener('close', function (event) {
   console.log('WebSocket is closed now.');
 });
+
+function updateFeatureInView(featureId, field, newValue) {
+  // Trova la riga della tabella corrispondente al file
+  var row = document.getElementById(featureId);
+  if (row) {
+    // Trova la cella corrispondente al campo
+    var cell = row.getElementsByClassName(field)[0];
+    if (cell) {
+      // Aggiorna il valore della cella
+      cell.textContent = newValue;
+    }
+  }
+}
 
 function hideLoader() {
   document.getElementById('tagsInput').classList.remove('disabled');
@@ -161,3 +178,15 @@ $(document).ready(function() {
     ]
 });
 });
+
+function updateFeature(featureId, field, newValue) {
+  let message = JSON.stringify({
+    action: 'updateFeature',
+    featureId: featureId,
+    field: field,
+    newValue: newValue
+  });
+
+  socket.send(message);
+}
+
