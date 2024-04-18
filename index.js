@@ -226,6 +226,13 @@ wss.on('connection', ws => {
         console.log(gherkinDocumentToString(featureFile));
       });
     }
+    if (data.action === 'reset') {
+      const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+      const directoryPath = config.directoryPath;
+      let featureFiles = getFiles(directoryPath);
+      featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
+      notifyClients(JSON.stringify({ action: 'reset' }));
+    }
   });
 });
 

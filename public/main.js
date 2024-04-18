@@ -2,25 +2,13 @@ const socket = new WebSocket('ws://localhost:3000');
 
 socket.addEventListener('message', function (event) {
   console.log('Received message: ', event.data);
-  var messages = document.getElementById('messages');
-  try {
-    const data = JSON.parse(event.data);
-    if (typeof data === 'object') {
-      messages.textContent += JSON.stringify(data, null, 2) + '\n';
-      if (data.action === 'featureUpdated') {
-        // Aggiorna la visualizzazione su table.ejs
-        updateFeatureInView(data.featureId, data.field, data.newValue);
-      }
-    } else {
-      messages.textContent += data + '\n';
-    }
-  } catch (error) {
-    messages.textContent += event.data + '\n';
-  }
   if (event.data === 'tests started') {
     showLoader();
   } else if (event.data === 'tests finished') {
     hideLoader();
+  } else if (JSON.parse(event.data).action === 'reset') {
+    console.log('Resetting the page...');
+    location.reload();
   }
 });
 
@@ -192,6 +180,13 @@ function updateFeature(featureId, field, newValue) {
 function saveOnDisk() {
   let message = JSON.stringify({
     action: 'saveOnDisk'
+  });
+  socket.send(message);
+}
+
+function reset() {
+  let message = JSON.stringify({
+    action: 'reset'
   });
   socket.send(message);
 }
