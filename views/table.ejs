@@ -71,10 +71,10 @@
         <% if (featureFile && featureFile.path) { %>
         <tr id="<%= featureFile.featureId %>">
           <td>
-            <p class="featureTitle" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)"><%= featureFile.feature.name %></p>
-            <p class="featureDescription" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)"><%= featureFile.feature.description %></p>
-            <p class="scenarioCount"><%= featureFile.feature.children.length %> scenarios contained</p>
-            <p class="featureFilePath">Location: <%= featureFile.path %></p>
+            <p class="feature.name" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)"><%= featureFile.feature.name %></p>
+            <p class="feature.description" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)"><%= featureFile.feature.description %></p>
+            <p class="feature.children.length"><%= featureFile.feature.children.length %> scenarios contained</p>
+            <p class="path">Location: <%= featureFile.path %></p>
           </td>
           <td>
             <ul class="tag-list">

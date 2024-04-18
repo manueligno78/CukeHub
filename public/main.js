@@ -9,6 +9,15 @@ socket.addEventListener('message', function (event) {
   } else if (JSON.parse(event.data).action === 'reset') {
     console.log('Resetting the page...');
     location.reload();
+    document.getElementById('save-button').style.display = 'none';
+    document.getElementById('reset-button').style.display = 'none';
+  } else if (JSON.parse(event.data).action === 'featureUpdated') {
+    // Aggiorna la visualizzazione su table.ejs
+    updateFeatureInView(JSON.parse(event.data).featureId, JSON.parse(event.data).field, JSON.parse(event.data).newValue);
+    
+    // Mostra i pulsanti Save e Reset
+    document.getElementById('save-button').style.display = 'block';
+    document.getElementById('reset-button').style.display = 'block';
   }
 });
 
@@ -33,6 +42,7 @@ function updateFeatureInView(featureId, field, newValue) {
     if (cell) {
       // Aggiorna il valore della cella
       cell.textContent = newValue;
+      cell.classList.add('content-updated');
     }
   }
 }
@@ -151,10 +161,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
   }
 });
 
-$(function() {
-  var taglist = $("#tagsInput").data("tags").split(",");
-  autocompleteInputTags(taglist, "#tagsInput");
-});
+// $(function() {
+//   var taglist = $("#tagsInput").data("tags").split(",");
+//   autocompleteInputTags(taglist, "#tagsInput");
+// });
 
 $(document).ready(function() {
     $('#table').DataTable({

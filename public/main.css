@@ -69,18 +69,25 @@ body {
     color: #4CAF50;
   }
 
-  .featureTitle {
+  .feature.title {
     font-size: 1.2em;
     margin: 10px 0;
   }
 
-  .featureDescription {
+  .feature.description {
     font-size: 0.9em;
     color: #888;
     margin: 0px 0 10px 0;
   }
 
-  .featureFilePath {
+  .feature.children.length
+  {
+    font-size: 0.9em;
+    color: #888;
+    margin: 0px 0 10px 0;
+  }
+
+  .path {
     font-size: 0.9em;
     color: #888;
   }
@@ -165,3 +172,11 @@ body {
     background-color: #ccc;
     opacity: 0.5;
   }
+
+  #save-button, #reset-button {
+    display: none;
+  }
+
+.content-updated{ 
+  background-color: #007bff;
+}
