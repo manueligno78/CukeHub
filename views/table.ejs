@@ -1,16 +1,18 @@
+<!-- <%= JSON.stringify(featureFiles) %> -->
 <% 
-var uniqueTags = [];
-featureFiles.forEach(function(featureFile) {
-  featureFile.tags.forEach(function(tag) {
-    if (!uniqueTags.includes(tag)) {
-      uniqueTags.push(tag);
-    }
-  });
-}); %>
+//var uniqueTags = [];
+//featureFiles.forEach(function(featureFile) {
+//  featureFile.tags.forEach(function(tag) {
+//    if (!uniqueTags.includes(tag)) {
+//       uniqueTags.push(tag);
+//    }
+//  });
+//});
+ %>
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Scenarino Console</title>
+  <title>CukeHub</title>
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -38,18 +40,18 @@ featureFiles.forEach(function(featureFile) {
     <% } %>
   </div>
   <div class="content">
-    <div class="tag-box">
+    <!-- <div class="tag-box">
       <h2>Tags</h2>
       <ul class = "tag-list">
-        <% uniqueTags.forEach(function(tag) { %>
+        <% //niqueTags.forEach(function(tag) { %>
           <li>
-            <a href="#" class="tag-label" onclick="addTagToInput('<%= tag %>')" >
-              <%= tag %>
+            <a href="#" class="tag-label" onclick="addTagToInput('<%= //tag %>')" >
+              <%= //tag %>
             </a>
           </li>
-        <% }); %>
+        <% //}); %>
       </ul>
-    </div>
+    </div> -->
     <table id="table">
       <thead>
         <tr>
@@ -65,58 +67,64 @@ featureFiles.forEach(function(featureFile) {
         </tr>
       </thead>
       <tbody>
-        <% featureFiles.forEach(function(featureFile) { %>
-          <% if (featureFile && featureFile.path) { %>
-          <tr id="<%= featureFile.featureId %>">
-            <td>
-              <p class="featureTitle" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'featureTitle', this.innerText)"><%= featureFile.featureTitle %></p>
-              <p class="featureDescription" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'featureDescription', this.innerText)"><%= featureFile.featureDescription %></p>
-              <p class="scenarioCount"><%= featureFile.scenarioCount %> scenarios contained</p>
-              <p class="featureFilePath">Location: <%= featureFile.path %></p>
-            </td>
-            <td>
-              <ul class="tag-list">
-                <% featureFile.tags.forEach(function(tag) { %>
-                  <li>
-                    <a href="#" class="tag-label" onclick="addTagToInput('<%= tag %>')" >
-                      <%= tag %>
-                    </a>
-                  </li>
-                <% }); %>
-              </ul>
-            </td>
-            <td>
-              <ul>
-                <% featureFile.scenarios.forEach(function(scenario) { %>
+      <% featureFiles.forEach(function(featureFile) { %>
+        <% if (featureFile && featureFile.path) { %>
+        <tr id="<%= featureFile.featureId %>">
+          <td>
+            <p class="featureTitle" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)"><%= featureFile.feature.name %></p>
+            <p class="featureDescription" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)"><%= featureFile.feature.description %></p>
+            <p class="scenarioCount"><%= featureFile.feature.children.length %> scenarios contained</p>
+            <p class="featureFilePath">Location: <%= featureFile.path %></p>
+          </td>
+          <td>
+            <ul class="tag-list">
+              <% featureFile.feature.tags.forEach(function(tag) { %>
+                <li>
+                  <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')" >
+                    <%= tag.name %>
+                  </a>
+                </li>
+              <% }); %>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <% featureFile.feature.children.forEach(function(child, index) { %>
+                <% if (child.scenario) { %>
                   <li>
                     <span class="tags">
-                      <% scenario.tags.forEach(function(tag) { %>
-                        <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')" >
+                      <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
+                        <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')"
+                          contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.tags[' + '<%= tagIndex %>' + '].name', this.innerText)">
                           <%= tag.name %>
                         </a> 
                       <% }); %>             
                     </span>
-                    <a href="#" class="scenario-link" data-tags='<%= JSON.stringify(scenario.tags.map(function(tag) { return tag.name; })) %>'
-                       title='<%= JSON.stringify(scenario.tags.map(function(tag) { return tag.name; })) %>'>
-                      <%- scenario.name %>
-                      <% if (scenario.isOutline) { %>
+                    <a href="#" class="scenario-link" data-tags='<%= JSON.stringify(child.scenario.tags.map(function(tag) { return tag.name; })) %>'
+                      title='<%= JSON.stringify(child.scenario.tags.map(function(tag) { return tag.name; })) %>'
+                      contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
+                      <%- child.scenario.name %>
+                      <% if (child.scenario.isOutline) { %>
                         <span>(Outline)</span>
                       <% } %>
                     </a> 
                     <p>
-                      <% if (scenario.description) { %>
-                      <span><%= scenario.description %></span>
+                      <% if (child.scenario.description) { %>
+                      <span contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.description', this.innerText)">
+                      <%= child.scenario.description %></span>
                       <% } %>
                     </p>
                   </li>
-                <% }); %>
-              </ul>
-            </td>
-          </tr>
-          <% } %>
-        <% }); %>
+                <% } %>
+              <% }); %>
+            </ul>
+          </td>
+        </tr>
+        <% } %>
+      <% }); %>
       </tbody>
     </table>
   </div>
+  <button id="save-button" type="button" onclick="saveOnDisk()">Save</button>
 </body>
 </html>

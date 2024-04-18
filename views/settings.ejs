@@ -13,13 +13,20 @@
         <label for="directoryPath">Directory Path:</label>
         <input type="text" id="directoryPath" name="directoryPath" value="<%= directoryPath %>">
         <br/>
-        <p>This is the command executed when you press Run Test button. The command should be the same you run from the root of your system (not relative path), <b>@yourTag</b> is a placeholder and will be replaced by the tag selected by the user</p>
+        <p>This is the command executed when you press the Run Test button. The command should be the same one you run from the root of your system (not a relative path), <b>@yourTag</b> is a placeholder and will be replaced by the tag selected by the user.</p>
         <p>For example: mvn clean test -Pselenium-regression-tests '-Dcucumber.filter.tags=@yourTag'</p>
         <label for="testCommand">Run command:</label>
         <input type="text" id="testCommand" name="testCommand" value="<%= testCommand %>">
         <br/>
         <label for="folderToExclude">Folder to exclude:</label>
         <input type="text" id="folderToExclude" name="folderToExclude" value="<%= folderToExclude %>">
+        <br/>
+        <label for="outputFolder">Output folder for modified feature files:</label>
+        <input type="text" id="outputFolder" name="outputFolder" value="<%= outputFolder %>">
+        <br/>
+        <label for="keepFolderStructure">Keep original folder structure:</label>
+        <input type="checkbox" id="keepFolderStructure" name="keepFolderStructure" <%= keepFolderStructure ? 'checked' : '' %>>
+        <br/>
         <input type="submit" value="Save">
     </form>
     <a href="/">Back to home</a>

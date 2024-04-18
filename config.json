@@ -1,5 +1,7 @@
 {
   "directoryPath": "C:\\Users\\manue\\Desktop\\repositories\\selenium-cucumber-sample-project",
   "testCommand": "",
-  "folderToExclude": "*target*, *resource2s*, *Departure*, *gherkinRef*"
+  "folderToExclude": "*target*, *resource2s*, *Departure*, *gherkinRef*",
+  "outputFolder": "C:\\Users\\manue\\Desktop\\outTest",
+  "keepFolderStructure": false
 }

@@ -186,7 +186,12 @@ function updateFeature(featureId, field, newValue) {
     field: field,
     newValue: newValue
   });
-
   socket.send(message);
 }
 
+function saveOnDisk() {
+  let message = JSON.stringify({
+    action: 'saveOnDisk'
+  });
+  socket.send(message);
+}

@@ -22,127 +22,6 @@ module.exports = server;
 
 let featureFilesCopy = [];
 
-function getScenarios(filePath) {
-  try {
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const uuidFn = Messages.IdGenerator.uuid();
-    const builder = new Gherkin.AstBuilder(uuidFn);
-    const matcher = new Gherkin.GherkinClassicTokenMatcher();
-    const parser = new Gherkin.Parser(builder, matcher);
-    const gherkinDocument = parser.parse(fileContent);
-    const scenarios = gherkinDocument.feature.children.map(child => {
-      const isOutline = child.scenario && child.scenario.examples && child.scenario.examples.length > 0;
-      return {
-        name: child.scenario.name,
-        description: child.scenario.description,
-        tags: child.scenario.tags.map(tag => ({
-          name: tag.name,
-          color: hashCode(tag.name)
-        })),
-        isOutline: isOutline
-      };
-    });
-
-    const allTags = gherkinDocument.feature.children.flatMap(child => child.scenario.tags.map(tag => ({
-      name: tag.name,
-      color: hashCode(tag.name)
-    })));
-    const uniqueTags = [...new Set(allTags.map(tag => tag.name))];
-
-    const featureTitle = gherkinDocument.feature.name;
-    const featureDescription = gherkinDocument.feature.description;
-
-    return {
-      featureId: uuidFn(),
-      featureTitle: featureTitle,
-      featureDescription: featureDescription,
-      scenarioCount: scenarios.length,
-      scenarios: scenarios,
-      tags: uniqueTags
-    };
-  } catch (error) {
-    console.error(`Error getting scenarios: ${error}`);
-    return null;
-  }
-}
-
-function gherkinDocumentToString(gherkinDocument) {
-  let gherkinText = '';
-
-  // Add the feature tags, if any
-  if (gherkinDocument.feature.tags && gherkinDocument.feature.tags.length > 0) {
-    const tags = gherkinDocument.feature.tags.map(tag => tag.name).join(' ');
-    gherkinText += `${tags}\n`;
-  }
-
-  // Add the feature title
-  gherkinText += `Feature: ${gherkinDocument.feature.name}\n\n`;
-
-  // Add the feature description, if any
-  if (gherkinDocument.feature.description) {
-    gherkinText += `${gherkinDocument.feature.description}\n\n`;
-  }
-
-  // Add each scenario or background
-  gherkinDocument.feature.children.forEach((child, index, array) => {
-    if (child.background) {
-      gherkinText += `\n  Background:\n`;
-
-      // Add each step of the background
-      child.background.steps.forEach(step => {
-        gherkinText += `    ${step.keyword} ${step.text}\n`;
-      });
-
-      // Add a blank line after the background
-      gherkinText += '\n';
-    } else if (child.scenario) {
-
-      // Add the scenario tags, if any
-      if (child.scenario.tags && child.scenario.tags.length > 0) {
-        const tags = child.scenario.tags.map(tag => tag.name).join(' ');
-        gherkinText += `  ${tags}\n`;
-      }
-
-      gherkinText += `  Scenario: ${child.scenario.name}\n`;
-
-      // Add the scenario description, if any
-      if (child.scenario.description) {
-        gherkinText += `\n${child.scenario.description}\n\n`;
-      }
-
-      // Add each step of the scenario
-      child.scenario.steps.forEach(step => {
-        gherkinText += `    ${step.keyword}${step.text}\n`;
-      });
-
-      // Add the Examples, if any
-      if (child.scenario.examples && child.scenario.examples.length > 0) {
-        child.scenario.examples.forEach(example => {
-          gherkinText += `\n    Examples:\n`;
-
-          // Add the table header
-          const header = example.tableHeader.cells.map(cell => cell.value).join(' | ');
-          gherkinText += `      | ${header} |\n`;
-
-          // Add the table rows
-          example.tableBody.forEach(row => {
-            const rowText = row.cells.map(cell => cell.value).join(' | ');
-            gherkinText += `      | ${rowText} |\n`;
-          });
-        });
-      }
-
-      // Add a blank line after each scenario, except the last one
-      if (index < array.length - 1) {
-        gherkinText += '\n';
-      }
-    }
-  });
-
-  return gherkinText;
-}
-
-
 function getFiles(dirPath, arrayOfFiles = []) {
   const files = fs.readdirSync(dirPath);
   const foldersToExclude = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8')).folderToExclude;
@@ -171,6 +50,85 @@ function getFiles(dirPath, arrayOfFiles = []) {
   return arrayOfFiles;
 }
 
+
+function getScenarios(filePath) {
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    const uuidFn = Messages.IdGenerator.uuid();
+    const builder = new Gherkin.AstBuilder(uuidFn);
+    const matcher = new Gherkin.GherkinClassicTokenMatcher();
+    const parser = new Gherkin.Parser(builder, matcher);
+    const gherkinDocument = parser.parse(fileContent);
+    return {
+      featureId: uuidFn(),
+      ...gherkinDocument
+    };
+  } catch (error) {
+    console.error(`Error getting scenarios: ${error}`);
+    return null;
+  }
+}
+
+function gherkinDocumentToString(gherkinDocument) {
+  let gherkinText = '';
+  // Add the feature tags, if any
+  if (gherkinDocument.feature.tags && gherkinDocument.feature.tags.length > 0) {
+    const tags = gherkinDocument.feature.tags.map(tag => tag.name).join(' ');
+    gherkinText += `${tags}\n`;
+  }
+  // Add the feature title
+  gherkinText += `Feature: ${gherkinDocument.feature.name}\n\n`;
+  // Add the feature description, if any
+  if (gherkinDocument.feature.description) {
+    gherkinText += `${gherkinDocument.feature.description}\n\n`;
+  }
+  // Add each scenario or background
+  gherkinDocument.feature.children.forEach((child, index, array) => {
+    if (child.background) {
+      gherkinText += `\n  Background:\n`;
+      // Add each step of the background
+      child.background.steps.forEach(step => {
+        gherkinText += `    ${step.keyword} ${step.text}\n`;
+      });
+      // Add a blank line after the background
+      gherkinText += '\n';
+    } else if (child.scenario) {
+      // Add the scenario tags, if any
+      if (child.scenario.tags && child.scenario.tags.length > 0) {
+        const tags = child.scenario.tags.map(tag => tag.name).join(' ');
+        gherkinText += `  ${tags}\n`;
+      }
+      gherkinText += `  Scenario: ${child.scenario.name}\n`;
+      // Add the scenario description, if any
+      if (child.scenario.description) {
+        gherkinText += `\n${child.scenario.description}\n\n`;
+      }
+      // Add each step of the scenario
+      child.scenario.steps.forEach(step => {
+        gherkinText += `    ${step.keyword}${step.text}\n`;
+      });
+      // Add the Examples, if any
+      if (child.scenario.examples && child.scenario.examples.length > 0) {
+        child.scenario.examples.forEach(example => {
+          gherkinText += `\n    Examples:\n`;
+          // Add the table header
+          const header = example.tableHeader.cells.map(cell => cell.value).join(' | ');
+          gherkinText += `      | ${header} |\n`;
+          // Add the table rows
+          example.tableBody.forEach(row => {
+            const rowText = row.cells.map(cell => cell.value).join(' | ');
+            gherkinText += `      | ${rowText} |\n`;
+          });
+        });
+      }
+      // Add a blank line after each scenario, except the last one
+      if (index < array.length - 1) {
+        gherkinText += '\n';
+      }
+    }
+  });
+  return gherkinText;
+}
 
 function hashCode(str) {
   var hash = 0;
@@ -201,9 +159,10 @@ app.get('/', (req, res) => {
   if (!directoryPath) {
     res.redirect('/settings');
   } else {
-    let featureFiles = getFiles(directoryPath);
-    featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
-    console.log('featureFilesCopy', featureFilesCopy);
+    if (featureFilesCopy.length === 0) {
+      let featureFiles = getFiles(directoryPath);
+      featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
+    }
     res.render('table', { featureFiles: featureFilesCopy, runCommand: !!config.testCommand });
   }
 });
@@ -213,7 +172,9 @@ app.get('/settings', (req, res) => {
   res.render('settings', {
     directoryPath: config.directoryPath,
     testCommand: config.testCommand,
-    folderToExclude: config.folderToExclude
+    folderToExclude: config.folderToExclude,
+    outputFolder: config.outputFolder, // Aggiunto qui
+    keepFolderStructure: config.keepFolderStructure // Aggiunto qui
   });
 });
 
@@ -221,10 +182,14 @@ app.post('/save-settings', (req, res) => {
   const newDirectoryPath = req.body.directoryPath;
   const newTestCommand = req.body.testCommand;
   const newFolderToExclude = req.body.folderToExclude;
+  const newOutputFolder = req.body.outputFolder; // Aggiunto qui
+  const newKeepFolderStructure = req.body.keepFolderStructure === 'on'; // Aggiunto qui
   const newConfig = {
       directoryPath: newDirectoryPath,
       testCommand: newTestCommand,
-      folderToExclude: newFolderToExclude
+      folderToExclude: newFolderToExclude,
+      outputFolder: newOutputFolder, // Aggiunto qui
+      keepFolderStructure: newKeepFolderStructure // Aggiunto qui
   };
   fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(newConfig, null, 2), 'utf-8');
   res.redirect('/settings');
@@ -249,14 +214,41 @@ wss.on('connection', ws => {
     }
     if (data.action === 'updateFeature') {
       let featureFile = featureFilesCopy.find(file => file.featureId === data.featureId);
-      if (featureFile && featureFile.hasOwnProperty(data.field)) {
-        featureFile[data.field] = data.newValue;
+      if (featureFile) { 
+        setNestedProperty(featureFile, data.field, data.newValue);
       }
-      console.log('OnUpdateFeature -> featureFilesCopy: ', featureFilesCopy);
-      notifyClients(JSON.stringify({ action: 'featureUpdated', filePath: data.filePath, field: data.field, newValue: data.newValue }));
+      //console.log('Feature updated:', JSON.stringify(featureFile));
+      notifyClients(JSON.stringify({ action: 'featureUpdated', featureId: data.featureId, field: data.field, newValue: data.newValue }));
+    }
+    if (data.action === 'saveOnDisk') {
+      // Per ogni elemento di featureFilesCopy, stampalo attraverso gherkinDocumentToString
+      featureFilesCopy.forEach(featureFile => {
+        console.log(gherkinDocumentToString(featureFile));
+      });
     }
   });
 });
+
+function getNestedProperty(obj, path) {
+  return path.split('.').reduce((prev, curr) => {
+      return prev ? prev[curr] : null
+  }, obj || self)
+}
+
+function setNestedProperty(obj, path, value) {
+  const pathParts = path.split(/[\.\[\]]/).filter(part => part);
+  const lastPart = pathParts.pop();
+
+  const target = pathParts.reduce((prev, curr) => {
+      return prev ? prev[curr] : null
+  }, obj || self);
+
+  if (target && lastPart) {
+      target[lastPart] = value;
+  } else {
+      console.error('Error setting nested property', path, 'on', obj);
+  }
+}
 
 server.listen(3000, () => {
   console.log('App listening on http://localhost:3000');
