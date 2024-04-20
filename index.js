@@ -221,9 +221,21 @@ wss.on('connection', ws => {
       notifyClients(JSON.stringify({ action: 'featureUpdated', featureId: data.featureId, field: data.field, newValue: data.newValue }));
     }
     if (data.action === 'saveOnDisk') {
-      // Per ogni elemento di featureFilesCopy, stampalo attraverso gherkinDocumentToString
+      const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+      const outputFolder = config.outputFolder;
+      const keepFolderStructure = config.keepFolderStructure;
+      const directoryPath = config.directoryPath;
+    
       featureFilesCopy.forEach(featureFile => {
-        console.log(gherkinDocumentToString(featureFile));
+        const gherkinText = gherkinDocumentToString(featureFile);
+        let outputUrl = featureFile.path.replace(directoryPath, outputFolder);
+    
+        if (keepFolderStructure) {
+          outputUrl = outputUrl.replace(/\\/g, '\\\\');
+        }
+    
+        ensureDirectoryExistence(outputUrl);
+        fs.writeFileSync(outputUrl, gherkinText);
       });
     }
     if (data.action === 'reset') {
@@ -255,6 +267,15 @@ function setNestedProperty(obj, path, value) {
   } else {
       console.error('Error setting nested property', path, 'on', obj);
   }
+}
+
+function ensureDirectoryExistence(filePath) {
+  const dirname = path.dirname(filePath);
+  if (fs.existsSync(dirname)) {
+    return true;
+  }
+  ensureDirectoryExistence(dirname);
+  fs.mkdirSync(dirname);
 }
 
 server.listen(3000, () => {
