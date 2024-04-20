@@ -1,22 +1,52 @@
-const assert = require('assert');
-const server = require('../index.js'); // Assicurati che questo percorso sia corretto
-const request = require('supertest')(server);
+const request = require('supertest');
+const { server, getFiles, getScenarios } = require('../index.js');
+const fs = require('fs');
+const path = require('path');
 
-describe('Express Server Test', () => {
+let expect;
 
-    after((done) => {
-        server.close(() => {
-            console.log('Server chiuso');
-            done();
-        });
-    });
+before(async () => {
+  expect = (await import('chai')).expect;
+});
 
-    it('Should return a 302 response for the route /', (done) => {
-        request.get('/')
-        .expect(302)
-        .end((err, res) => {
-            if (err) return done(err);
-            done();
-        });
-    });
+describe('getFiles', () => {
+  it('should return an array of files', () => {
+    const files = getFiles(__dirname);
+    expect(Array.isArray(files)).to.be.true;
+  });
+});
+describe('getScenarios', () => {
+  it('should return null if file does not exist', () => {
+    const scenarios = getScenarios('nonexistent.file');
+    expect(scenarios).to.be.null;
+  });
+});
+
+describe('HTTP routes', () => {
+  after(() => {
+    server.close();
+  });
+
+  it('should return 302 for GET /', async () => {
+    const response = await request(server).get('/');
+    expect(response.statusCode).to.equal(302);
+  });
+
+  it('should return 200 for GET /settings', async () => {
+    const response = await request(server).get('/settings');
+    expect(response.statusCode).to.equal(200);
+  });
+
+  it('should return 302 for POST /save-settings', async () => {
+    const response = await request(server)
+      .post('/save-settings')
+      .send({
+        directoryPath: __dirname,
+        testCommand: 'npm test',
+        folderToExclude: 'node_modules',
+        outputFolder: path.join(__dirname, 'output'),
+        keepFolderStructure: 'on'
+      });
+    expect(response.statusCode).to.equal(302);
+  });
 });

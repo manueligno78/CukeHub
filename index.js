@@ -18,16 +18,22 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-module.exports = server;
+module.exports.server = server;
+module.exports.getFiles = getFiles;
+module.exports.getScenarios = getScenarios;
 
 let featureFilesCopy = [];
 
 function getFiles(dirPath, arrayOfFiles = []) {
   const files = fs.readdirSync(dirPath);
-  const foldersToExclude = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8')).folderToExclude;
-  const excludePatterns = foldersToExclude.split(',').map(folder => 
-    new RegExp('^' + folder.trim().replace(/\*/g, '.*') + '$')
-  );
+  const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  const foldersToExclude = config.folderToExclude;
+  let excludePatterns = [];
+  if (foldersToExclude) {
+    excludePatterns = foldersToExclude.split(',').map(folder => 
+      new RegExp('^' + folder.trim().replace(/\*/g, '.*') + '$')
+    );
+  }
   files.forEach(file => {
     const fullPath = path.join(dirPath, "/", file);
     const isExcluded = excludePatterns.some(pattern => pattern.test(fullPath));
@@ -49,7 +55,6 @@ function getFiles(dirPath, arrayOfFiles = []) {
   });
   return arrayOfFiles;
 }
-
 
 function getScenarios(filePath) {
   try {
@@ -130,19 +135,6 @@ function gherkinDocumentToString(gherkinDocument) {
   return gherkinText;
 }
 
-function hashCode(str) {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  var color = '#';
-  for (var i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
-    color += ('00' + value.toString(16)).substr(-2);
-  }
-  return color;
-}
-
 /// SERVER and WEBSOCKETS
 
 function notifyClients(message) {
@@ -173,8 +165,8 @@ app.get('/settings', (req, res) => {
     directoryPath: config.directoryPath,
     testCommand: config.testCommand,
     folderToExclude: config.folderToExclude,
-    outputFolder: config.outputFolder, // Aggiunto qui
-    keepFolderStructure: config.keepFolderStructure // Aggiunto qui
+    outputFolder: config.outputFolder,
+    keepFolderStructure: config.keepFolderStructure
   });
 });
 
@@ -182,17 +174,21 @@ app.post('/save-settings', (req, res) => {
   const newDirectoryPath = req.body.directoryPath;
   const newTestCommand = req.body.testCommand;
   const newFolderToExclude = req.body.folderToExclude;
-  const newOutputFolder = req.body.outputFolder; // Aggiunto qui
-  const newKeepFolderStructure = req.body.keepFolderStructure === 'on'; // Aggiunto qui
+  const newOutputFolder = req.body.outputFolder; 
+  const newKeepFolderStructure = req.body.keepFolderStructure === 'on';
   const newConfig = {
       directoryPath: newDirectoryPath,
       testCommand: newTestCommand,
       folderToExclude: newFolderToExclude,
-      outputFolder: newOutputFolder, // Aggiunto qui
-      keepFolderStructure: newKeepFolderStructure // Aggiunto qui
+      outputFolder: newOutputFolder, 
+      keepFolderStructure: newKeepFolderStructure 
   };
-  fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(newConfig, null, 2), 'utf-8');
-  res.redirect('/settings');
+  const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  if (JSON.stringify(config) !== JSON.stringify(newConfig)) {
+    fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(newConfig, null, 2), 'utf-8');
+    reset();
+  }
+  res.redirect('/');
 });
 
 
@@ -239,11 +235,7 @@ wss.on('connection', ws => {
       });
     }
     if (data.action === 'reset') {
-      const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
-      const directoryPath = config.directoryPath;
-      let featureFiles = getFiles(directoryPath);
-      featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
-      notifyClients(JSON.stringify({ action: 'reset' }));
+      reset();
     }
   });
 });
@@ -253,6 +245,14 @@ function getNestedProperty(obj, path) {
       return prev ? prev[curr] : null
   }, obj || self)
 }
+
+function reset() {
+  const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  const directoryPath = config.directoryPath;
+  let featureFiles = getFiles(directoryPath);
+  featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
+  notifyClients(JSON.stringify({ action: 'reset' }));
+  }
 
 function setNestedProperty(obj, path, value) {
   const pathParts = path.split(/[\.\[\]]/).filter(part => part);
