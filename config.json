@@ -1,7 +1,7 @@
 {
-  "directoryPath": "C:\\Users\\manue\\Desktop\\repositories\\selenium-cucumber-sample-project",
+  "directoryPath": "",
   "testCommand": "",
-  "folderToExclude": "*target*, *resource2s*",
-  "outputFolder": "C:\\Users\\manue\\Desktop\\outTest",
-  "keepFolderStructure": false
+  "folderToExclude": "*target*",
+  "outputFolder": "",
+  "keepFolderStructure": true
 }
