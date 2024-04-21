@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CukeHub</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/main.js"></script>
+</head>
+
+<body>
+  <header class="p-3 bg-dark text-white fixed-top">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none me-lg-auto">
+          <img src="TCM_Logo.png" alt="Logo" width="60" height="48">
+        </a>
+
+        <ul class="nav col-12 col-lg-auto me-lg-3 mb-2 justify-content-center mb-md-0">
+          <li><a href="#" class="nav-link px-2 text-white">Console</a></li>
+          <li><a href="/settings" class="nav-link px-2 text-white">Settings</a></li>
+        </ul>
+
+        <form class="d-flex col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+          <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+        </form>
+        <button class="btn btn-primary" id="save-button" type="button" onclick="saveOnDisk()">Save</button>
+        <button class="btn btn-danger" id="reset-button" type="button" onclick="reset()">Reset</button>
+      </div>
+    </div>
+  </header>
+  <div class="container" style="padding-top: 100px;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Feature</th>
+          <th scope="col">Tags</th>
+          <th scope="col">Scenarios</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% featureFiles.forEach(function(featureFile) { %>
+        <% if (featureFile && featureFile.path) { %>
+        <tr id="<%= featureFile.featureId %>">
+          <td>
+            <p class="feature.name" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)"><%= featureFile.feature.name %></p>
+            <p class="feature.description" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)"><%= featureFile.feature.description %></p>
+            <p class="feature.children.length"><%= featureFile.feature.children.length %> scenarios contained</p>
+            <p class="path">Location: <%= featureFile.path %></p>
+          </td>
+          <td>
+            <ul class="tag-list">
+              <% featureFile.feature.tags.forEach(function(tag) { %>
+                <li>
+                  <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')" >
+                    <%= tag.name %>
+                  </a>
+                </li>
+              <% }); %>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <% featureFile.feature.children.forEach(function(child, index) { %>
+                <% if (child.scenario) { %>
+                  <li>
+                    <span class="tags">
+                      <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
+                        <a href="#" class="tag-label" onclick="addTagToInput('<%= tag.name %>')"
+                          contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.tags[' + '<%= tagIndex %>' + '].name', this.innerText)">
+                          <%= tag.name %>
+                        </a> 
+                      <% }); %>             
+                    </span>
+                    <a href="#" class="scenario-link" data-tags='<%= JSON.stringify(child.scenario.tags.map(function(tag) { return tag.name; })) %>'
+                      title='<%= JSON.stringify(child.scenario.tags.map(function(tag) { return tag.name; })) %>'
+                      contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
+                      <%- child.scenario.name %>
+                      <% if (child.scenario.isOutline) { %>
+                        <span>(Outline)</span>
+                      <% } %>
+                    </a> 
+                    <p>
+                      <% if (child.scenario.description) { %>
+                      <span contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.description', this.innerText)">
+                      <%= child.scenario.description %></span>
+                      <% } %>
+                    </p>
+                  </li>
+                <% } %>
+              <% }); %>
+            </ul>
+          </td>
+        </tr>
+        <% } %>
+      <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <p class="col-md-4 mb-0 text-muted">© 2024 CukeHub</p>
+
+    <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+      <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+    </a>
+
+    <ul class="nav col-md-4 justify-content-end">
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Console</a></li>
+      <li class="nav-item"><a href="/settings" class="nav-link px-2 text-muted">Settings</a></li>
+    </ul>
+  </footer>
+</body>
+</html>
