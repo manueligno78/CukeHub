@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       tag.style.color = 'white';
     }
   });
+  
 
   const form = document.querySelector('form');
   if(form) {
@@ -149,16 +150,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 //   autocompleteInputTags(taglist, "#tagsInput");
 // });
 
-$(document).ready(function() {
-    $('#table').DataTable({
-    order: [[ 0, 'asc' ]],
-    columns: [
-        { width: "30%" },
-        { width: "20%" },
-        { width: "50%" }
-    ]
-});
-});
+$(document).ready( function () {
+  $('#dataTable').DataTable();
+} );
 
 function updateFeature(featureId, field, newValue) {
   let message = JSON.stringify({
@@ -168,6 +162,11 @@ function updateFeature(featureId, field, newValue) {
     newValue: newValue
   });
   socket.send(message);
+}
+
+function removeTag(featureId, scenarioId, tag) {
+  // Trova la feature o lo scenario con l'ID specificato
+  // Rimuovi il tag specificato
 }
 
 function saveOnDisk() {

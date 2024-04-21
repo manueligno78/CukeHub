@@ -155,7 +155,7 @@ app.get('/', (req, res) => {
       let featureFiles = getFiles(directoryPath);
       featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
     }
-    res.render('table', { featureFiles: featureFilesCopy, runCommand: !!config.testCommand });
+    res.render('table-bs-theme', { featureFiles: featureFilesCopy, runCommand: !!config.testCommand });
   }
 });
 

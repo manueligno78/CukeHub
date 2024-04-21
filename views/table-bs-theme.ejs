@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <title>CukeHub</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Custom fonts for this template -->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="/vendor/datatables/jquery.dataTables.js"></script>
+    <script src="/main.js"></script>
+  </head>
+
+<body id="page-top">
+  <div id="wrapper">
+  <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+          <div class="sidebar-brand-icon rotate-n-15">
+                <img src="TCM_Logo.png" alt="Logo" width="60" height="48">
+          </div>
+          <div class="sidebar-brand-text mx-3">Cuke<sup>HUB</sup></div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item">
+          <a class="nav-link" href="/">
+              <i class="fas fa-fw fa-tachometer-alt"></i>
+              <span>Dashboard</span></a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+          Interface
+      </div>
+
+      <!-- Nav Item - Charts -->
+      <li class="nav-item active">
+          <a class="nav-link" href="charts.html">
+              <i class="fas fa-fw fa-chart-area"></i>
+              <span>Feature Explorer</span></a>
+      </li>
+
+      <!-- Nav Item - Tables -->
+      <li class="nav-item">
+          <a class="nav-link" href="/settings">
+              <i class="fas fa-fw fa-wrench"></i>
+              <span>Settings</span></a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+          <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+
+  </ul>
+  <!-- End of Sidebar -->
+
+
+  <!-- Content Wrapper -->
+  <div id="content-wrapper" class="d-flex flex-column">
+    <!-- Main Content -->
+    <div id="content">
+    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+      <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" role="search">
+          <div class="input-group">
+            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button">
+                    <i class="fas fa-search fa-sm"></i>
+                </button>
+            </div>
+        </div>
+      </form>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown no-arrow mx-1">
+          <button class="btn btn-primary px-1 mx-1" id="save-button" type="button" onclick="saveOnDisk()">Save</button>
+        </li>
+        <li class="nav-item dropdown no-arrow mx-1">
+          <button class="btn btn-danger px-1 mx-1" id="reset-button" type="button" onclick="reset()">Reset</button>
+        </li>
+      </ul>
+    </nav> 
+  <!-- Begin Page Content -->
+    <div class="container-fluid">
+      <h1 class="h3 mb-2 text-gray-800">Features</h1>
+      <p class="mb-4">Features files and scenarios:</p>
+
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Feature files:</h6>
+        </div>
+
+
+        <div class="card-body">
+          <div class="table-responsive">
+
+            <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+              <table id="dataTable" class="table table-striped display">
+                <thead>
+                  <tr>
+                    <th scope="col">Feature</th>
+                    <th scope="col">Scenarios</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% featureFiles.forEach(function(featureFile) { %>
+                    <% if (featureFile && featureFile.path) { %>
+                    <tr id="<%= featureFile.featureId %>">
+                      <td>
+                        <div class="d-flex gap-2 justify-content-left pt-5">
+                          <% featureFile.feature.tags.forEach(function(tag) { %>
+                            <span class="tag-label badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                              <span onclick='addTagToInput("<%= tag.name %>")' contentEditable="true" onblur="updateFeature('', this.innerText)" class="px-1">                                <%= tag.name %>
+                              </span> 
+                              <a href="#" onclick="removeTag('<%= tag.name %>')">
+                                <svg class="bi ms-1" width="16" height="16"><use xlink:href="#x-circle-fill"></use></svg>
+                              </a>
+                          </span>
+                          <% }); %>
+                        </div>
+                        <h3 class="fw-bold mb-0 fs-4 text-body-emphasis" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)">
+                          <%= featureFile.feature.name %>
+                        </h3>
+                        <p contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)">
+                          <%= featureFile.feature.description %>
+                        </p>
+                        <p><%= featureFile.feature.children.length %> scenarios contained</p>
+                      </td>
+                      <td>
+                        <ul class="list-unstyled">
+                          <% featureFile.feature.children.forEach(function(child, index) { %>
+                            <% if (child.scenario) { %>
+                              <li>
+                                <div class="d-flex gap-2 justify-content-left pt-5">
+                                  <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
+                                    <span class="tag-label badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                      <span contentEditable="true" onblur='updateFeature("<%= featureFile.featureId %>", "feature.children[<%= index %>].scenario.tags[<%= tagIndex %>].name", this.innerText)' class="px-1">                                        <%= tag.name %>
+                                      </span> 
+                                      <a href="#" onclick="removeTag('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.tags[' + '<%= tagIndex %>' + ']', '<%= tag.name %>')">
+                                        <svg class="tag-delete bi ms-1" width="16" height="16"><use xlink:href="#x-circle-fill"></use></svg>
+                                      </a>
+                                    </span>
+                                  <% }); %>
+                                </div>            
+                                <h4 href="#" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
+                                  <%- child.scenario.name %>
+                                  <% if (child.scenario.isOutline) { %>
+                                    <span>(Outline)</span>
+                                  <% } %>
+                                </h4> 
+                                <% if (child.scenario.description) { %>
+                                  <p contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.description', this.innerText)">
+                                    <%= child.scenario.description %>
+                                  </p>
+                                <% } %>
+                              </li>
+                            <% } %>
+                          <% }); %>
+                        </ul>
+                      </td>
+                    </tr>
+                    <% } %>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <footer class="sticky-footer bg-white">
+      <div class="copyright text-center my-auto">© 2024 CukeHub</p>
+      <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+      </a>
+    </footer>
+<!-- End of Content Wrapper -->    
+</div>
+<!-- End of Page Wrapper -->
+</body>
+</html>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="x-circle-fill" viewBox="0 0 16 16">
+    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
+  </symbol>
+</svg>
+
+
+
