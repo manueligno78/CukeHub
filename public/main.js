@@ -12,10 +12,7 @@ socket.addEventListener('message', function (event) {
     document.getElementById('save-button').style.display = 'none';
     document.getElementById('reset-button').style.display = 'none';
   } else if (JSON.parse(event.data).action === 'featureUpdated') {
-    // Aggiorna la visualizzazione su table.ejs
     updateFeatureInView(JSON.parse(event.data).featureId, JSON.parse(event.data).field, JSON.parse(event.data).newValue);
-    
-    // Mostra i pulsanti Save e Reset
     document.getElementById('save-button').style.display = 'block';
     document.getElementById('reset-button').style.display = 'block';
   }
@@ -34,13 +31,10 @@ socket.addEventListener('close', function (event) {
 });
 
 function updateFeatureInView(featureId, field, newValue) {
-  // Trova la riga della tabella corrispondente al file
   var row = document.getElementById(featureId);
   if (row) {
-    // Trova la cella corrispondente al campo
     var cell = row.getElementsByClassName(field)[0];
     if (cell) {
-      // Aggiorna il valore della cella
       cell.textContent = newValue;
       cell.classList.add('content-updated');
     }
@@ -68,18 +62,6 @@ function addScenarioTagsToInput(tags) {
   tags.forEach(tag => addTagToInput(tag));
 }
 
-function hashCode(str) {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  var color = '#';
-  for (var i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
-    color += ('00' + value.toString(16)).substr(-2);
-  }
-  return color;
-}
 
 document.querySelectorAll('.scenario-link').forEach(link => {
   link.addEventListener('click', function (event) {
@@ -144,6 +126,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       tag.style.color = 'white';
     }
   });
+
   const form = document.querySelector('form');
   if(form) {
     form.addEventListener('submit', function(event) {
