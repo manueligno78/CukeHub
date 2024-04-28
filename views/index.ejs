@@ -108,7 +108,7 @@
                     <% if (featureFile && featureFile.path) { %>
                     <tr id="<%= featureFile.featureId %>">
                       <td>
-                        <div class="d-flex gap-2 justify-content-left pt-5">
+                        <div class="d-flex gap-2 justify-content-left pt-1">
                           <!-- Tags -->
                           <% featureFile.feature.tags.forEach(function(tag) { %>
                             <span class="tag-label badge d-flex p-2 mr-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
@@ -131,14 +131,14 @@
                         <p contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)">
                           <%= featureFile.feature.description %>
                         </p>
-                        <p><%= featureFile.feature.children.length %> scenarios contained</p>
                       </td>
                       <td>
                         <ul class="list-unstyled">
+                          <h6><%= featureFile.feature.children.length %> scenarios contained: </h6>
                           <% featureFile.feature.children.forEach(function(child, index) { %>
                             <% if (child.scenario) { %>
                               <li>
-                                <div class="d-flex gap-2 justify-content-left pt-5">
+                                <div class="d-flex gap-2 justify-content-left pt-1">
                                   <!-- Tags -->
                                   <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
                                     <span class="tag-label badge d-flex p-2 mr-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
