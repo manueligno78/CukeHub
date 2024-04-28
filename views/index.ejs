@@ -126,9 +126,9 @@
                           </span>
                           <% }); %>
                         </div>
-                        <h3 class="fw-bold mb-0 fs-4 text-body-emphasis" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)">
+                        <h5 class="fw-bold mb-0 fs-4 text-body-emphasis" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)">
                           <%= featureFile.feature.name %>
-                        </h3>
+                        </h5>
                         <p contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)">
                           <%= featureFile.feature.description %>
                         </p>
@@ -150,12 +150,12 @@
                                     </span>
                                   <% }); %>
                                 </div>            
-                                <h4 href="#" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
+                                <h5 href="#" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
                                   <%- child.scenario.name %>
                                   <% if (child.scenario.isOutline) { %>
                                     <span>(Outline)</span>
                                   <% } %>
-                                </h4> 
+                                </h5> 
                                 <% if (child.scenario.description) { %>
                                   <p contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.description', this.innerText)">
                                     <%= child.scenario.description %>
