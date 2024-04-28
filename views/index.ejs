@@ -69,7 +69,7 @@
     <!-- Main Content -->
     <div id="content">
     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-      <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" role="search">
+      <!-- <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" role="search">
           <div class="input-group">
             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
             <div class="input-group-append">
@@ -78,7 +78,7 @@
                 </button>
             </div>
         </div>
-      </form>
+      </form> -->
       <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown no-arrow mx-1">
           <button class="btn btn-primary px-1 mx-1" id="save-button" type="button" onclick="saveOnDisk()">Save</button>
@@ -90,15 +90,8 @@
     </nav> 
   <!-- Begin Page Content -->
     <div class="container-fluid">
-      <h1 class="h3 mb-2 text-gray-800">Features</h1>
-      <p class="mb-4">Features files and scenarios:</p>
-
+      <!-- Page Heading -->
       <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Feature files:</h6>
-        </div>
-
-
         <div class="card-body">
           <div class="table-responsive">
 
@@ -116,15 +109,21 @@
                     <tr id="<%= featureFile.featureId %>">
                       <td>
                         <div class="d-flex gap-2 justify-content-left pt-5">
+                          <!-- Tags -->
                           <% featureFile.feature.tags.forEach(function(tag) { %>
-                            <span class="tag-label badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
-                              <span onclick='addTagToInput("<%= tag.name %>")' contentEditable="true" onblur="updateFeature('', this.innerText)" class="px-1">                                <%= tag.name %>
+                            <span class="tag-label badge d-flex p-2 mr-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                              <span onclick='addTagToInput("<%= tag.name %>")' contentEditable="true" onblur="updateFeature('', this.innerText)" class="px-1"><%= tag.name %>
                               </span> 
                               <a href="#" onclick="removeTag('<%= tag.name %>')">
                                 <svg class="bi ms-1" width="16" height="16"><use xlink:href="#x-circle-fill"></use></svg>
                               </a>
                           </span>
                           <% }); %>
+                          <span class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                            <a href="#" id="addTagInput" contentEditable="true" onfocus="handleTagInputFocus()" onblur="handleTagInputBlur()" onkeydown="handleTagInputKeyDown(event)">
+                                + add tag
+                            </a>
+                          </span> 
                         </div>
                         <h5 class="fw-bold mb-0 fs-4 text-body-emphasis" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)">
                           <%= featureFile.feature.name %>
@@ -140,15 +139,21 @@
                             <% if (child.scenario) { %>
                               <li>
                                 <div class="d-flex gap-2 justify-content-left pt-5">
+                                  <!-- Tags -->
                                   <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
-                                    <span class="tag-label badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
-                                      <span contentEditable="true" onblur='updateFeature("<%= featureFile.featureId %>", "feature.children[<%= index %>].scenario.tags[<%= tagIndex %>].name", this.innerText)' class="px-1">                                        <%= tag.name %>
+                                    <span class="tag-label badge d-flex p-2 mr-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                      <span contentEditable="true" onblur='updateFeature("<%= featureFile.featureId %>", "feature.children[<%= index %>].scenario.tags[<%= tagIndex %>].name", this.innerText)' class="px-1"><%= tag.name %>
                                       </span> 
                                       <a href="#" onclick="removeTag('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.tags[' + '<%= tagIndex %>' + ']', '<%= tag.name %>')">
                                         <svg class="tag-delete bi ms-1" width="16" height="16"><use xlink:href="#x-circle-fill"></use></svg>
                                       </a>
                                     </span>
                                   <% }); %>
+                                  <span class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                    <a href="#" id="addTagInput" contentEditable="true" onfocus="handleTagInputFocus()" onblur="handleTagInputBlur()" onkeydown="handleTagInputKeyDown(event)">
+                                        + add tag
+                                    </a>
+                                  </span>
                                 </div>            
                                 <h5 href="#" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
                                   <%- child.scenario.name %>

@@ -182,3 +182,30 @@ function reset() {
   });
   socket.send(message);
 }
+
+function handleTagInputFocus() {
+  var input = document.getElementById('addTagInput');
+  if (input.innerText === '+ add tag') {
+      input.innerText = '';
+  }
+}
+
+function handleTagInputBlur() {
+  var input = document.getElementById('addTagInput');
+  if (input.innerText.trim() === '') {
+      input.innerText = '+ add tag';
+  } else {
+      addTag(input.innerText);
+  }
+}
+
+function handleTagInputKeyDown(event) {
+  if (event.key === 'Enter') {
+      event.preventDefault();
+      var input = document.getElementById('addTagInput');
+      if (input.innerText.trim() !== '') {
+          addTag(input.innerText);
+      }
+      input.blur();
+  }
+}
