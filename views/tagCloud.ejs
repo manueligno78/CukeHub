@@ -2,13 +2,9 @@
     #tagCloud {
       display: flex;
       flex-wrap: wrap;
-      justify-content: start;
+      justify-content: center;
     }
-    .tag-label {
-      order: 0;
-      transition: order 5s ease;
-    }
-  </style>
+</style>
   
   <% 
     var tagFrequency = {};
@@ -33,23 +29,24 @@
       }
     });
   %>
-  <div id="tagCloud">
+  <ul id="tagCloud">
     <% for (var tag in tagFrequency) { %>
-      <span class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill" 
+      <li class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill" 
             style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em" 
             title="This tag is present on: <%= tagFrequency[tag].scenarios.join('\n ') %>"
             data-count="<%= tagFrequency[tag].count %>">
         <span class="px-1"><%= tag %>
         </span> 
         <span class="badge badge-secondary badge-counter"><%= tagFrequency[tag].count %></span>
-      </span>
+      </li>
     <% } %>
-  </div>
+    </ul>
   <span class="badge d-flex p-2 mr-1 mb-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
     <span class="px-1"><input type="checkbox" id="sortCheckbox" onclick="sortTags()">+ Switch tag cloud order</input>
     </span> 
   </span>
-  
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js"></script>
   <script>
     function sortTags() {
       var container = document.getElementById('tagCloud');
@@ -67,5 +64,12 @@
         tag.style.order = index;
       });
     }
+
+      // Crea un nuovo oggetto Sortable per il tag cloud
+  var sortable = Sortable.create(document.getElementById('tagCloud'), {
+    animation: 1000, // Durata dell'animazione in ms
+    onUpdate: sortTags // Funzione da chiamare quando l'ordine degli elementi cambia
+  });
+
     sortTags();
   </script>
