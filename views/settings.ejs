@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Impostazioni</title>
+    <title>Settings</title>
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
@@ -19,34 +19,34 @@
                     <div class="col-lg-7">
                         <div class="p-5">
                             <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Impostazioni</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Settings</h1>
                             </div>
                             <form action="/save-settings" method="POST" class="user">
                                 <div class="form-group">
-                                    <label for="directoryPath">Directory Path:</label>
+                                    <label for="directoryPath">Project source path containing .feature files (absolute path):</label>
                                     <input type="text" class="form-control form-control-user" id="directoryPath" name="directoryPath" value="<%= directoryPath %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="testCommand">Run command:</label>
+                                    <label for="testCommand">Run command (experimental):</label>
                                     <input type="text" class="form-control form-control-user" id="testCommand" name="testCommand" value="<%= testCommand %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="folderToExclude">Folder to exclude:</label>
+                                    <label for="folderToExclude">Folder to exclude from source path scaffolding:</label>
                                     <input type="text" class="form-control form-control-user" id="folderToExclude" name="folderToExclude" value="<%= folderToExclude %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="outputFolder">Output folder for modified feature files:</label>
+                                    <label for="outputFolder">Export folder for modified feature files (absolute path):</label>
                                     <input type="text" class="form-control form-control-user" id="outputFolder" name="outputFolder" value="<%= outputFolder %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="keepFolderStructure">Keep original folder structure:</label>
+                                    <label for="keepFolderStructure">Keep source folder structure when exporting:</label>
                                     <input type="checkbox" class="form-control form-control-user" id="keepFolderStructure" name="keepFolderStructure" <%= keepFolderStructure ? 'checked' : '' %>>
                                 </div>
                                 <input type="submit" value="Save" class="btn btn-primary btn-user btn-block">
                             </form>
                             <hr>
                             <div class="text-center">
-                                <a class="small" href="/">Back to home</a>
+                                <a class="small" href="/">Back</a>
                             </div>
                         </div>
                     </div>

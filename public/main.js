@@ -9,12 +9,12 @@ socket.addEventListener('message', function (event) {
   } else if (JSON.parse(event.data).action === 'reset') {
     console.log('Resetting the page...');
     location.reload();
-    document.getElementById('save-button').style.display = 'none';
-    document.getElementById('reset-button').style.display = 'none';
+    document.getElementById('saveButton').style.display = 'none';
+    document.getElementById('resetButton').style.display = 'none';
   } else if (JSON.parse(event.data).action === 'featureUpdated') {
     updateFeatureInView(JSON.parse(event.data).featureId, JSON.parse(event.data).field, JSON.parse(event.data).newValue);
-    document.getElementById('save-button').style.display = 'block';
-    document.getElementById('reset-button').style.display = 'block';
+    document.getElementById('saveButton').style.display = 'block';
+    document.getElementById('resetButton').style.display = 'block';
   }
 });
 
@@ -176,11 +176,25 @@ function saveOnDisk() {
   socket.send(message);
 }
 
+function confirmExport() {
+  var confirmAction = confirm("Are you sure you want to export?");
+  if (confirmAction) {
+    saveOnDisk();
+  }
+}
+
 function reset() {
   let message = JSON.stringify({
     action: 'reset'
   });
   socket.send(message);
+}
+
+function confirmReset() {
+  var confirmAction = confirm("Are you sure you want to reset your changes?");
+  if (confirmAction) {
+    reset();
+  }
 }
 
 function handleTagInputFocus() {

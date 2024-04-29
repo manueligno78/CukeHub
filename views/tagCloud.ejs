@@ -37,10 +37,11 @@
     <% for (var tag in tagFrequency) { %>
       <span class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill" 
             style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em" 
-            title="Occorrenze: <%= tagFrequency[tag].count %> - Presente in: <%= tagFrequency[tag].scenarios.join('\n ') %>"
+            title="This tag is present on: <%= tagFrequency[tag].scenarios.join('\n ') %>"
             data-count="<%= tagFrequency[tag].count %>">
         <span class="px-1"><%= tag %>
         </span> 
+        <span class="badge badge-secondary badge-counter"><%= tagFrequency[tag].count %></span>
       </span>
     <% } %>
   </div>
@@ -66,4 +67,5 @@
         tag.style.order = index;
       });
     }
+    sortTags();
   </script>

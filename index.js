@@ -11,7 +11,7 @@ const http = require('http');
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -26,7 +26,6 @@ let featureFilesCopy = [];
 
 function getFiles(dirPath, arrayOfFiles = []) {
   const files = fs.readdirSync(dirPath);
-  const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   const foldersToExclude = config.folderToExclude;
   let excludePatterns = [];
   if (foldersToExclude) {
@@ -163,7 +162,7 @@ function notifyClients(message) {
 }
 
 app.get('/', (req, res) => {
-  const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   const directoryPath = config.directoryPath;
   if (!directoryPath) {
     res.redirect('/settings');
@@ -172,12 +171,12 @@ app.get('/', (req, res) => {
       let featureFiles = getFiles(directoryPath);
       featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
     }
-    res.render('index', { featureFiles: featureFilesCopy, runCommand: !!config.testCommand });
+    res.render('index', { configuration: config, featureFiles: featureFilesCopy, runCommand: !!config.testCommand });
   }
 });
 
 app.get('/settings', (req, res) => {
-  const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   res.render('settings', {
     directoryPath: config.directoryPath,
     testCommand: config.testCommand,
@@ -200,7 +199,7 @@ app.post('/save-settings', (req, res) => {
       outputFolder: newOutputFolder, 
       keepFolderStructure: newKeepFolderStructure 
   };
-  const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   if (JSON.stringify(config) !== JSON.stringify(newConfig)) {
     fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(newConfig, null, 2), 'utf-8');
     reset();
@@ -214,7 +213,7 @@ wss.on('connection', ws => {
     const data = JSON.parse(message);
     if (data.action === 'run-tests') {
       const tags = data.tags;
-      const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+      //config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
       const testCommand = config.testCommand.replace('@yourTag', tags);
       
       notifyClients('tests started');
@@ -234,7 +233,7 @@ wss.on('connection', ws => {
       notifyClients(JSON.stringify({ action: 'featureUpdated', featureId: data.featureId, field: data.field, newValue: data.newValue }));
     }
     if (data.action === 'saveOnDisk') {
-      const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+      //const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
       const outputFolder = config.outputFolder;
       const keepFolderStructure = config.keepFolderStructure;
       const directoryPath = config.directoryPath;
@@ -264,7 +263,7 @@ function getNestedProperty(obj, path) {
 }
 
 function reset() {
-  const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   const directoryPath = config.directoryPath;
   let featureFiles = getFiles(directoryPath);
   featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
@@ -296,5 +295,5 @@ function ensureDirectoryExistence(filePath) {
 }
 
 server.listen(3000, () => {
-  console.log('App listening on http://localhost:3000');
+  console.log('CukeHub listening on http://localhost:3000');
 });
