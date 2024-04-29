@@ -64,8 +64,25 @@ function getScenarios(filePath) {
     const matcher = new Gherkin.GherkinClassicTokenMatcher();
     const parser = new Gherkin.Parser(builder, matcher);
     const gherkinDocument = parser.parse(fileContent);
+
+    const featureId = uuidFn();
+    const tags = [];
+
+    gherkinDocument.feature.children.forEach(child => {
+      if (child.scenario) {
+        child.scenario.tags.forEach(tag => {
+          tags.push({
+            tag: tag.name,
+            scenario: child.scenario.name,
+            featureId: featureId
+          });
+        });
+      }
+    });
+
     return {
-      featureId: uuidFn(),
+      featureId: featureId,
+      tags: tags,
       ...gherkinDocument
     };
   } catch (error) {

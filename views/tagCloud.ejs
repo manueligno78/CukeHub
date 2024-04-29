@@ -1,0 +1,69 @@
+<style>
+    #tagCloud {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: start;
+    }
+    .tag-label {
+      order: 0;
+      transition: order 5s ease;
+    }
+  </style>
+  
+  <% 
+    var tagFrequency = {};
+    var maxFrequency = 1;
+    featureFiles.forEach(function(featureFile) {
+      if (featureFile && featureFile.path) {
+        featureFile.feature.children.forEach(function(child) {
+          if (child.scenario) {
+            child.scenario.tags.forEach(function(tag) {
+              if (tagFrequency[tag.name]) {
+                tagFrequency[tag.name].count++;
+                tagFrequency[tag.name].scenarios.push(child.scenario.name);
+                if (tagFrequency[tag.name].count > maxFrequency) {
+                  maxFrequency = tagFrequency[tag.name].count;
+                }
+              } else {
+                tagFrequency[tag.name] = { count: 1, scenarios: [child.scenario.name] };
+              }
+            });
+          }
+        });
+      }
+    });
+  %>
+  <div id="tagCloud">
+    <% for (var tag in tagFrequency) { %>
+      <span class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill" 
+            style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em" 
+            title="Occorrenze: <%= tagFrequency[tag].count %> - Presente in: <%= tagFrequency[tag].scenarios.join('\n ') %>"
+            data-count="<%= tagFrequency[tag].count %>">
+        <span class="px-1"><%= tag %>
+        </span> 
+      </span>
+    <% } %>
+  </div>
+  <span class="badge d-flex p-2 mr-1 mb-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+    <span class="px-1"><input type="checkbox" id="sortCheckbox" onclick="sortTags()">+ Switch tag cloud order</input>
+    </span> 
+  </span>
+  
+  <script>
+    function sortTags() {
+      var container = document.getElementById('tagCloud');
+      var tags = Array.from(container.getElementsByClassName('tag-label'));
+      if (document.getElementById('sortCheckbox').checked) {
+        tags.sort(function(a, b) {
+          return b.getAttribute('data-count') - a.getAttribute('data-count');
+        });
+      } else {
+        tags.sort(function(a, b) {
+          return a.textContent.localeCompare(b.textContent);
+        });
+      }
+      tags.forEach(function(tag, index) {
+        tag.style.order = index;
+      });
+    }
+  </script>
