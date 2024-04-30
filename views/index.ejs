@@ -31,68 +31,10 @@
 <body id="page-top">
   <div id="wrapper">
   <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-      <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-          <div class="sidebar-brand-icon rotate-n-15">
-                <img src="TCM_Logo.png" alt="Logo" width="60" height="48">
-          </div>
-          <div class="sidebar-brand-text mx-3">Cuke<sup>HUB</sup></div>
-      </a>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider my-0">
-
-      <!-- Nav Item - Charts -->
-      <li class="nav-item active">
-          <a class="nav-link" href="charts.html">
-              <i class="fas fa-fw fa-chart-area"></i>
-              <span>Feature Explorer</span>
-            </a>
-      </li>
-
-      <li class="nav-item flex-wrap">
-        <div class="sidebar-heading m-1 p-1">Source path : <%= configuration.directoryPath %></div>
-      </li>
-
-      <!-- Nav Item - Tables -->
-      <li class="nav-item">
-          <a class="nav-link" href="/settings">
-              <i class="fas fa-fw fa-wrench"></i>
-              <span>Settings</span></a>
-      </li>
-
-      <li class="nav-item flex-wrap">
-        <div class="sidebar-heading m-1 p-1">Export path : <%= configuration.outputFolder %></div>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider d-none d-md-block">
-
-      <!-- Sidebar Toggler (Sidebar) -->
-      <div class="text-center d-none d-md-inline">
-          <button class="rounded-circle border-0" id="sidebarToggle"></button>
-      </div>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider d-none d-md-block">
-
-      <!-- Nav Item - Save -->
-      <li class="nav-item" id="saveButton" style="display: none;">
-        <a class="nav-link" href="#" onclick="confirmExport()" title="Export to folder <%= configuration.outputFolder %> , go to settings to change the export folder">
-            <i class="fas fa-fw fa-save"></i>
-            <span>Export</span></a>
-      </li>
-
-      <!-- Nav Item - Reset -->
-      <li class="nav-item" id="resetButton" style="display: none;">
-          <a class="nav-link" href="#" onclick="confirmReset()">
-              <i class="fas fa-fw fa-undo"></i>
-              <span>Reset</span></a>
-      </li>
-  </ul>
+  <div id="sidebar-wrapper">
+    <%- include('sidebar.ejs') %>
   <!-- End of Sidebar -->
-
+  </div>
 
   <!-- Content Wrapper -->
   <div id="content-wrapper" class="d-flex flex-column">
@@ -209,10 +151,7 @@
     </div>
     </div>
     <footer class="sticky-footer bg-white">
-      <div class="copyright text-center my-auto">© 2024 CukeHub</p>
-      <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-      </a>
+      <%- include('footer.ejs') %>
     </footer>
 <!-- End of Content Wrapper -->    
 </div>
