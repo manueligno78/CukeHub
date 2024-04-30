@@ -97,43 +97,57 @@
                           <%= featureFile.feature.name %>
                         </h5>
                         <p contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)">
-                          <%= featureFile.feature.description %>
+                          <% if (featureFile.feature.description) { %>
+                          <%- featureFile.feature.description.replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;') %>
+                          <% } else { %>
+                              <%- 'No description' %>
+                          <% } %>
                         </p>
                       </td>
                       <td>
+                        <span><%= featureFile.feature.children.length %> scenarios contained: </span>
                         <ul class="list-unstyled">
-                          <h6><%= featureFile.feature.children.length %> scenarios contained: </h6>
                           <% featureFile.feature.children.forEach(function(child, index) { %>
                             <% if (child.scenario) { %>
                               <li>
-                                <div class="d-flex gap-2 justify-content-left pt-1">
-                                  <!-- Tags -->
-                                  <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
-                                    <span class="tag-label badge d-flex p-2 mr-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
-                                      <span contentEditable="true" onblur='updateFeature("<%= featureFile.featureId %>", "feature.children[<%= index %>].scenario.tags[<%= tagIndex %>].name", this.innerText)' class="px-1"><%= tag.name %>
-                                      </span> 
-                                      <a href="#" onclick="removeTag('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.tags[' + '<%= tagIndex %>' + ']', '<%= tag.name %>')">
-                                        <svg class="tag-delete bi ms-1" width="16" height="16"><use xlink:href="#x-circle-fill"></use></svg>
-                                      </a>
-                                    </span>
-                                  <% }); %>
-                                  <span class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
-                                    <a href="#" id="addTagInput" contentEditable="true" onfocus="handleTagInputFocus()" onblur="handleTagInputBlur()" onkeydown="handleTagInputKeyDown(event)">
-                                        + add tag
-                                    </a>
-                                  </span>
-                                </div>            
-                                <h5 href="#" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
-                                  <%- child.scenario.name %>
-                                  <% if (child.scenario.isOutline) { %>
-                                    <span>(<%- child.scenario.numberOfExamples %> examples)</span>
-                                  <% } %>
-                                </h5> 
-                                <% if (child.scenario.description) { %>
-                                  <p contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.description', this.innerText)">
-                                    <%= child.scenario.description %>
-                                  </p>
-                                <% } %>
+                                <div class="card shadow border-secondary mb-4">
+                                  <div class="card-header py-3">
+                                    <div class="d-flex gap-2 justify-content-left pt-1">
+                                      <!-- Tags -->
+                                      <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
+                                        <span class="tag-label badge d-flex p-2 mr-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                          <span contentEditable="true" onblur='updateFeature("<%= featureFile.featureId %>", "feature.children[<%= index %>].scenario.tags[<%= tagIndex %>].name", this.innerText)' class="px-1"><%= tag.name %>
+                                          </span> 
+                                          <a href="#" onclick="removeTag('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.tags[' + '<%= tagIndex %>' + ']', '<%= tag.name %>')">
+                                            <svg class="tag-delete bi ms-1" width="16" height="16"><use xlink:href="#x-circle-fill"></use></svg>
+                                          </a>
+                                        </span>
+                                      <% }); %>
+                                      <span class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                        <a href="#" id="addTagInput" contentEditable="true" onfocus="handleTagInputFocus()" onblur="handleTagInputBlur()" onkeydown="handleTagInputKeyDown(event)">
+                                            + add tag
+                                        </a>
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div class="card-body">         
+                                    <h5 href="#" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
+                                      <%- child.scenario.name %>
+                                    </h5>
+                                    <span>(<%- child.scenario.numberOfSteps %> steps
+                                      <% if (child.scenario.isOutline) { %>
+                                        iterated in <%- child.scenario.numberOfExamples %> examples
+                                      <% } %>
+                                    )</span>
+                                    <p contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.description', this.innerText)">
+                                    <% if (child.scenario.description) { %>
+                                        <%- child.scenario.description.replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;') %>
+                                    <% } else { %>
+                                        <%- 'No description' %>
+                                    <% } %>
+                                    </p>
+                                  </div>
+                                </div>
                               </li>
                             <% } %>
                           <% }); %>

@@ -82,6 +82,8 @@ function getScenarios(filePath) {
             return count + (example.tableBody ? example.tableBody.length : 0);
           }, 0);
         }
+        // Count the steps in the scenario
+        child.scenario.numberOfSteps = child.scenario.steps ? child.scenario.steps.length : 0;
       }
     });
 
