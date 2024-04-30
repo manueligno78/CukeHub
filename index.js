@@ -126,7 +126,12 @@ function gherkinDocumentToString(gherkinDocument) {
         const tags = child.scenario.tags.map(tag => tag.name).join(' ');
         gherkinText += `  ${tags}\n`;
       }
-      gherkinText += `  Scenario: ${child.scenario.name}\n`;
+      // Check if the scenario is an outline
+      if (child.scenario.examples && child.scenario.examples.length > 0) {
+        gherkinText += `  Scenario Outline: ${child.scenario.name}\n`;
+      } else {
+        gherkinText += `  Scenario: ${child.scenario.name}\n`;
+      }
       // Add the scenario description, if any
       if (child.scenario.description) {
         gherkinText += `\n${child.scenario.description}\n\n`;
