@@ -126,7 +126,7 @@
                                 <h5 href="#" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
                                   <%- child.scenario.name %>
                                   <% if (child.scenario.isOutline) { %>
-                                    <span>(Outline)</span>
+                                    <span>(<%- child.scenario.numberOfExamples %> examples)</span>
                                   <% } %>
                                 </h5> 
                                 <% if (child.scenario.description) { %>

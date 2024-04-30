@@ -76,6 +76,12 @@ function getScenarios(filePath) {
             featureId: featureId
           });
         });
+        child.scenario.isOutline = child.scenario.keyword.includes('Outline');
+        if (child.scenario.isOutline && child.scenario.examples) {
+          child.scenario.numberOfExamples = child.scenario.examples.reduce((count, example) => {
+            return count + (example.tableBody ? example.tableBody.length : 0);
+          }, 0);
+        }
       }
     });
 
@@ -91,6 +97,7 @@ function getScenarios(filePath) {
 }
 
 function gherkinDocumentToString(gherkinDocument) {
+  //console.log('gherkinDocument:', JSON.stringify(gherkinDocument));
   let gherkinText = '';
   // Add the feature tags, if any
   if (gherkinDocument.feature.tags && gherkinDocument.feature.tags.length > 0) {
@@ -152,7 +159,6 @@ function gherkinDocumentToString(gherkinDocument) {
 }
 
 /// SERVER and WEBSOCKETS
-
 function notifyClients(message) {
   wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
@@ -170,6 +176,7 @@ app.get('/', (req, res) => {
     if (featureFilesCopy.length === 0) {
       let featureFiles = getFiles(directoryPath);
       featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
+      console.log('featureFilesCopy:', featureFilesCopy);
     }
     res.render('index', { configuration: config, featureFiles: featureFilesCopy, runCommand: !!config.testCommand });
   }
@@ -206,7 +213,6 @@ app.post('/save-settings', (req, res) => {
   }
   res.redirect('/');
 });
-
 
 wss.on('connection', ws => {
   ws.on('message', message => {
@@ -268,7 +274,7 @@ function reset() {
   let featureFiles = getFiles(directoryPath);
   featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
   notifyClients(JSON.stringify({ action: 'reset' }));
-  }
+}
 
 function setNestedProperty(obj, path, value) {
   const pathParts = path.split(/[\.\[\]]/).filter(part => part);

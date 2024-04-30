@@ -2,6 +2,6 @@
   "directoryPath": "C:\\Users\\manue\\Desktop\\VF_features",
   "testCommand": "",
   "folderToExclude": "*target*",
-  "outputFolder": "",
+  "outputFolder": "C:\\Users\\manue\\Desktop\\outTest",
   "keepFolderStructure": true
 }
