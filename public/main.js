@@ -50,12 +50,13 @@ function showLoader() {
   document.getElementById('tagsInput').classList.add('disabled');
   document.getElementById('run-test-button').classList.add('disabled');
 }
-
 function addTagToInput(tag) {
-  const input = document.getElementById('tagsInput');
-  const operatorSelect = document.getElementById('operatorSelect');
-  const operator = operatorSelect.value === 'AND' ? 'and' : 'or';
-  input.value = input.value ? `${input.value} ${operator} ${tag}` : tag;
+  // Ottieni l'istanza di DataTables
+  var table = $('#dataTable').DataTable();
+
+  // Imposta una funzione di ricerca personalizzata
+  table.search(tag);
+  table.draw();
 }
 
 function addScenarioTagsToInput(tags) {
