@@ -1,182 +1,216 @@
 body {
-    font-family: Arial, sans-serif;
-  }
+  font-family: Arial, sans-serif;
+}
 
-  #messages {
-    width: 99%;
-    height: 300px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    padding: 10px;
-    white-space: pre-wrap;
-    font-family: monospace;
-    font-size: small;
-    text-align: left;
-    background: darkkhaki;
-  }
+#messages {
+  width: 99%;
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: small;
+  text-align: left;
+  background: darkkhaki;
+}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
-  th,
-  td {
-    border: 1px solid #ddd;
-    padding: 3px;
-    text-align: left;
-  }
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 3px;
+  text-align: left;
+}
 
-  th {
-    background-color: #4CAF50;
-    color: white;
-  }
-  /* Stilizza il campo di ricerca */
-  .dataTables_filter input {
-      border: 1px solid #ccc;
-      padding: 5px;
-      margin: 5px 0;
-  }
+th {
+  background-color: #4CAF50;
+  color: white;
+}
 
-  /* Stilizza la paginazione */
-  a, .dataTables_paginate a {
-      display: inline-block;
-      padding: 5px;
-      margin-right: 4px;
-      border: 1px solid #ddd;
-      text-decoration: none;
-  }
+/* Stilizza il campo di ricerca */
+.dataTables_filter input {
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin: 5px 0;
+}
 
-  a.current, .dataTables_paginate a.current {
-      background-color: #333;
-      color: #fff;
-  }
+/* Stilizza la paginazione */
+a,
+.dataTables_paginate a {
+  display: inline-block;
+  padding: 5px;
+  margin-right: 4px;
+  border: 1px solid #ddd;
+  text-decoration: none;
+}
 
-  a:hover, .dataTables_paginate a:hover {
-      background-color: #ddd;
-  }
+a.current,
+.dataTables_paginate a.current {
+  background-color: #333;
+  color: #fff;
+}
 
-  tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
+a:hover,
+.dataTables_paginate a:hover {
+  background-color: #ddd;
+}
 
-  .scenario-link {
-    color: #333;
-    text-decoration: none;
-  }
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
 
-  .scenario-link:hover {
-    color: #4CAF50;
-  }
+.scenario-link {
+  color: #333;
+  text-decoration: none;
+}
 
-  .feature.title {
-    font-size: 1.2em;
-    margin: 10px 0;
-  }
+.scenario-link:hover {
+  color: #4CAF50;
+}
 
-  .feature.description {
-    font-size: 0.9em;
-    color: #888;
-    margin: 0px 0 10px 0;
-  }
+.feature.title {
+  font-size: 1.2em;
+  margin: 10px 0;
+}
 
-  .feature.children.length
-  {
-    font-size: 0.9em;
-    color: #888;
-    margin: 0px 0 10px 0;
-  }
+.feature.description {
+  font-size: 0.9em;
+  color: #888;
+  margin: 0px 0 10px 0;
+}
 
-  .path {
-    font-size: 0.9em;
-    color: #888;
-  }
+.feature.children.length {
+  font-size: 0.9em;
+  color: #888;
+  margin: 0px 0 10px 0;
+}
 
-  .tag {
-    display: inline-block;
-    padding: 2px 6px;
-    margin: 2px;
-    border-radius: 4px;
-    color: white;
-    text-decoration: none;
-  }
+.path {
+  font-size: 0.9em;
+  color: #888;
+}
 
-  .tag-label {
-    display: inline-block;
-    padding: .2em .6em .3em;
-    font-size: 0.9em;
-    font-weight: 700;
-    line-height: 1;
-    color: #fff;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: .25em;
-    background-color: #007bff;
-  }
+.tag {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 2px;
+  border-radius: 4px;
+  color: white;
+  text-decoration: none;
+}
 
-  ul.tag-list {
-    list-style-type: none; /* Rimuove i punti dell'elenco */
-    padding: 0; /* Rimuove il padding */
-    display: flex; /* Rende gli elementi dell'elenco affiancati */
-    flex-wrap: wrap; /* Permette agli elementi dell'elenco di andare a capo se necessario */
-  }
+.tag-label {
+  display: inline-block;
+  padding: .2em .6em .3em;
+  font-size: 0.9em;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25em;
+  background-color: #007bff;
+}
 
-  ul.tag-list li {
-    margin-right: 10px; /* Aggiunge uno spazio di 10px a destra di ogni elemento dell'elenco */
-    /* background-color: #007bff; /* Cambia il colore di sfondo in blu */
-    color: white; /* Cambia il colore del testo in bianco */
-    padding: 5px; /* Aggiunge un padding di 5px */
-    border-radius: 3px; /* Arrotonda gli angoli */
-  }
+ul.tag-list {
+  list-style-type: none;
+  /* Rimuove i punti dell'elenco */
+  padding: 0;
+  /* Rimuove il padding */
+  display: flex;
+  /* Rende gli elementi dell'elenco affiancati */
+  flex-wrap: wrap;
+  /* Permette agli elementi dell'elenco di andare a capo se necessario */
+}
+
+ul.tag-list li {
+  margin-right: 10px;
+  /* Aggiunge uno spazio di 10px a destra di ogni elemento dell'elenco */
+  /* background-color: #007bff; /* Cambia il colore di sfondo in blu */
+  color: white;
+  /* Cambia il colore del testo in bianco */
+  padding: 5px;
+  /* Aggiunge un padding di 5px */
+  border-radius: 3px;
+  /* Arrotonda gli angoli */
+}
 
 /* Stile per l'header */
-  .header {
-    background-color: #4CAF50; /* Colore di sfondo */
-    color: white; /* Colore del testo */
-    padding: 20px; /* Spazio intorno al testo */
-    text-align: center; /* Allinea il testo al centro */
-    font-size: 2em; /* Dimensione del testo */
-    font-weight: bold; /* Grassetto */
-  }
+.header {
+  background-color: #4CAF50;
+  /* Colore di sfondo */
+  color: white;
+  /* Colore del testo */
+  padding: 20px;
+  /* Spazio intorno al testo */
+  text-align: center;
+  /* Allinea il testo al centro */
+  font-size: 2em;
+  /* Dimensione del testo */
+  font-weight: bold;
+  /* Grassetto */
+}
 
-  /* Stile per il box di input */
-  #tagsInput, input{
-    width: 60%; /* Larghezza */
-    padding: 10px; /* Spazio intorno al testo */
-    font-size: 1.0em; /* Dimensione del testo */
-    margin-bottom: 20px; /* Spazio sotto il box di input */
-  }
+/* Stile per il box di input */
+#tagsInput,
+input {
+  width: 60%;
+  /* Larghezza */
+  padding: 10px;
+  /* Spazio intorno al testo */
+  font-size: 1.0em;
+  /* Dimensione del testo */
+  margin-bottom: 20px;
+  /* Spazio sotto il box di input */
+}
 
-  /* Stile per il pulsante "Run test" */
-  button, #run-test-button, #operatorSelect{
-    background-color: #136a28; /* Colore di sfondo */
-    color: white; /* Colore del testo */
-    padding: 15px 30px; /* Spazio intorno al testo */
-    font-size: 1.0em; /* Dimensione del testo */
-    border: none; /* Rimuove il bordo */
-    border-radius: 5px; /* Angoli arrotondati */
-    cursor: pointer; /* Cambia il cursore al passaggio del mouse */
-  }
+/* Stile per il pulsante "Run test" */
+button,
+#run-test-button,
+#operatorSelect {
+  background-color: #136a28;
+  /* Colore di sfondo */
+  color: white;
+  /* Colore del testo */
+  padding: 15px 30px;
+  /* Spazio intorno al testo */
+  font-size: 1.0em;
+  /* Dimensione del testo */
+  border: none;
+  /* Rimuove il bordo */
+  border-radius: 5px;
+  /* Angoli arrotondati */
+  cursor: pointer;
+  /* Cambia il cursore al passaggio del mouse */
+}
 
-  #run-test-button:hover, #operatorSelect:hover{
-    background-color: #218838; /* Cambia il colore di sfondo al passaggio del mouse */
-  }
+#run-test-button:hover,
+#operatorSelect:hover {
+  background-color: #218838;
+  /* Cambia il colore di sfondo al passaggio del mouse */
+}
 
-  .content {
-    margin-top: 20px;
-  }
+.content {
+  margin-top: 20px;
+}
 
-  .disabled {
-    pointer-events: none;
-    background-color: #ccc;
-    opacity: 0.5;
-  }
+.disabled {
+  pointer-events: none;
+  background-color: #ccc;
+  opacity: 0.5;
+}
 
-  #save-button, #reset-button {
-    display: none;
-  }
+#save-button,
+#reset-button {
+  display: none;
+}
 
-.content-updated{ 
+.content-updated {
   background-color: #007bff;
 }

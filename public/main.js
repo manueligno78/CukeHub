@@ -19,11 +19,11 @@ socket.addEventListener('message', function (event) {
 });
 
 socket.addEventListener('open', function (event) {
-    console.log('WebSocket is open now.');
+  console.log('WebSocket is open now.');
 });
 
 socket.addEventListener('error', function (event) {
-    console.log('WebSocket error: ', event);
+  console.log('WebSocket error: ', event);
 });
 
 socket.addEventListener('close', function (event) {
@@ -72,19 +72,19 @@ document.querySelectorAll('.scenario-link').forEach(link => {
 });
 
 function hashCode(str) {
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        hash = hash & hash;
-    }
-    return hash;
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
+  return hash;
 }
 
 function intToRGB(i) {
-    var c = (i & 0x00FFFFFF)
-        .toString(16)
-        .toUpperCase();
-    return "00000".substring(0, 6 - c.length) + c;
+  var c = (i & 0x00FFFFFF)
+    .toString(16)
+    .toUpperCase();
+  return "00000".substring(0, 6 - c.length) + c;
 }
 
 function autocompleteInputTags(taglist, tagInputId) {
@@ -94,9 +94,9 @@ function autocompleteInputTags(taglist, tagInputId) {
 }
 
 function isLightColor(color) {
-  var r, g, b, hsp; 
-  color = +("0x" + color.slice(1).replace( 
-  color.length < 5 && /./g, '$&$&'));
+  var r, g, b, hsp;
+  color = +("0x" + color.slice(1).replace(
+    color.length < 5 && /./g, '$&$&'));
   r = color >> 16;
   g = color >> 8 & 255;
   b = color & 255;
@@ -105,16 +105,16 @@ function isLightColor(color) {
     0.587 * (g * g) +
     0.114 * (b * b)
   );
-  if (hsp>127.5) {
+  if (hsp > 127.5) {
     return true;
-  } 
+  }
   else {
     return false;
   }
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-  document.querySelectorAll('.tag-label').forEach(function(tag) {
+  document.querySelectorAll('.tag-label').forEach(function (tag) {
     var text = tag.textContent.trim();
     var hash = hashCode(text);
     var color = intToRGB(hash);
@@ -125,11 +125,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
       tag.style.color = 'white';
     }
   });
-  
+
 
   const form = document.querySelector('form');
-  if(form) {
-    form.addEventListener('submit', function(event) {
+  if (form) {
+    form.addEventListener('submit', function (event) {
       event.preventDefault();
       const tags = document.querySelector('#tagsInput').value;
       const operator = document.querySelector('#operatorSelect').value;
@@ -149,9 +149,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 //   autocompleteInputTags(taglist, "#tagsInput");
 // });
 
-$(document).ready( function () {
+$(document).ready(function () {
   $('#dataTable').DataTable();
-} );
+});
 
 function updateFeature(featureId, field, newValue) {
   let message = JSON.stringify({
@@ -199,26 +199,26 @@ function confirmReset() {
 function handleTagInputFocus() {
   var input = document.getElementById('addTagInput');
   if (input.innerText === '+ add tag') {
-      input.innerText = '';
+    input.innerText = '';
   }
 }
 
 function handleTagInputBlur() {
   var input = document.getElementById('addTagInput');
   if (input.innerText.trim() === '') {
-      input.innerText = '+ add tag';
+    input.innerText = '+ add tag';
   } else {
-      addTag(input.innerText);
+    addTag(input.innerText);
   }
 }
 
 function handleTagInputKeyDown(event) {
   if (event.key === 'Enter') {
-      event.preventDefault();
-      var input = document.getElementById('addTagInput');
-      if (input.innerText.trim() !== '') {
-          addTag(input.innerText);
-      }
-      input.blur();
+    event.preventDefault();
+    var input = document.getElementById('addTagInput');
+    if (input.innerText.trim() !== '') {
+      addTag(input.innerText);
+    }
+    input.blur();
   }
 }

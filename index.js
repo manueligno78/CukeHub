@@ -29,7 +29,7 @@ function getFiles(dirPath, arrayOfFiles = []) {
   const foldersToExclude = config.folderToExclude;
   let excludePatterns = [];
   if (foldersToExclude) {
-    excludePatterns = foldersToExclude.split(',').map(folder => 
+    excludePatterns = foldersToExclude.split(',').map(folder =>
       new RegExp('^' + folder.trim().replace(/\*/g, '.*') + '$')
     );
   }
@@ -169,9 +169,9 @@ function gherkinDocumentToString(gherkinDocument) {
 /// SERVER and WEBSOCKETS
 function notifyClients(message) {
   wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-          client.send(message);
-      }
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(message);
+    }
   });
 }
 
@@ -205,14 +205,14 @@ app.post('/save-settings', (req, res) => {
   const newDirectoryPath = req.body.directoryPath;
   const newTestCommand = req.body.testCommand;
   const newFolderToExclude = req.body.folderToExclude;
-  const newOutputFolder = req.body.outputFolder; 
+  const newOutputFolder = req.body.outputFolder;
   const newKeepFolderStructure = req.body.keepFolderStructure === 'on';
   const newConfig = {
-      directoryPath: newDirectoryPath,
-      testCommand: newTestCommand,
-      folderToExclude: newFolderToExclude,
-      outputFolder: newOutputFolder, 
-      keepFolderStructure: newKeepFolderStructure 
+    directoryPath: newDirectoryPath,
+    testCommand: newTestCommand,
+    folderToExclude: newFolderToExclude,
+    outputFolder: newOutputFolder,
+    keepFolderStructure: newKeepFolderStructure
   };
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   if (JSON.stringify(config) !== JSON.stringify(newConfig)) {
@@ -229,18 +229,18 @@ wss.on('connection', ws => {
       const tags = data.tags;
       //config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
       const testCommand = config.testCommand.replace('@yourTag', tags);
-      
+
       notifyClients('tests started');
       notifyClients('executing: ' + testCommand);
       notifyClients('debug: ' + tags);
-      
+
       exec(testCommand, (error, stdout, stderr) => {
         // ... gestione dell'output come prima ...
       });
     }
     if (data.action === 'updateFeature') {
       let featureFile = featureFilesCopy.find(file => file.featureId === data.featureId);
-      if (featureFile) { 
+      if (featureFile) {
         setNestedProperty(featureFile, data.field, data.newValue);
       }
       //console.log('Feature updated:', JSON.stringify(featureFile));
@@ -251,15 +251,15 @@ wss.on('connection', ws => {
       const outputFolder = config.outputFolder;
       const keepFolderStructure = config.keepFolderStructure;
       const directoryPath = config.directoryPath;
-    
+
       featureFilesCopy.forEach(featureFile => {
         const gherkinText = gherkinDocumentToString(featureFile);
         let outputUrl = featureFile.path.replace(directoryPath, outputFolder);
-    
+
         if (keepFolderStructure) {
           outputUrl = outputUrl.replace(/\\/g, '\\\\');
         }
-    
+
         ensureDirectoryExistence(outputUrl);
         fs.writeFileSync(outputUrl, gherkinText);
       });
@@ -272,7 +272,7 @@ wss.on('connection', ws => {
 
 function getNestedProperty(obj, path) {
   return path.split('.').reduce((prev, curr) => {
-      return prev ? prev[curr] : null
+    return prev ? prev[curr] : null
   }, obj || self)
 }
 
@@ -289,13 +289,13 @@ function setNestedProperty(obj, path, value) {
   const lastPart = pathParts.pop();
 
   const target = pathParts.reduce((prev, curr) => {
-      return prev ? prev[curr] : null
+    return prev ? prev[curr] : null
   }, obj || self);
 
   if (target && lastPart) {
-      target[lastPart] = value;
+    target[lastPart] = value;
   } else {
-      console.error('Error setting nested property', path, 'on', obj);
+    console.error('Error setting nested property', path, 'on', obj);
   }
 }
 
