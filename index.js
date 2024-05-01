@@ -47,6 +47,7 @@ function getFiles(dirPath, arrayOfFiles = []) {
         arrayOfFiles.push({
           name: file,
           path: fullPath,
+          relativePath: fullPath.replace(config.directoryPath, ''),
           ...scenarioData
         });
       }

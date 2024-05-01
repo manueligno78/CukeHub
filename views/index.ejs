@@ -89,6 +89,7 @@
                         <h5 class="card-header fw-bold mb-0 fs-4 text-body-emphasis" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)">
                           <%= featureFile.feature.name %>
                         </h5>
+                        <p class="card-body m-1 py-1 small"><%= featureFile.relativePath %></p>
                         <p class="card-body" contentEditable="true" onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)">
                           <% if (featureFile.feature.description) { %>
                           <%- featureFile.feature.description.replace(/\n/g, '<br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;') %>
