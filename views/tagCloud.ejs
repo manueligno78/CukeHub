@@ -34,7 +34,8 @@
       <li class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill" 
             style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em" 
             title="This tag is present on: <%= tagFrequency[tag].scenarios.join('\n ') %>"
-            data-count="<%= tagFrequency[tag].count %>">
+            data-count="<%= tagFrequency[tag].count %>"
+            onclick='addTagToInput("<%= tag %>")'>
         <span class="px-1"><%= tag %>
         </span> 
         <span class="badge badge-secondary badge-counter"><%= tagFrequency[tag].count %></span>
@@ -42,6 +43,7 @@
     <% } %>
     </ul>
   <span class="badge d-flex p-2 mr-1 mb-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+    <!-- TODO: Switch label from switch to alphabetical order/occurrency order -->
     <span class="px-1"><input type="checkbox" id="sortCheckbox" onclick="sortTags()">+ Switch tag cloud order</input>
     </span> 
   </span>
