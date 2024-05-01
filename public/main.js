@@ -62,7 +62,6 @@ function addScenarioTagsToInput(tags) {
   tags.forEach(tag => addTagToInput(tag));
 }
 
-
 document.querySelectorAll('.scenario-link').forEach(link => {
   link.addEventListener('click', function (event) {
     event.preventDefault();
@@ -70,7 +69,6 @@ document.querySelectorAll('.scenario-link').forEach(link => {
     addScenarioTagsToInput(tags);
   });
 });
-
 
 function hashCode(str) {
     var hash = 0;
