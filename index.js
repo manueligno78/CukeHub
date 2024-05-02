@@ -108,15 +108,15 @@ function gherkinDocumentToString(gherkinDocument) {
     gherkinText += `${tags}\n`;
   }
   // Add the feature title
-  gherkinText += `Feature: ${gherkinDocument.feature.name}\n\n`;
+  gherkinText += `Feature: ${gherkinDocument.feature.name}\n`;
   // Add the feature description, if any
   if (gherkinDocument.feature.description) {
-    gherkinText += `${gherkinDocument.feature.description}\n\n`;
+    gherkinText += `${gherkinDocument.feature.description}\n`;
   }
   // Add each scenario or background
   gherkinDocument.feature.children.forEach((child, index, array) => {
-    if (child.background) {
-      gherkinText += `\n  Background:\n`;
+    if (child.background) { // TODO: bug: title is not displayed
+      gherkinText += `Background:\n`;
       // Add each step of the background
       child.background.steps.forEach(step => {
         gherkinText += `    ${step.keyword} ${step.text}\n`;
@@ -137,10 +137,10 @@ function gherkinDocumentToString(gherkinDocument) {
       }
       // Add the scenario description, if any
       if (child.scenario.description) {
-        gherkinText += `\n${child.scenario.description}\n\n`;
+        gherkinText += `${child.scenario.description}\n`;
       }
       // Add each step of the scenario
-      child.scenario.steps.forEach(step => {
+      child.scenario.steps.forEach(step => { // TODO: bug: if there is a data table, it is not displayed
         gherkinText += `    ${step.keyword}${step.text}\n`;
       });
       // Add the Examples, if any
