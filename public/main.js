@@ -49,7 +49,7 @@ function showLoader() {
   document.getElementById('tagsInput').classList.add('disabled');
   document.getElementById('run-test-button').classList.add('disabled');
 }
-function addTagToInput(tag) {
+function addTagToDataTableSearchInput(tag) {
   // Ottieni l'istanza di DataTables
   var table = $('#dataTable').DataTable();
 
@@ -59,7 +59,7 @@ function addTagToInput(tag) {
 }
 
 function addScenarioTagsToInput(tags) {
-  tags.forEach(tag => addTagToInput(tag));
+  tags.forEach(tag => addTagToDataTableSearchInput(tag));
 }
 
 document.querySelectorAll('.scenario-link').forEach(link => {
@@ -173,6 +173,19 @@ function removeTag(featureId, scenarioId, tag, id) {
   document.getElementById(id).remove();
 }
 
+function addTag(featureId, scenarioId, tag, caller) {
+  let message = JSON.stringify({
+    action: 'addTag',
+    featureId: featureId,
+    scenarioId: scenarioId,
+    tag: tag
+  });
+  socket.send(message);
+  // do some animation on the tag
+  caller.classList.add('bg-animation-pulse');
+  //document.getElementById(id).blur;
+}
+
 function saveOnDisk() {
   let message = JSON.stringify({
     action: 'saveOnDisk'
@@ -201,29 +214,3 @@ function confirmReset() {
   }
 }
 
-function handleTagInputFocus() {
-  var input = document.getElementById('addTagInput');
-  if (input.innerText === '+ add tag') {
-    input.innerText = '';
-  }
-}
-
-function handleTagInputBlur() {
-  var input = document.getElementById('addTagInput');
-  if (input.innerText.trim() === '') {
-    input.innerText = '+ add tag';
-  } else {
-    addTag(input.innerText);
-  }
-}
-
-function handleTagInputKeyDown(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    var input = document.getElementById('addTagInput');
-    if (input.innerText.trim() !== '') {
-      addTag(input.innerText);
-    }
-    input.blur();
-  }
-}

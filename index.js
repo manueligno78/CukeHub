@@ -260,6 +260,23 @@ wss.on('connection', ws => {
         }
       }
     }
+    if (data.action === 'addTag') {
+      let featureFile = featureFilesCopy.find(file => file.featureId === data.featureId);
+      if (featureFile) {
+        let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === data.scenarioId);
+        if (scenario) {
+          let tagExists = scenario.scenario.tags.some(tag => tag.name === data.tag);
+          if (!tagExists) {
+            scenario.scenario.tags.push({ name: data.tag });
+            let scenarioIndex = featureFile.feature.children.findIndex(child => child.scenario && child.scenario.id === data.scenarioId);
+            featureFile.feature.children[scenarioIndex] = scenario;
+            let featureIndex = featureFilesCopy.findIndex(file => file.featureId === data.featureId);
+            featureFilesCopy[featureIndex] = featureFile;
+            notifyClients(JSON.stringify({ action: 'featureUpdated', featureId: data.featureId, field: 'tags', newValue: scenario.scenario.tags }));
+          }
+        }
+      }
+    }
     if (data.action === 'saveOnDisk') {
       const outputFolder = config.outputFolder;
       const keepFolderStructure = config.keepFolderStructure;

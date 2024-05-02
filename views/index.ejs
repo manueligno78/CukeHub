@@ -75,8 +75,8 @@
                                     <span
                                       class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
                                       id="tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>">
-                                      <span onclick='addTagToInput("<%= tag.name %>")' contentEditable="true"
-                                        onblur="updateFeature('', this.innerText)" class="px-1">
+                                      <span onclick='addTagToDataTableSearchInput("<%= tag.name %>")'
+                                        contentEditable="true" onblur="updateFeature('', this.innerText)" class="px-1">
                                         <%= tag.name %>
                                       </span>
                                       <!-- TODO: On click implement removeTag-->
@@ -91,9 +91,8 @@
                                       <!-- TODO: On click user should be able to add a new tag-->
                                       <span
                                         class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
-                                        <a href="#" id="addTagInput" contentEditable="true"
-                                          onfocus="handleTagInputFocus()" onblur="handleTagInputBlur()"
-                                          onkeydown="handleTagInputKeyDown(event)">
+                                        <a href="#" class="addTagInput" contentEditable="true"
+                                          onblur="addTag('<%= featureFile.featureId %>', '<%= featureFile.feature.featureId %>', this.innerText,this)">
                                           + add tag
                                         </a>
                                       </span>
@@ -151,9 +150,8 @@
                                                 <!-- TODO: On click user should be able to add a new tag-->
                                                 <span
                                                   class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
-                                                  <a href="#" id="addTagInput" contentEditable="true"
-                                                    onfocus="handleTagInputFocus()" onblur="handleTagInputBlur()"
-                                                    onkeydown="handleTagInputKeyDown(event)">
+                                                  <a href="#" class="addTagInput" contentEditable="true"
+                                                    onblur="addTag('<%= featureFile.featureId %>', '<%= featureFile.feature.children[index].scenario.id %>', this.innerText,this)">
                                                     + add tag
                                                   </a>
                                                 </span>
