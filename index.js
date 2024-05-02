@@ -111,12 +111,13 @@ function gherkinDocumentToString(gherkinDocument) {
   gherkinText += `Feature: ${gherkinDocument.feature.name}\n`;
   // Add the feature description, if any
   if (gherkinDocument.feature.description) {
-    gherkinText += `${gherkinDocument.feature.description}\n`;
+    gherkinText += `  ${gherkinDocument.feature.description}\n`;
   }
   // Add each scenario or background
   gherkinDocument.feature.children.forEach((child, index, array) => {
+    gherkinText += '\n';
     if (child.background) { // TODO: bug: title is not displayed
-      gherkinText += `Background:\n`;
+      gherkinText += `  Background:\n`;
       // Add each step of the background
       child.background.steps.forEach(step => {
         gherkinText += `    ${step.keyword} ${step.text}\n`;
@@ -146,14 +147,14 @@ function gherkinDocumentToString(gherkinDocument) {
       // Add the Examples, if any
       if (child.scenario.examples && child.scenario.examples.length > 0) {
         child.scenario.examples.forEach(example => {
-          gherkinText += `\n    Examples:\n`;
+          gherkinText += `\n      Examples:\n`;
           // Add the table header
           const header = example.tableHeader.cells.map(cell => cell.value).join(' | ');
-          gherkinText += `      | ${header} |\n`;
+          gherkinText += `        | ${header}\t|\n`;
           // Add the table rows
           example.tableBody.forEach(row => {
             const rowText = row.cells.map(cell => cell.value).join(' | ');
-            gherkinText += `      | ${rowText} |\n`;
+            gherkinText += `        | ${rowText}\t|\n`;
           });
         });
       }
