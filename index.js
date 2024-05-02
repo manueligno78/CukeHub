@@ -149,12 +149,12 @@ function gherkinDocumentToString(gherkinDocument) {
         child.scenario.examples.forEach(example => {
           gherkinText += `\n      Examples:\n`;
           // Add the table header
-          const header = example.tableHeader.cells.map(cell => cell.value).join(' | ');
-          gherkinText += `        | ${header}\t|\n`;
+          const header = example.tableHeader.cells.map(cell => cell.value).join(' \t| ');
+          gherkinText += `        | ${header} |\n`;
           // Add the table rows
           example.tableBody.forEach(row => {
-            const rowText = row.cells.map(cell => cell.value).join(' | ');
-            gherkinText += `        | ${rowText}\t|\n`;
+            const rowText = row.cells.map(cell => cell.value).join(' \t| ');
+            gherkinText += `        | ${rowText} |\n`;
           });
         });
       }
