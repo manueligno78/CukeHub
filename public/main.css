@@ -15,109 +15,6 @@ body {
   background: darkkhaki;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 3px;
-  text-align: left;
-}
-
-th {
-  background-color: #4CAF50;
-  color: white;
-}
-
-/* Stilizza il campo di ricerca */
-.dataTables_filter input {
-  border: 1px solid #ccc;
-  padding: 5px;
-  margin: 5px 0;
-}
-
-/* Stilizza la paginazione */
-a,
-.dataTables_paginate a {
-  display: inline-block;
-  padding: 5px;
-  margin-right: 4px;
-  border: 1px solid #ddd;
-  text-decoration: none;
-}
-
-a.current,
-.dataTables_paginate a.current {
-  background-color: #333;
-  color: #fff;
-}
-
-a:hover,
-.dataTables_paginate a:hover {
-  background-color: #ddd;
-}
-
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.scenario-link {
-  color: #333;
-  text-decoration: none;
-}
-
-.scenario-link:hover {
-  color: #4CAF50;
-}
-
-.feature.title {
-  font-size: 1.2em;
-  margin: 10px 0;
-}
-
-.feature.description {
-  font-size: 0.9em;
-  color: #888;
-  margin: 0px 0 10px 0;
-}
-
-.feature.children.length {
-  font-size: 0.9em;
-  color: #888;
-  margin: 0px 0 10px 0;
-}
-
-.path {
-  font-size: 0.9em;
-  color: #888;
-}
-
-.tag {
-  display: inline-block;
-  padding: 2px 6px;
-  margin: 2px;
-  border-radius: 4px;
-  color: white;
-  text-decoration: none;
-}
-
-.tag-label {
-  display: inline-block;
-  padding: .2em .6em .3em;
-  font-size: 0.9em;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: baseline;
-  border-radius: .25em;
-  background-color: #007bff;
-}
-
 ul.tag-list {
   list-style-type: none;
   /* Rimuove i punti dell'elenco */
@@ -157,38 +54,6 @@ ul.tag-list li {
   /* Grassetto */
 }
 
-/* Stile per il box di input */
-#tagsInput,
-input {
-  width: 60%;
-  /* Larghezza */
-  padding: 10px;
-  /* Spazio intorno al testo */
-  font-size: 1.0em;
-  /* Dimensione del testo */
-  margin-bottom: 20px;
-  /* Spazio sotto il box di input */
-}
-
-/* Stile per il pulsante "Run test" */
-button,
-#run-test-button,
-#operatorSelect {
-  background-color: #136a28;
-  /* Colore di sfondo */
-  color: white;
-  /* Colore del testo */
-  padding: 15px 30px;
-  /* Spazio intorno al testo */
-  font-size: 1.0em;
-  /* Dimensione del testo */
-  border: none;
-  /* Rimuove il bordo */
-  border-radius: 5px;
-  /* Angoli arrotondati */
-  cursor: pointer;
-  /* Cambia il cursore al passaggio del mouse */
-}
 
 #run-test-button:hover,
 #operatorSelect:hover {
@@ -213,4 +78,12 @@ button,
 
 .content-updated {
   background-color: #007bff;
+}
+
+.tag-label {
+  transition: all 0.5s ease;
+}
+
+.tag-label:hover {
+  transform: scale(1.2);
 }
