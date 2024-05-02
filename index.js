@@ -184,7 +184,6 @@ app.get('/', (req, res) => {
     if (featureFilesCopy.length === 0) {
       let featureFiles = getFiles(directoryPath);
       featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
-      console.log('featureFilesCopy:', featureFilesCopy);
     }
     res.render('index', { configuration: config, featureFiles: featureFilesCopy, runCommand: !!config.testCommand });
   }
@@ -227,7 +226,6 @@ wss.on('connection', ws => {
     const data = JSON.parse(message);
     if (data.action === 'run-tests') {
       const tags = data.tags;
-      //config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
       const testCommand = config.testCommand.replace('@yourTag', tags);
 
       notifyClients('tests started');
@@ -243,23 +241,35 @@ wss.on('connection', ws => {
       if (featureFile) {
         setNestedProperty(featureFile, data.field, data.newValue);
       }
-      //console.log('Feature updated:', JSON.stringify(featureFile));
       notifyClients(JSON.stringify({ action: 'featureUpdated', featureId: data.featureId, field: data.field, newValue: data.newValue }));
     }
+    if (data.action === 'removeTag') {
+      let featureFile = featureFilesCopy.find(file => file.featureId === data.featureId);
+      if (featureFile) {
+        let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === data.scenarioId);
+        if (scenario) {
+          let tagIndex = scenario.scenario.tags.findIndex(tag => tag.name === data.tag);
+          if (tagIndex > -1) {
+            scenario.scenario.tags.splice(tagIndex, 1);
+            let scenarioIndex = featureFile.feature.children.findIndex(child => child.scenario && child.scenario.id === data.scenarioId);
+            featureFile.feature.children[scenarioIndex] = scenario;
+            let featureIndex = featureFilesCopy.findIndex(file => file.featureId === data.featureId);
+            featureFilesCopy[featureIndex] = featureFile;
+            notifyClients(JSON.stringify({ action: 'featureUpdated', featureId: data.featureId, field: 'tags', newValue: scenario.scenario.tags }));
+          }
+        }
+      }
+    }
     if (data.action === 'saveOnDisk') {
-      //const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
       const outputFolder = config.outputFolder;
       const keepFolderStructure = config.keepFolderStructure;
       const directoryPath = config.directoryPath;
-
       featureFilesCopy.forEach(featureFile => {
         const gherkinText = gherkinDocumentToString(featureFile);
         let outputUrl = featureFile.path.replace(directoryPath, outputFolder);
-
         if (keepFolderStructure) {
           outputUrl = outputUrl.replace(/\\/g, '\\\\');
         }
-
         ensureDirectoryExistence(outputUrl);
         fs.writeFileSync(outputUrl, gherkinText);
       });

@@ -12,7 +12,6 @@ socket.addEventListener('message', function (event) {
     document.getElementById('saveButton').style.display = 'none';
     document.getElementById('resetButton').style.display = 'none';
   } else if (JSON.parse(event.data).action === 'featureUpdated') {
-    updateFeatureInView(JSON.parse(event.data).featureId, JSON.parse(event.data).field, JSON.parse(event.data).newValue);
     document.getElementById('saveButton').style.display = 'block';
     document.getElementById('resetButton').style.display = 'block';
   }
@@ -163,9 +162,15 @@ function updateFeature(featureId, field, newValue) {
   socket.send(message);
 }
 
-function removeTag(featureId, scenarioId, tag) {
-  // Trova la feature o lo scenario con l'ID specificato
-  // Rimuovi il tag specificato
+function removeTag(featureId, scenarioId, tag, id) {
+  let message = JSON.stringify({
+    action: 'removeTag',
+    featureId: featureId,
+    scenarioId: scenarioId,
+    tag: tag
+  });
+  socket.send(message);
+  document.getElementById(id).remove();
 }
 
 function saveOnDisk() {

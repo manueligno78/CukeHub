@@ -72,17 +72,19 @@
                                   <!-- TODO: Click on tags to filter results of table-->
                                   <% featureFile.feature.tags.forEach(function(tag) { %>
                                     <span
-                                      class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                      class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
+                                      id="tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>">
                                       <span onclick='addTagToInput("<%= tag.name %>")' contentEditable="true"
                                         onblur="updateFeature('', this.innerText)" class="px-1">
                                         <%= tag.name %>
                                       </span>
                                       <!-- TODO: On click implement removeTag-->
-                                      <a href="#" onclick="removeTag('<%= tag.name %>')">
+                                      <button type="button" class="btn btn-link"
+                                        onclick="removeTag('<%= featureFile.featureId %>', '<%= featureFile.feature.featureId %>', '<%= tag.name %>','tag-<%= tag.name %>','tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>')"></a>
                                         <svg class="bi ms-1" width="16" height="16">
                                           <use xlink:href="#x-circle-fill"></use>
                                         </svg>
-                                      </a>
+                                      </button>
                                     </span>
                                     <% }); %>
                                       <!-- TODO: On click user should be able to add a new tag-->
@@ -129,6 +131,7 @@
                                             <!-- TODO: Click on tags to filter results of table-->
                                             <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
                                               <span
+                                                id='tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>-<%= featureFile.featureId %>-<%= featureFile.feature.children[index].scenario.id %>'
                                                 class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
                                                 <span contentEditable="true"
                                                   onblur='updateFeature("<%= featureFile.featureId %>", "feature.children[<%= index %>].scenario.tags[<%= tagIndex %>].name", this.innerText)'
@@ -136,12 +139,12 @@
                                                   <%= tag.name %>
                                                 </span>
                                                 <!-- TODO: On click implement removeTag-->
-                                                <a href="#"
-                                                  onclick="removeTag('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.tags[' + '<%= tagIndex %>' + ']', '<%= tag.name %>')">
+                                                <button type="button" class="btn btn-link"
+                                                  onclick="removeTag('<%= featureFile.featureId %>', '<%= featureFile.feature.children[index].scenario.id %>', '<%= tag.name %>','tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>-<%= featureFile.featureId %>-<%= featureFile.feature.children[index].scenario.id %>')">
                                                   <svg class="tag-delete bi ms-1" width="16" height="16">
                                                     <use xlink:href="#x-circle-fill"></use>
                                                   </svg>
-                                                </a>
+                                                </button>
                                               </span>
                                               <% }); %>
                                                 <!-- TODO: On click user should be able to add a new tag-->
