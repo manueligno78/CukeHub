@@ -7,13 +7,27 @@
 </style>
 
 <% var tagFrequency={}; var maxFrequency=1; featureFiles.forEach(function(featureFile) { if (featureFile &&
-  featureFile.path) { featureFile.feature.children.forEach(function(child) { if (child.scenario) {
-  child.scenario.tags.forEach(function(tag) { if (tagFrequency[tag.name]) { tagFrequency[tag.name].count++;
-  tagFrequency[tag.name].scenarios.push(child.scenario.name); if (tagFrequency[tag.name].count> maxFrequency) {
+  featureFile.path) { if (featureFile.feature.tags) { featureFile.feature.tags.forEach(function(tag) { if
+  (tagFrequency[tag.name]) { tagFrequency[tag.name].count++;
+  tagFrequency[tag.name].features.push(featureFile.feature.name); if (tagFrequency[tag.name].count> maxFrequency) {
   maxFrequency = tagFrequency[tag.name].count;
   }
   } else {
-  tagFrequency[tag.name] = { count: 1, scenarios: [child.scenario.name] };
+  tagFrequency[tag.name] = { count: 1, scenarios: [], features: [featureFile.feature.name] };
+  }
+  });
+  }
+  featureFile.feature.children.forEach(function(child) {
+  if (child.scenario) {
+  child.scenario.tags.forEach(function(tag) {
+  if (tagFrequency[tag.name]) {
+  tagFrequency[tag.name].count++;
+  tagFrequency[tag.name].scenarios.push(child.scenario.name);
+  if (tagFrequency[tag.name].count > maxFrequency) {
+  maxFrequency = tagFrequency[tag.name].count;
+  }
+  } else {
+  tagFrequency[tag.name] = { count: 1, scenarios: [child.scenario.name], features: [] };
   }
   });
   }
@@ -21,12 +35,13 @@
   }
   });
   %>
+
   <ul id="tagCloud">
     <% for (var tag in tagFrequency) { %>
       <li
         class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
         style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em"
-        title="This tag is present on: <%= tagFrequency[tag].scenarios.join('\n ') %>"
+        title="<%= tagFrequency[tag].scenarios.length > 0 ? 'This tag is present on: \n' + tagFrequency[tag].scenarios.join('\n ') : 'This tag is present at the feature level in: \n' + tagFrequency[tag].features.join('\n ') %>"
         data-count="<%= tagFrequency[tag].count %>" onclick='addTagToDataTableSearchInput("<%= tag %>")'>
         <span class="px-1">
           <%= tag %>
