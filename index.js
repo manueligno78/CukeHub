@@ -7,6 +7,7 @@ const Messages = require('@cucumber/messages');
 const { exec } = require('child_process');
 const WebSocket = require('ws');
 const http = require('http');
+const gherkinDocumentToString = require('./gherkinUtils');
 
 const app = express();
 const server = http.createServer(app);
@@ -97,74 +98,6 @@ function getScenarios(filePath) {
     console.error(`Error getting scenarios: ${error}`);
     return null;
   }
-}
-
-function gherkinDocumentToString(gherkinDocument) {
-  //console.log('gherkinDocument:', JSON.stringify(gherkinDocument));
-  let gherkinText = '';
-  // Add the feature tags, if any
-  if (gherkinDocument.feature.tags && gherkinDocument.feature.tags.length > 0) {
-    const tags = gherkinDocument.feature.tags.map(tag => tag.name).join(' ');
-    gherkinText += `${tags}\n`;
-  }
-  // Add the feature title
-  gherkinText += `Feature: ${gherkinDocument.feature.name}\n`;
-  // Add the feature description, if any
-  if (gherkinDocument.feature.description) {
-    gherkinText += `  ${gherkinDocument.feature.description}\n`;
-  }
-  // Add each scenario or background
-  gherkinDocument.feature.children.forEach((child, index, array) => {
-    gherkinText += '\n';
-    if (child.background) { // TODO: bug: title is not displayed
-      gherkinText += `  Background:\n`;
-      // Add each step of the background
-      child.background.steps.forEach(step => {
-        gherkinText += `    ${step.keyword} ${step.text}\n`;
-      });
-      // Add a blank line after the background
-      gherkinText += '\n';
-    } else if (child.scenario) {
-      // Add the scenario tags, if any
-      if (child.scenario.tags && child.scenario.tags.length > 0) {
-        const tags = child.scenario.tags.map(tag => tag.name).join(' ');
-        gherkinText += `  ${tags}\n`;
-      }
-      // Check if the scenario is an outline
-      if (child.scenario.examples && child.scenario.examples.length > 0) {
-        gherkinText += `  Scenario Outline: ${child.scenario.name}\n`;
-      } else {
-        gherkinText += `  Scenario: ${child.scenario.name}\n`;
-      }
-      // Add the scenario description, if any
-      if (child.scenario.description) {
-        gherkinText += `${child.scenario.description}\n`;
-      }
-      // Add each step of the scenario
-      child.scenario.steps.forEach(step => { // TODO: bug: if there is a data table, it is not displayed
-        gherkinText += `    ${step.keyword}${step.text}\n`;
-      });
-      // Add the Examples, if any
-      if (child.scenario.examples && child.scenario.examples.length > 0) {
-        child.scenario.examples.forEach(example => {
-          gherkinText += `\n      Examples:\n`;
-          // Add the table header
-          const header = example.tableHeader.cells.map(cell => cell.value).join(' \t| ');
-          gherkinText += `        | ${header} |\n`;
-          // Add the table rows
-          example.tableBody.forEach(row => {
-            const rowText = row.cells.map(cell => cell.value).join(' \t| ');
-            gherkinText += `        | ${rowText} |\n`;
-          });
-        });
-      }
-      // Add a blank line after each scenario, except the last one
-      if (index < array.length - 1) {
-        gherkinText += '\n';
-      }
-    }
-  });
-  return gherkinText;
 }
 
 /// SERVER and WEBSOCKETS
