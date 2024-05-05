@@ -1,6 +1,6 @@
 
 function gherkinDocumentToString(gherkinDocument) {
-    console.log('gherkinDocument:', JSON.stringify(gherkinDocument, null, 2));
+    //console.log('gherkinDocument:', JSON.stringify(gherkinDocument, null, 2));
     let gherkinText = '';
     // Add the feature tags, if any
     if (gherkinDocument.feature.tags && gherkinDocument.feature.tags.length > 0) {
@@ -17,7 +17,7 @@ function gherkinDocumentToString(gherkinDocument) {
     gherkinDocument.feature.children.forEach((child, index, array) => {
         gherkinText += '\n';
         if (child.background) { // TODO: bug: title is not displayed
-            gherkinText += `\tBackground:\n`;
+            gherkinText += `\tBackground: ${child.background.name}\n`;
             // Add each step of the background
             child.background.steps.forEach(step => {
                 gherkinText += `\t\t${step.keyword} ${step.text}\n`;
@@ -38,16 +38,19 @@ function gherkinDocumentToString(gherkinDocument) {
             }
             // Add the scenario description, if any
             if (child.scenario.description) {
-                gherkinText += `\t${child.scenario.description}\n`;
+                gherkinText += `${child.scenario.description}\n`;
             }
             // Add each step of the scenario
-            child.scenario.steps.forEach(step => {
-                gherkinText += `\t\t${step.keyword}${step.text}\n`;
+            child.scenario.steps.forEach((step, stepIndex) => {
+                gherkinText += `\t\t${step.keyword}${step.text}`;
                 // Check if the step has a datatable
                 if (step.dataTable) {
                     step.dataTable.rows.forEach(row => {
-                        gherkinText += '\t\t\t| ' + row.cells.map(cell => cell.value).join(' | ') + ' |\n';
+                        gherkinText += '\n\t\t\t| ' + row.cells.map(cell => cell.value).join(' | ') + ' |';
                     });
+                }
+                if (stepIndex < child.scenario.steps.length) {
+                    gherkinText += '\n';
                 }
             });
             // Add the Examples, if any
@@ -61,16 +64,16 @@ function gherkinDocumentToString(gherkinDocument) {
                     example.tableBody.forEach((row, rowIndex) => {
                         const rowText = row.cells.map(cell => cell.value).join(' \t| ');
                         gherkinText += `\t\t\t| ${rowText} |`;
-                        if (rowIndex < example.tableBody.length - 1) {
+                        if (rowIndex < example.tableBody.length) {
                             gherkinText += '\n';
                         }
                     });
                 });
             }
-            // Add a blank line after each scenario, except the last one
-            if (index < array.length - 1) {
-                gherkinText += '\n';
-            }
+            // // Add a blank line after each scenario, except the last one
+            // if (index < array.length - 1) {
+            //     gherkinText += '\n';
+            // }
         }
     });
     return gherkinText;
