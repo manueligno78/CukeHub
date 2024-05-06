@@ -2,12 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
-const Gherkin = require('@cucumber/gherkin');
-const Messages = require('@cucumber/messages');
+
 const { exec, execSync } = require('child_process');
 const WebSocket = require('ws');
 const http = require('http');
 const gherkinDocumentToString = require('./gherkinUtils');
+const featureFilesModule = require('./featureFilesModule.js');
 
 const app = express();
 const server = http.createServer(app);
@@ -20,86 +20,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 module.exports.server = server;
-module.exports.getFiles = getFiles;
-module.exports.getScenarios = getScenarios;
-
-let featureFilesCopy = [];
-
-function getFiles(dirPath, arrayOfFiles = []) {
-  const files = fs.readdirSync(dirPath);
-  const foldersToExclude = config.folderToExclude;
-  let excludePatterns = [];
-  if (foldersToExclude) {
-    excludePatterns = foldersToExclude.split(',').map(folder =>
-      new RegExp('^' + folder.trim().replace(/\*/g, '.*') + '$')
-    );
-  }
-  //
-  files.forEach(file => {
-    const fullPath = path.join(dirPath, "/", file);
-    const isExcluded = excludePatterns.some(pattern => pattern.test(fullPath));
-    if (isExcluded) {
-      return;
-    }
-    if (fs.statSync(fullPath).isDirectory()) {
-      arrayOfFiles = getFiles(fullPath, arrayOfFiles);
-    } else if (file.endsWith('.feature')) {
-      const scenarioData = getScenarios(fullPath);
-      if (scenarioData) {
-        arrayOfFiles.push({
-          name: file,
-          path: fullPath,
-          relativePath: fullPath.replace(config.directoryPath, ''),
-          ...scenarioData
-        });
-      }
-    }
-  });
-  return arrayOfFiles;
-}
-
-function getScenarios(filePath) {
-  try {
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const uuidFn = Messages.IdGenerator.uuid();
-    const builder = new Gherkin.AstBuilder(uuidFn);
-    const matcher = new Gherkin.GherkinClassicTokenMatcher();
-    const parser = new Gherkin.Parser(builder, matcher);
-    const gherkinDocument = parser.parse(fileContent);
-
-    const featureId = uuidFn();
-    const tags = [];
-
-    gherkinDocument.feature.children.forEach(child => {
-      if (child.scenario) {
-        child.scenario.tags.forEach(tag => {
-          tags.push({
-            tag: tag.name,
-            scenario: child.scenario.name,
-            featureId: featureId
-          });
-        });
-        child.scenario.isOutline = child.scenario.keyword.includes('Outline');
-        if (child.scenario.isOutline && child.scenario.examples) {
-          child.scenario.numberOfExamples = child.scenario.examples.reduce((count, example) => {
-            return count + (example.tableBody ? example.tableBody.length : 0);
-          }, 0);
-        }
-        // Count the steps in the scenario
-        child.scenario.numberOfSteps = child.scenario.steps ? child.scenario.steps.length : 0;
-      }
-    });
-
-    return {
-      featureId: featureId,
-      tags: tags,
-      ...gherkinDocument
-    };
-  } catch (error) {
-    console.error(`Error getting scenarios: ${error}`);
-    return null;
-  }
-}
 
 /// SERVER and WEBSOCKETS
 function notifyClients(message) {
@@ -124,11 +44,11 @@ app.get('/', (req, res) => {
   if (!directoryPath) {
     res.redirect('/settings');
   } else {
-    if (featureFilesCopy.length === 0) {
-      let featureFiles = getFiles(directoryPath);
-      featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
+    if (featureFilesModule.getFeatureFilesCopy().length === 0) {
+      let featureFiles = featureFilesModule.getFiles(directoryPath);
+      featureFilesModule.updateFeatureFilesCopy(JSON.parse(JSON.stringify(featureFiles)));
     }
-    res.render('index', { configuration: config, featureFiles: featureFilesCopy, runCommand: !!config.testCommand });
+    res.render('index', { configuration: config, featureFiles: featureFilesModule.getFeatureFilesCopy(), runCommand: !!config.testCommand });
   }
 });
 
@@ -180,14 +100,14 @@ wss.on('connection', ws => {
       });
     }
     if (data.action === 'updateFeature') {
-      let featureFile = featureFilesCopy.find(file => file.featureId === data.featureId);
+      let featureFile = featureFilesModule.getFeatureFilesCopy().find(file => file.featureId === data.featureId);
       if (featureFile) {
         setNestedProperty(featureFile, data.field, data.newValue);
       }
       notifyClients(JSON.stringify({ action: 'featureUpdated', featureId: data.featureId, field: data.field, newValue: data.newValue }));
     }
     if (data.action === 'removeTag') {
-      let featureFile = featureFilesCopy.find(file => file.featureId === data.featureId);
+      let featureFile = featureFilesModule.getFeatureFilesCopy().find(file => file.featureId === data.featureId);
       if (featureFile) {
         let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === data.scenarioId);
         if (scenario) {
@@ -196,15 +116,15 @@ wss.on('connection', ws => {
             scenario.scenario.tags.splice(tagIndex, 1);
             let scenarioIndex = featureFile.feature.children.findIndex(child => child.scenario && child.scenario.id === data.scenarioId);
             featureFile.feature.children[scenarioIndex] = scenario;
-            let featureIndex = featureFilesCopy.findIndex(file => file.featureId === data.featureId);
-            featureFilesCopy[featureIndex] = featureFile;
+            let featureIndex = featureFilesModule.getFeatureFilesCopy().findIndex(file => file.featureId === data.featureId);
+            featureFilesModule.getFeatureFilesCopy()[featureIndex] = featureFile;
             notifyClients(JSON.stringify({ action: 'featureUpdated', featureId: data.featureId, field: 'tags', newValue: scenario.scenario.tags }));
           }
         }
       }
     }
     if (data.action === 'addTag') {
-      let featureFile = featureFilesCopy.find(file => file.featureId === data.featureId);
+      let featureFile = featureFilesModule.getFeatureFilesCopy().find(file => file.featureId === data.featureId);
       if (featureFile) {
         let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === data.scenarioId);
         if (scenario) {
@@ -213,8 +133,8 @@ wss.on('connection', ws => {
             scenario.scenario.tags.push({ name: data.tag });
             let scenarioIndex = featureFile.feature.children.findIndex(child => child.scenario && child.scenario.id === data.scenarioId);
             featureFile.feature.children[scenarioIndex] = scenario;
-            let featureIndex = featureFilesCopy.findIndex(file => file.featureId === data.featureId);
-            featureFilesCopy[featureIndex] = featureFile;
+            let featureIndex = featureFilesModule.getFeatureFilesCopy().findIndex(file => file.featureId === data.featureId);
+            featureFilesModule.getFeatureFilesCopy()[featureIndex] = featureFile;
             notifyClients(JSON.stringify({ action: 'featureUpdated', featureId: data.featureId, field: 'tags', newValue: scenario.scenario.tags }));
           }
         }
@@ -224,7 +144,7 @@ wss.on('connection', ws => {
       const outputFolder = config.outputFolder;
       const keepFolderStructure = config.keepFolderStructure;
       const directoryPath = config.directoryPath;
-      featureFilesCopy.forEach(featureFile => {
+      featureFilesModule.getFeatureFilesCopy().forEach(featureFile => {
         const gherkinText = gherkinDocumentToString(featureFile);
         let outputUrl = featureFile.path.replace(directoryPath, outputFolder);
         if (keepFolderStructure) {
@@ -236,7 +156,7 @@ wss.on('connection', ws => {
     }
     // Delete all occurency of a tag from all the scenarios and features
     if (data.action === 'deleteAllOccurencyOfTag') {
-      featureFilesCopy.forEach(featureFile => {
+      featureFilesModule.getFeatureFilesCopy().forEach(featureFile => {
         featureFile.feature.children.forEach(child => {
           if (child.scenario) {
             let tagIndex = child.scenario.tags.findIndex(tag => tag.name === data.tag);
@@ -252,7 +172,7 @@ wss.on('connection', ws => {
     if (data.action === 'updateAllOccurencyOfTag') {
       let tagExists = false;
       let newTagExists = false;
-      featureFilesCopy.forEach(featureFile => {
+      featureFilesModule.getFeatureFilesCopy().forEach(featureFile => {
         featureFile.feature.children.forEach(child => {
           if (child.scenario) {
             let tagIndex = child.scenario.tags.findIndex(tag => tag.name === data.tag);
@@ -292,9 +212,8 @@ function getNestedProperty(obj, path) {
 function reset() {
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   const directoryPath = config.directoryPath;
-  let featureFiles = getFiles(directoryPath);
-  //let featureFiles = getFiles(directoryPath);
-  featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
+  let featureFiles = featureFilesModule.getFiles(directoryPath);
+  featureFilesModule.updateFeatureFilesCopy(JSON.parse(JSON.stringify(featureFiles)));
   notifyClients(JSON.stringify({ action: 'reset' }));
 }
 
