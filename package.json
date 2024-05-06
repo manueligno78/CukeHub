@@ -1,7 +1,7 @@
 {
     "name": "CukeHub",
     "version": "1.0.0",
-    "description": "This is a nodejs based console for test scenarios and tag management",
+    "description": "CukeHub is a Node.js-based application for managing Gherkin Cucumber features, scenarios, and tags.",
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
@@ -11,8 +11,10 @@
         "@cucumber/gherkin": "^28.0.0",
         "@cucumber/messages": "^13.1.0",
         "body-parser": "^1.19.0",
+        "chai": "^5.1.0",
         "ejs": "^3.1.6",
         "express": "^4.17.1",
+        "gherkin": "^9.0.0",
         "ws": "^7.4.6"
     },
     "devDependencies": {

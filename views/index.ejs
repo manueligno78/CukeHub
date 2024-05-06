@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <title>CukeHub</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- Custom fonts for this template -->
+  <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this page -->
+  <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+  <!-- Bootstrap JavaScript -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  <link href="https://cdn.datatables.net/2.0.5/css/dataTables.bootstrap4.css" rel="stylesheet">
+  <script type="text/javascript" charset="utf8" src="/vendor/datatables/jquery.dataTables.js"></script>
+
+  <script src="/main.js"></script>
+  <link href="/main.css" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" href="favicon-32x32.png">
+</head>
+
+<body id="page-top">
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+      <%- include('sidebar.ejs') %>
+        <!-- End of Sidebar -->
+    </div>
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <nav class="navbar navbar-expand navbar-light bg-white mb-4 static-top shadow">
+          <!-- Tags cloud-->
+          <div class="container-fluid d-flex flex-wrap">
+            <%- include('tagCloud.ejs') %>
+          </div>
+        </nav>
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <div class="card shadow mb-4">
+            <div class="card-body">
+              <div class="table-responsive">
+
+                <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                  <table id="dataTable" class="table table-striped display">
+                    <thead>
+                      <tr>
+                        <th scope="col">Feature</th>
+                        <th scope="col">Scenarios</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% featureFiles.forEach(function(featureFile) { %>
+                        <% if (featureFile && featureFile.path) { %>
+                          <tr id="<%= featureFile.featureId %>">
+                            <td>
+                              <div class="card" id="featureCard-<%= featureFile.featureId %>">
+                                <div class="card-header d-flex gap-2 justify-content-center flex-wrap">
+                                  <!-- Tags -->
+                                  <!-- TODO: Click on tags to filter results of table-->
+                                  <% featureFile.feature.tags.forEach(function(tag) { %>
+                                    <span
+                                      class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
+                                      id="tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>">
+                                      <span onclick='addTagToDataTableSearchInput("<%= tag.name %>")'
+                                        contentEditable="true" onblur="updateFeature('', this.innerText)" class="px-1">
+                                        <%= tag.name %>
+                                      </span>
+                                      <!-- TODO: Bug On click implement removeTag-->
+                                      <button type="button" class="btn btn-link d-flex m-0 p-0"
+                                        onclick="removeTag('<%= featureFile.featureId %>', '<%= featureFile.feature.featureId %>', '<%= tag.name %>','tag-<%= tag.name %>','tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>')"></a>
+                                        <svg class="bi ms-1" width="16" height="16">
+                                          <use xlink:href="#x-circle-fill"></use>
+                                        </svg>
+                                      </button>
+                                    </span>
+                                    <% }); %>
+                                      <!-- TODO: Bug On click user should be able to add a new tag-->
+                                      <span
+                                        class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                        <a href="#" class="addTagInput" contentEditable="true"
+                                          onblur="addTag('<%= featureFile.featureId %>', '<%= featureFile.feature.featureId %>', this.innerText,this)">
+                                          + add tag
+                                        </a>
+                                      </span>
+                                </div>
+                                <h5 class="card-header" contentEditable="true"
+                                  onblur="updateFeature('<%= featureFile.featureId %>', 'feature.name', this.innerText)">
+                                  <%= featureFile.feature.name %>
+                                </h5>
+                                <p class="card-body m-1 py-1 small">
+                                  Located in: <%= featureFile.relativePath %>
+                                </p>
+                                <p class="card-body" contentEditable="true"
+                                  onblur="updateFeature('<%= featureFile.featureId %>', 'feature.description', this.innerText)">
+                                  <% if (featureFile.feature.description) { %>
+                                    <%- featureFile.feature.description.replace(/\n/g, '<br>'
+                                      ).replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;' ) %>
+                                      <% } else { %>
+                                        <%- 'No description' %>
+                                          <% } %>
+                                </p>
+                              </div>
+                            </td>
+                            <td>
+                              <span>
+                                <%= featureFile.feature.children.length %> scenarios contained:
+                              </span>
+                              <ul class="list-unstyled">
+                                <% featureFile.feature.children.forEach(function(child, index) { %>
+                                  <% if (child.scenario) { %>
+                                    <li>
+                                      <div class="card shadow border-secondary mb-4"
+                                        id="scenarioCard-<%= featureFile.featureId %>-<%= index %>">
+                                        <div class="card-header py-3">
+                                          <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                            <!-- Tags -->
+                                            <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
+                                              <span
+                                                id='tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>-<%= featureFile.featureId %>-<%= featureFile.feature.children[index].scenario.id %>'
+                                                class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                                <span contentEditable="true"
+                                                  onblur='updateFeature("<%= featureFile.featureId %>", "feature.children[<%= index %>].scenario.tags[<%= tagIndex %>].name", this.innerText)'
+                                                  class="px-1">
+                                                  <%= tag.name %>
+                                                </span>
+                                                <button type="button" class="btn btn-link d-flex m-0 p-0"
+                                                  onclick="removeTag('<%= featureFile.featureId %>', '<%= featureFile.feature.children[index].scenario.id %>', '<%= tag.name %>','tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>-<%= featureFile.featureId %>-<%= featureFile.feature.children[index].scenario.id %>')">
+                                                  <svg class="tag-delete bi ms-1" width="16" height="16">
+                                                    <use xlink:href="#x-circle-fill"></use>
+                                                  </svg>
+                                                </button>
+                                              </span>
+                                              <% }); %>
+                                                <span
+                                                  class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                                  <a href="#" class="addTagInput" contentEditable="true"
+                                                    onblur="addTag('<%= featureFile.featureId %>', '<%= featureFile.feature.children[index].scenario.id %>', this.innerText,this)">
+                                                    + add tag
+                                                  </a>
+                                                </span>
+                                          </div>
+                                        </div>
+                                        <div class="card-body">
+                                          <!-- Add an icon if scenario outline-->
+                                          <% if (child.scenario.isOutline) { %>
+                                            <span class="small">Outline Scenario</span>
+                                            <% } %>
+                                              <h5 href="#" contentEditable="true"
+                                                onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.name', this.innerText)">
+                                                <%= child.scenario.name %>
+                                              </h5>
+                                              <span><%- child.scenario.numberOfSteps %> steps
+                                                  <% if (child.scenario.isOutline) { %>
+                                                    iterated in <%- child.scenario.numberOfExamples %> examples
+                                                      <% } %>
+                                              </span>
+                                              <p contentEditable="true"
+                                                onblur="updateFeature('<%= featureFile.featureId %>', 'feature.children[' + '<%= index %>' + '].scenario.description', this.innerText)">
+                                                <% if (child.scenario.description) { %>
+                                                  <%- child.scenario.description.replace(/\n/g, '<br>'
+                                                    ).replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;' ) %>
+                                                    <% } else { %>
+                                                      <%- 'No description' %>
+                                                        <% } %>
+                                              </p>
+                                              <!-- Add accordion to show steps -->
+                                              <div class="accordion"
+                                                id="accordion-<%= featureFile.featureId %>-<%= index %>">
+                                                <div class="accordion-item">
+                                                  <div class="accordion-header"
+                                                    id="heading-<%= featureFile.featureId %>-<%= index %>">
+                                                    <span class="accordion-button" type="button" data-toggle="collapse"
+                                                      data-target="#collapse-<%= featureFile.featureId %>-<%= index %>"
+                                                      aria-expanded="true"
+                                                      aria-controls="collapse-<%= featureFile.featureId %>-<%= index %>">
+                                                      Steps
+                                                    </span>
+                                                  </div>
+                                                  <div id="collapse-<%= featureFile.featureId %>-<%= index %>"
+                                                    class="accordion-collapse collapse hide"
+                                                    aria-labelledby="heading-<%= featureFile.featureId %>-<%= index %>"
+                                                    data-parent="#accordion-<%= featureFile.featureId %>-<%= index %>">
+                                                    <div class="accordion-body">
+                                                      <ul class="list-unstyled">
+                                                        <% child.scenario.steps.forEach(function(step, stepIndex) { %>
+                                                          <li>
+                                                            <div class="card shadow border-secondary mb-4"
+                                                              id="stepCard-<%= featureFile.featureId %>-<%= index %>-<%= stepIndex %>">
+                                                              <div class="card-header py-3">
+                                                                <div class="d-flex gap-2">
+                                                                  <span class=" badge bg-primary-subtle
+                                                                  text-primary-emphasis">
+                                                                    <%= step.keyword %>
+                                                                  </span>
+                                                                  <span
+                                                                    class="badge bg-primary-subtle text-primary-emphasis">
+                                                                    <%= step.text %>
+                                                                  </span>
+                                                                  <!-- Print dataTables if present-->
+                                                                  <% if (step.dataTable) { %>
+                                                                    <div class="card-body">
+                                                                      <table class="table table-striped display">
+                                                                        <tr>
+                                                                          <% step.dataTable.rows.forEach(row=> {
+                                                                            %>
+                                                                            <td>
+                                                                              <%= '\n\t\t\t| ' + row.cells.map(cell=>
+                                                                                cell.value).join(' | ') %>
+                                                                            </td>
+                                                                            <% }); %>
+                                                                        </tr>
+                                                                      </table>
+                                                                    </div>
+                                                                    <% } %>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                          </li>
+                                                          <% }); %>
+                                                      </ul>
+                                                      <!-- Add examples if scenario outline in a html table -->
+                                                      <% if (child.scenario.isOutline) { %>
+                                                        <div class="card-body">
+                                                          <span>Examples</span>
+                                                          <table class="table table-striped display">
+                                                            <% child.scenario.examples.forEach(example=> { %>
+                                                              <tr>
+                                                                <td>
+                                                                  <table class="table table-striped display">
+                                                                    <tr>
+                                                                      <% example.tableHeader.cells.forEach(cell=> {
+                                                                        %>
+                                                                        <td>
+                                                                          <%= cell.value %>
+                                                                        </td>
+                                                                        <% }); %>
+                                                                    </tr>
+                                                                    <% example.tableBody.forEach(row=> { %>
+                                                                      <tr>
+                                                                        <% row.cells.forEach(cell=> { %>
+                                                                          <td>
+                                                                            <%= cell.value %>
+                                                                          </td>
+                                                                          <% }); %>
+                                                                      </tr>
+                                                                      <% }); %>
+                                                                  </table>
+                                                                </td>
+                                                              </tr>
+                                                              <% }); %>
+                                                          </table>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                    </li>
+                                    <% } %>
+                                      <% }); %>
+                              </ul>
+                            </td>
+                          </tr>
+                          <% } %>
+                            <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="sticky-footer bg-white">
+        <%- include('footer.ejs') %>
+      </footer>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+</body>
+
+</html>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="x-circle-fill" viewBox="0 0 16 16">
+    <path
+      d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"
+      style="fill: #858796;"></path>
+  </symbol>
+</svg>

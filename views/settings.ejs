@@ -1,27 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
+
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Settings</title>
-    <link rel="stylesheet" type="text/css" href="/main.css">
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="header">
-        <div>Settings</div>
-        <div><a href="/">Console</a></div>
+
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-4">Settings</h1>
+                            </div>
+                            <form action="/save-settings" method="POST" class="user">
+                                <div class="form-group">
+                                    <label for="directoryPath">Project source path containing .feature files (absolute path):</label>
+                                    <input type="text" class="form-control form-control-user" id="directoryPath" name="directoryPath" value="<%= directoryPath %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="testCommand">Run command (experimental):</label>
+                                    <input type="text" class="form-control form-control-user" id="testCommand" name="testCommand" value="<%= testCommand %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="folderToExclude">Folder to exclude from source path scaffolding:</label>
+                                    <input type="text" class="form-control form-control-user" id="folderToExclude" name="folderToExclude" value="<%= folderToExclude %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="outputFolder">Export folder for modified feature files (absolute path):</label>
+                                    <input type="text" class="form-control form-control-user" id="outputFolder" name="outputFolder" value="<%= outputFolder %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="keepFolderStructure">Keep source folder structure when exporting:</label>
+                                    <input type="checkbox" class="form-control form-control-user" id="keepFolderStructure" name="keepFolderStructure" <%= keepFolderStructure ? 'checked' : '' %>>
+                                </div>
+                                <input type="submit" value="Save" class="btn btn-primary btn-user btn-block">
+                            </form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small" href="/">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <form action="/save-settings" method="POST">
-        <label for="directoryPath">Directory Path:</label>
-        <input type="text" id="directoryPath" name="directoryPath" value="<%= directoryPath %>">
-        <br/>
-        <p>This is the command executed when you press Run Test button. The command should be the same you run from the root of your system (not relative path), <b>@yourTag</b> is a placeholder and will be replaced by the tag selected by the user</p>
-        <p>For example: mvn clean test -Pselenium-regression-tests '-Dcucumber.filter.tags=@yourTag'</p>
-        <label for="testCommand">Run command:</label>
-        <input type="text" id="testCommand" name="testCommand" value="<%= testCommand %>">
-        <br/>
-        <label for="folderToExclude">Folder to exclude:</label>
-        <input type="text" id="folderToExclude" name="folderToExclude" value="<%= folderToExclude %>">
-        <input type="submit" value="Save">
-    </form>
-    <a href="/">Back to home</a>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/sb-admin-2.min.js"></script>
 </body>
+
 </html>

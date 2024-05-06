@@ -2,35 +2,47 @@ const socket = new WebSocket('ws://localhost:3000');
 
 socket.addEventListener('message', function (event) {
   console.log('Received message: ', event.data);
-  var messages = document.getElementById('messages');
-  try {
-    const data = JSON.parse(event.data);
-    if (typeof data === 'object') {
-      messages.textContent += JSON.stringify(data, null, 2) + '\n';
-    } else {
-      messages.textContent += data + '\n';
-    }
-  } catch (error) {
-    messages.textContent += event.data + '\n';
-  }
   if (event.data === 'tests started') {
     showLoader();
   } else if (event.data === 'tests finished') {
     hideLoader();
+  } else if (JSON.parse(event.data).action === 'reset') {
+    console.log('Resetting the page...');
+    location.reload();
+    document.getElementById('saveButton').style.display = 'none';
+    document.getElementById('resetButton').style.display = 'none';
+  } else if (JSON.parse(event.data).action === 'featureUpdated') {
+    document.getElementById('saveButton').style.display = 'block';
+    document.getElementById('resetButton').style.display = 'block';
+    // reload the page
+    location.reload();
+  } else if (JSON.parse(event.data).action === 'gitStatus') {
+    document.getElementById('git-status').innerHTML = JSON.parse(event).data.message;
   }
 });
 
 socket.addEventListener('open', function (event) {
-    console.log('WebSocket is open now.');
+  console.log('WebSocket is open now.');
 });
 
 socket.addEventListener('error', function (event) {
-    console.log('WebSocket error: ', event);
+  console.log('WebSocket error: ', event);
 });
 
 socket.addEventListener('close', function (event) {
   console.log('WebSocket is closed now.');
 });
+
+function updateFeatureInView(featureId, field, newValue) {
+  var row = document.getElementById(featureId);
+  if (row) {
+    var cell = row.getElementsByClassName(field)[0];
+    if (cell) {
+      cell.textContent = newValue;
+      cell.classList.add('content-updated');
+    }
+  }
+}
 
 function hideLoader() {
   document.getElementById('tagsInput').classList.remove('disabled');
@@ -41,29 +53,17 @@ function showLoader() {
   document.getElementById('tagsInput').classList.add('disabled');
   document.getElementById('run-test-button').classList.add('disabled');
 }
+function addTagToDataTableSearchInput(tag) {
+  // Ottieni l'istanza di DataTables
+  var table = $('#dataTable').DataTable();
 
-function addTagToInput(tag) {
-  const input = document.getElementById('tagsInput');
-  const operatorSelect = document.getElementById('operatorSelect');
-  const operator = operatorSelect.value === 'AND' ? 'and' : 'or';
-  input.value = input.value ? `${input.value} ${operator} ${tag}` : tag;
+  // Imposta una funzione di ricerca personalizzata
+  table.search(tag);
+  table.draw();
 }
 
 function addScenarioTagsToInput(tags) {
-  tags.forEach(tag => addTagToInput(tag));
-}
-
-function hashCode(str) {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  var color = '#';
-  for (var i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
-    color += ('00' + value.toString(16)).substr(-2);
-  }
-  return color;
+  tags.forEach(tag => addTagToDataTableSearchInput(tag));
 }
 
 document.querySelectorAll('.scenario-link').forEach(link => {
@@ -74,21 +74,20 @@ document.querySelectorAll('.scenario-link').forEach(link => {
   });
 });
 
-
 function hashCode(str) {
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        hash = hash & hash;
-    }
-    return hash;
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
+  return hash;
 }
 
 function intToRGB(i) {
-    var c = (i & 0x00FFFFFF)
-        .toString(16)
-        .toUpperCase();
-    return "00000".substring(0, 6 - c.length) + c;
+  var c = (i & 0x00FFFFFF)
+    .toString(16)
+    .toUpperCase();
+  return "00000".substring(0, 6 - c.length) + c;
 }
 
 function autocompleteInputTags(taglist, tagInputId) {
@@ -98,9 +97,9 @@ function autocompleteInputTags(taglist, tagInputId) {
 }
 
 function isLightColor(color) {
-  var r, g, b, hsp; 
-  color = +("0x" + color.slice(1).replace( 
-  color.length < 5 && /./g, '$&$&'));
+  var r, g, b, hsp;
+  color = +("0x" + color.slice(1).replace(
+    color.length < 5 && /./g, '$&$&'));
   r = color >> 16;
   g = color >> 8 & 255;
   b = color & 255;
@@ -109,16 +108,16 @@ function isLightColor(color) {
     0.587 * (g * g) +
     0.114 * (b * b)
   );
-  if (hsp>127.5) {
+  if (hsp > 127.5) {
     return true;
-  } 
+  }
   else {
     return false;
   }
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-  document.querySelectorAll('.tag-label').forEach(function(tag) {
+  document.querySelectorAll('.tag-label').forEach(function (tag) {
     var text = tag.textContent.trim();
     var hash = hashCode(text);
     var color = intToRGB(hash);
@@ -129,9 +128,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
       tag.style.color = 'white';
     }
   });
+
+
   const form = document.querySelector('form');
-  if(form) {
-    form.addEventListener('submit', function(event) {
+  if (form) {
+    form.addEventListener('submit', function (event) {
       event.preventDefault();
       const tags = document.querySelector('#tagsInput').value;
       const operator = document.querySelector('#operatorSelect').value;
@@ -146,18 +147,95 @@ document.addEventListener('DOMContentLoaded', (event) => {
   }
 });
 
-$(function() {
-  var taglist = $("#tagsInput").data("tags").split(",");
-  autocompleteInputTags(taglist, "#tagsInput");
+// $(function() {
+//   var taglist = $("#tagsInput").data("tags").split(",");
+//   autocompleteInputTags(taglist, "#tagsInput");
+// });
+
+$(document).ready(function () {
+  $('#dataTable').DataTable();
+  let message = JSON.stringify({
+    action: 'gitStatus'
+  });
+  socket.send(message);
 });
 
-$(document).ready(function() {
-    $('#table').DataTable({
-    order: [[ 0, 'asc' ]],
-    columns: [
-        { width: "30%" },
-        { width: "20%" },
-        { width: "50%" }
-    ]
-});
-});
+function updateFeature(featureId, field, newValue) {
+  let message = JSON.stringify({
+    action: 'updateFeature',
+    featureId: featureId,
+    field: field,
+    newValue: newValue
+  });
+  socket.send(message);
+}
+
+function removeTag(featureId, scenarioId, tag, id) {
+  let message = JSON.stringify({
+    action: 'removeTag',
+    featureId: featureId,
+    scenarioId: scenarioId,
+    tag: tag
+  });
+  socket.send(message);
+  document.getElementById(id).remove();
+}
+
+function addTag(featureId, scenarioId, tag, caller) {
+  let message = JSON.stringify({
+    action: 'addTag',
+    featureId: featureId,
+    scenarioId: scenarioId,
+    tag: tag
+  });
+  socket.send(message);
+  // do some animation on the tag
+  caller.classList.add('bg-animation-pulse');
+  //document.getElementById(id).blur;
+}
+
+function updateAllOccurencyOfTag(tag, newTag) {
+  let message = JSON.stringify({
+    action: 'updateAllOccurencyOfTag',
+    tag: tag,
+    newTag: newTag
+  });
+  socket.send(message);
+}
+
+function deleteAllOccurencyOfTag(tag) {
+  let message = JSON.stringify({
+    action: 'deleteAllOccurencyOfTag',
+    tag: tag
+  });
+  socket.send(message);
+}
+
+function saveOnDisk() {
+  let message = JSON.stringify({
+    action: 'saveOnDisk'
+  });
+  socket.send(message);
+}
+
+function confirmExport() {
+  var confirmAction = confirm("Are you sure you want to export?");
+  if (confirmAction) {
+    saveOnDisk();
+  }
+}
+
+function reset() {
+  let message = JSON.stringify({
+    action: 'reset'
+  });
+  socket.send(message);
+}
+
+function confirmReset() {
+  var confirmAction = confirm("Are you sure you want to reset your changes?");
+  if (confirmAction) {
+    reset();
+  }
+}
+

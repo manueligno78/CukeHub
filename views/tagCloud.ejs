@@ -1,0 +1,89 @@
+<style>
+  #tagCloud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>
+
+<% var tagFrequency={}; var maxFrequency=1; featureFiles.forEach(function(featureFile) { if (featureFile &&
+  featureFile.path) { if (featureFile.feature.tags) { featureFile.feature.tags.forEach(function(tag) { if
+  (tagFrequency[tag.name]) { tagFrequency[tag.name].count++;
+  tagFrequency[tag.name].features.push(featureFile.feature.name); if (tagFrequency[tag.name].count> maxFrequency) {
+  maxFrequency = tagFrequency[tag.name].count;
+  }
+  } else {
+  tagFrequency[tag.name] = { count: 1, scenarios: [], features: [featureFile.feature.name] };
+  }
+  });
+  }
+  featureFile.feature.children.forEach(function(child) {
+  if (child.scenario) {
+  child.scenario.tags.forEach(function(tag) {
+  if (tagFrequency[tag.name]) {
+  tagFrequency[tag.name].count++;
+  tagFrequency[tag.name].scenarios.push(child.scenario.name);
+  if (tagFrequency[tag.name].count > maxFrequency) {
+  maxFrequency = tagFrequency[tag.name].count;
+  }
+  } else {
+  tagFrequency[tag.name] = { count: 1, scenarios: [child.scenario.name], features: [] };
+  }
+  });
+  }
+  });
+  }
+  });
+  %>
+
+  <ul id="tagCloud">
+    <% for (var tag in tagFrequency) { %>
+      <li
+        class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
+        style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em"
+        title="<%= tagFrequency[tag].scenarios.length > 0 ? 'This tag is present on: \n' + tagFrequency[tag].scenarios.join('\n ') : 'This tag is present at the feature level in: \n' + tagFrequency[tag].features.join('\n ') %>"
+        data-count="<%= tagFrequency[tag].count %>" onclick='addTagToDataTableSearchInput("<%= tag %>")'>
+        <span contenteditable="true" onblur='updateAllOccurencyOfTag("<%= tag %>", this.innerText)' class="px-1">
+          <%= tag %>
+        </span>
+        <span class="badge badge-secondary badge-counter">
+          <%= tagFrequency[tag].count %>
+        </span>
+        <span class="badge badge-secondary badge-counter" onclick='deleteAllOccurencyOfTag("<%= tag %>")'>X</span>
+      </li>
+      <% } %>
+  </ul>
+  <span
+    class="badge d-flex p-2 mr-1 mb-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+    <!-- TODO: Switch label from switch to alphabetical order/occurrency order -->
+    <span class="px-1"><input type="checkbox" id="sortCheckbox" onclick="sortTags()">+ Switch tag cloud order</input>
+    </span>
+  </span>
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js"></script>
+  <script>
+    function sortTags() {
+      var container = document.getElementById('tagCloud');
+      var tags = Array.from(container.getElementsByClassName('tag-label'));
+      if (document.getElementById('sortCheckbox').checked) {
+        tags.sort(function (a, b) {
+          return b.getAttribute('data-count') - a.getAttribute('data-count');
+        });
+      } else {
+        tags.sort(function (a, b) {
+          return a.textContent.localeCompare(b.textContent);
+        });
+      }
+      tags.forEach(function (tag, index) {
+        tag.style.order = index;
+      });
+    }
+
+    // Crea un nuovo oggetto Sortable per il tag cloud
+    var sortable = Sortable.create(document.getElementById('tagCloud'), {
+      animation: 1000, // Durata dell'animazione in ms
+      onUpdate: sortTags // Funzione da chiamare quando l'ordine degli elementi cambia
+    });
+
+    sortTags();
+  </script>
