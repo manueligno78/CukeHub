@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const Gherkin = require('@cucumber/gherkin');
 const Messages = require('@cucumber/messages');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 const WebSocket = require('ws');
 const http = require('http');
 const gherkinDocumentToString = require('./gherkinUtils');
@@ -107,6 +107,14 @@ function notifyClients(message) {
       client.send(message);
     }
   });
+}
+
+function gitStatus() {
+  // Execute a shell command
+  // git status on config.directoryPath
+  const gitStatusCommand = 'git status --porcelain';
+  const gitStatusOutput = execSync(gitStatusCommand, { cwd: config.directoryPath });
+  return gitStatusOutput.toString();
 }
 
 app.get('/', (req, res) => {
@@ -226,8 +234,51 @@ wss.on('connection', ws => {
         fs.writeFileSync(outputUrl, gherkinText);
       });
     }
+    // Delete all occurency of a tag from all the scenarios and features
+    if (data.action === 'deleteAllOccurencyOfTag') {
+      featureFilesCopy.forEach(featureFile => {
+        featureFile.feature.children.forEach(child => {
+          if (child.scenario) {
+            let tagIndex = child.scenario.tags.findIndex(tag => tag.name === data.tag);
+            if (tagIndex > -1) {
+              child.scenario.tags.splice(tagIndex, 1);
+            }
+          }
+        });
+      });
+      notifyClients(JSON.stringify({ action: 'featureUpdated', tag: data.tag }));
+    }
+    // Update all occurency of a tag from all the scenarios and features only if the tag exists and newTag does not exist else notify the client that the newTag already exists
+    if (data.action === 'updateAllOccurencyOfTag') {
+      let tagExists = false;
+      let newTagExists = false;
+      featureFilesCopy.forEach(featureFile => {
+        featureFile.feature.children.forEach(child => {
+          if (child.scenario) {
+            let tagIndex = child.scenario.tags.findIndex(tag => tag.name === data.tag);
+            if (tagIndex > -1) {
+              tagExists = true;
+              let newTagIndex = child.scenario.tags.findIndex(tag => tag.name === data.newTag);
+              if (newTagIndex > -1) {
+                newTagExists = true;
+              } else {
+                child.scenario.tags[tagIndex].name = data.newTag;
+              }
+            }
+          }
+        });
+      });
+      if (tagExists && !newTagExists) {
+        notifyClients(JSON.stringify({ action: 'featureUpdated', tag: data.tag, newTag: data.newTag }));
+      } else if (newTagExists) {
+        notifyClients(JSON.stringify({ action: 'error', message: data.newTag + ' already exists' }));
+      }
+    }
     if (data.action === 'reset') {
       reset();
+    }
+    if (data.action === 'gitStatus') {
+      notifyClients(JSON.stringify({ action: 'gitStatus', message: gitStatus() }));
     }
   });
 });

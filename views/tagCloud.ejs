@@ -43,12 +43,13 @@
         style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em"
         title="<%= tagFrequency[tag].scenarios.length > 0 ? 'This tag is present on: \n' + tagFrequency[tag].scenarios.join('\n ') : 'This tag is present at the feature level in: \n' + tagFrequency[tag].features.join('\n ') %>"
         data-count="<%= tagFrequency[tag].count %>" onclick='addTagToDataTableSearchInput("<%= tag %>")'>
-        <span class="px-1">
+        <span contenteditable="true" onblur='updateAllOccurencyOfTag("<%= tag %>", this.innerText)' class="px-1">
           <%= tag %>
         </span>
         <span class="badge badge-secondary badge-counter">
           <%= tagFrequency[tag].count %>
         </span>
+        <span class="badge badge-secondary badge-counter" onclick='deleteAllOccurencyOfTag("<%= tag %>")'>X</span>
       </li>
       <% } %>
   </ul>

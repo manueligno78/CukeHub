@@ -14,6 +14,10 @@ socket.addEventListener('message', function (event) {
   } else if (JSON.parse(event.data).action === 'featureUpdated') {
     document.getElementById('saveButton').style.display = 'block';
     document.getElementById('resetButton').style.display = 'block';
+    // reload the page
+    location.reload();
+  } else if (JSON.parse(event.data).action === 'gitStatus') {
+    document.getElementById('git-status').innerHTML = JSON.parse(event).data.message;
   }
 });
 
@@ -150,6 +154,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 $(document).ready(function () {
   $('#dataTable').DataTable();
+  let message = JSON.stringify({
+    action: 'gitStatus'
+  });
+  socket.send(message);
 });
 
 function updateFeature(featureId, field, newValue) {
@@ -184,6 +192,23 @@ function addTag(featureId, scenarioId, tag, caller) {
   // do some animation on the tag
   caller.classList.add('bg-animation-pulse');
   //document.getElementById(id).blur;
+}
+
+function updateAllOccurencyOfTag(tag, newTag) {
+  let message = JSON.stringify({
+    action: 'updateAllOccurencyOfTag',
+    tag: tag,
+    newTag: newTag
+  });
+  socket.send(message);
+}
+
+function deleteAllOccurencyOfTag(tag) {
+  let message = JSON.stringify({
+    action: 'deleteAllOccurencyOfTag',
+    tag: tag
+  });
+  socket.send(message);
 }
 
 function saveOnDisk() {
