@@ -1,6 +1,10 @@
 
 function gherkinDocumentToString(gherkinDocument) {
     //console.log('gherkinDocument:', JSON.stringify(gherkinDocument, null, 2));
+    // Check if the document contains a feature otherwise return an error
+    if (!gherkinDocument.feature.name) {
+        return 'Error: The document is empty';
+    }
     let gherkinText = '';
     // Add the feature tags, if any
     if (gherkinDocument.feature.tags && gherkinDocument.feature.tags.length > 0) {
@@ -58,11 +62,11 @@ function gherkinDocumentToString(gherkinDocument) {
                 child.scenario.examples.forEach(example => {
                     gherkinText += `\n\t\tExamples:\n`;
                     // Add the table header
-                    const header = example.tableHeader.cells.map(cell => cell.value).join(' \t| ');
+                    const header = example.tableHeader.cells.map(cell => cell.value).join(' | ');
                     gherkinText += `\t\t\t| ${header} |\n`;
                     // Add the table rows
                     example.tableBody.forEach((row, rowIndex) => {
-                        const rowText = row.cells.map(cell => cell.value).join(' \t| ');
+                        const rowText = row.cells.map(cell => cell.value).join(' | ');
                         gherkinText += `\t\t\t| ${rowText} |`;
                         if (rowIndex < example.tableBody.length) {
                             gherkinText += '\n';
