@@ -1,0 +1,1 @@
+<div class="copyright text-center my-auto">© 2024 CukeHub</div>
