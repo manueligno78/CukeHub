@@ -41,10 +41,10 @@ describe('HTTP routes', () => {
     const response = await request(server)
       .post('/save-settings')
       .send({
-        directoryPath: __dirname,
+        directoryPath: 'testDir',
         testCommand: 'npm test',
         folderToExclude: 'node_modules',
-        outputFolder: path.join(__dirname, 'output'),
+        outputFolder: 'testoutput',
         keepFolderStructure: 'on'
       });
     expect(response.statusCode).to.equal(302);

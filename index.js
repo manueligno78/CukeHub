@@ -143,7 +143,6 @@ app.get('/settings', (req, res) => {
 });
 
 app.post('/save-settings', (req, res) => {
-  console.log(req.body);
   const newDirectoryPath = req.body.directoryPath;
   const newTestCommand = req.body.testCommand;
   const newFolderToExclude = req.body.folderToExclude;
@@ -293,6 +292,7 @@ function reset() {
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   const directoryPath = config.directoryPath;
   let featureFiles = getFiles(directoryPath);
+  //let featureFiles = getFiles(directoryPath);
   featureFilesCopy = JSON.parse(JSON.stringify(featureFiles));
   notifyClients(JSON.stringify({ action: 'reset' }));
 }
