@@ -2,12 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
-
-
 const http = require('http');
-
 const featureFilesModule = require('./featureFilesModule.js');
-
 const app = express();
 const server = http.createServer(app);
 const { initializeWebSocket, notifyClients } = require('./websocket.js');

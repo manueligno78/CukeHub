@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const Gherkin = require('@cucumber/gherkin');
 const Messages = require('@cucumber/messages');
+const gherkinDocumentToString = require('./gherkinUtils');
 
 let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
@@ -106,4 +107,4 @@ function getScenarios(filePath) {
     return parseGherkinContent(fileContent);
 }
 
-module.exports = { updateFeatureFilesCopy, getFeatureFilesCopy, getFiles, getScenarios, parseGherkinContent };
+module.exports = { updateFeatureFilesCopy, getFeatureFilesCopy, getFiles, getScenarios, parseGherkinContent, gherkinDocumentToString };

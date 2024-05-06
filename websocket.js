@@ -1,7 +1,6 @@
 const WebSocket = require('ws');
 const fs = require('fs');
 const featureFilesModule = require('./featureFilesModule.js');
-const gherkinDocumentToString = require('./gherkinUtils');
 const { exec, execSync } = require('child_process');
 const path = require('path');
 let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
@@ -68,7 +67,7 @@ function initializeWebSocket(server) {
                 const keepFolderStructure = config.keepFolderStructure;
                 const directoryPath = config.directoryPath;
                 featureFilesModule.getFeatureFilesCopy().forEach(featureFile => {
-                    const gherkinText = gherkinDocumentToString(featureFile);
+                    const gherkinText = featureFilesModule.gherkinDocumentToString(featureFile);
                     let outputUrl = featureFile.path.replace(directoryPath, outputFolder);
                     if (keepFolderStructure) {
                         outputUrl = outputUrl.replace(/\\/g, '\\\\');
