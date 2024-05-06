@@ -34,6 +34,7 @@ function getFiles(dirPath, arrayOfFiles = []) {
       new RegExp('^' + folder.trim().replace(/\*/g, '.*') + '$')
     );
   }
+  //
   files.forEach(file => {
     const fullPath = path.join(dirPath, "/", file);
     const isExcluded = excludePatterns.some(pattern => pattern.test(fullPath));
