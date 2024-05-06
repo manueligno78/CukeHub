@@ -31,8 +31,6 @@ function notifyClients(message) {
 }
 
 function gitStatus() {
-  // Execute a shell command
-  // git status on config.directoryPath
   const gitStatusCommand = 'git status --porcelain';
   const gitStatusOutput = execSync(gitStatusCommand, { cwd: config.directoryPath });
   return gitStatusOutput.toString();
@@ -90,11 +88,9 @@ wss.on('connection', ws => {
     if (data.action === 'run-tests') {
       const tags = data.tags;
       const testCommand = config.testCommand.replace('@yourTag', tags);
-
       notifyClients('tests started');
       notifyClients('executing: ' + testCommand);
       notifyClients('debug: ' + tags);
-
       exec(testCommand, (error, stdout, stderr) => {
         // ... gestione dell'output come prima ...
       });
@@ -202,12 +198,6 @@ wss.on('connection', ws => {
     }
   });
 });
-
-function getNestedProperty(obj, path) {
-  return path.split('.').reduce((prev, curr) => {
-    return prev ? prev[curr] : null
-  }, obj || self)
-}
 
 function reset() {
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
