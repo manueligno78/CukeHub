@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
+        "startwd": "nodemon --exec \"npm test && node index.js\"",
         "test": "mocha"
     },
     "dependencies": {
@@ -15,10 +16,12 @@
         "ejs": "^3.1.6",
         "express": "^4.17.1",
         "gherkin": "^9.0.0",
+        "sinon": "^17.0.1",
         "ws": "^7.4.6"
     },
     "devDependencies": {
         "mocha": "^10.4.0",
+        "nodemon": "^3.1.0",
         "supertest": "^6.3.4"
     }
 }

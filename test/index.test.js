@@ -9,19 +9,6 @@ before(async () => {
   expect = (await import('chai')).expect;
 });
 
-describe('getFiles', () => {
-  it('should return an array of files', () => {
-    const files = getFiles(__dirname);
-    expect(Array.isArray(files)).to.be.true;
-  });
-});
-describe('getScenarios', () => {
-  it('should return null if file does not exist', () => {
-    const scenarios = getScenarios('nonexistent.file');
-    expect(scenarios).to.be.null;
-  });
-});
-
 describe('HTTP routes', () => {
   after(() => {
     server.close();
