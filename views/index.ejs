@@ -79,15 +79,15 @@
                                 <div class="card-header d-flex gap-2 justify-content-center flex-wrap">
                                   <!-- Tags -->
                                   <!-- TODO: Click on tags to filter results of table-->
-                                  <% featureFile.feature.tags.forEach(function(tag) { %>
+                                  <% featureFile.feature.tags.forEach(function(tag,tagIndex) { %>
                                     <span
                                       class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
                                       id="tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>">
-                                      <span onclick='addTagToDataTableSearchInput("<%= tag.name %>")'
-                                        contentEditable="true" onblur="updateFeature('', this.innerText)" class="px-1">
+                                      <span contentEditable="true"
+                                        onblur='updateFeature("<%= featureFile.featureId %>", "feature.tags[<%= tagIndex %>].name", this.innerText)'
+                                        class="px-1">
                                         <%= tag.name %>
                                       </span>
-                                      <!-- TODO: Bug On click implement removeTag-->
                                       <button type="button" class="btn btn-link d-flex m-0 p-0"
                                         onclick="removeTag('<%= featureFile.featureId %>', '<%= featureFile.feature.featureId %>', '<%= tag.name %>','tag-<%= tag.name %>','tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>')"></a>
                                         <svg class="bi ms-1" width="16" height="16">
@@ -96,7 +96,6 @@
                                       </button>
                                     </span>
                                     <% }); %>
-                                      <!-- TODO: Bug On click user should be able to add a new tag-->
                                       <span
                                         class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
                                         <a href="#" class="addTagInput" contentEditable="true"

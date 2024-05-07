@@ -117,6 +117,12 @@ function reset() {
 function updateFeatureFile(featureId, field, newValue) {
     let featureFile = getFeatureFilesCopy().find(file => file.featureId === featureId);
     if (featureFile) {
+        // If the field path contains a tag validate the tag (start with @ and no spaces)
+        if (field.includes('tags')) {
+            if (!newValue.startsWith('@') || newValue.includes(' ')) {
+                return null;
+            }
+        }
         setNestedProperty(featureFile, field, newValue);
         return featureFile;
     }
@@ -159,6 +165,11 @@ function removeTag(featureId, scenarioId, tag) {
 // TODO: Actually add Tag only to scenario, need to add tag to feature tags too (add test also)
 function addTag(featureId, scenarioId, tag) {
     let result = null;
+    // validate tag (start with @ and no spaces)
+    if (!tag.startsWith('@') || tag.includes(' ')) {
+        result = null;
+        return result;
+    }
     let featureFilesCopy = getFeatureFilesCopy();
     let featureFile = featureFilesCopy.find(file => file.featureId === featureId);
     if (featureFile) {
@@ -249,6 +260,10 @@ function deleteAllOccurencyOfTag(tag) {
 
 // Bug needs to be investigated, seems not to be invoked
 function updateAllOccurencyOfTag(tag, newTag) {
+    // validate tag (start with @ and no spaces)
+    if (!newTag.startsWith('@') || newTag.includes(' ')) {
+        return null;
+    }
     let tagExists = false;
     let newTagExists = false;
     let featureFilesCopy = getFeatureFilesCopy();

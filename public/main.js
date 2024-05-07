@@ -9,11 +9,11 @@ socket.addEventListener('message', function (event) {
   } else if (JSON.parse(event.data).action === 'reset') {
     console.log('Resetting the page...');
     location.reload();
-    document.getElementById('saveButton').style.display = 'none';
-    document.getElementById('resetButton').style.display = 'none';
+    //document.getElementById('saveButton').style.display = 'none';
+    //document.getElementById('resetButton').style.display = 'none';
   } else if (JSON.parse(event.data).action === 'featureUpdated') {
-    document.getElementById('saveButton').style.display = 'block';
-    document.getElementById('resetButton').style.display = 'block';
+    //document.getElementById('saveButton').style.display = 'block';
+    //document.getElementById('resetButton').style.display = 'block';
     // reload the page
     location.reload();
   } else if (JSON.parse(event.data).action === 'gitStatus') {
@@ -189,9 +189,6 @@ function addTag(featureId, scenarioId, tag, caller) {
     tag: tag
   });
   socket.send(message);
-  // do some animation on the tag
-  caller.classList.add('bg-animation-pulse');
-  //document.getElementById(id).blur;
 }
 
 function updateAllOccurencyOfTag(tag, newTag) {
