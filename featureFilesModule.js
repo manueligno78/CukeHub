@@ -123,13 +123,13 @@ function updateFeatureFile(featureId, field, newValue) {
     return null;
 }
 
-// TODO: Actually remove tag only from scenario, need to remove from feature tags too (add test also)
 function removeTag(featureId, scenarioId, tag) {
+    console.log('scenarioId: ', scenarioId);
     let featureFile = getFeatureFilesCopy().find(file => file.featureId === featureId);
     let result = null;
     if (featureFile) {
         // Remove tag from feature tags
-        if (featureFile.feature.tags && featureFile.feature.tags.length > 0) {
+        if (featureFile.feature.tags && featureFile.feature.tags.length > 0 && scenarioId === null) {
             let tagIndex = featureFile.feature.tags.findIndex(t => t.name === tag);
             if (tagIndex > -1) {
                 featureFile.feature.tags.splice(tagIndex, 1);
@@ -139,7 +139,7 @@ function removeTag(featureId, scenarioId, tag) {
             }
         }
         // Remove tag from scenario tags
-        if (featureFile.feature.children && featureFile.feature.children.length > 0) {
+        if (featureFile.feature.children && featureFile.feature.children.length > 0 && scenarioId !== null) {
             let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
             if (scenario) {
                 let tagIndex = scenario.scenario.tags.findIndex(t => t.name === tag);
@@ -162,16 +162,28 @@ function addTag(featureId, scenarioId, tag) {
     let featureFilesCopy = getFeatureFilesCopy();
     let featureFile = featureFilesCopy.find(file => file.featureId === featureId);
     if (featureFile) {
+        // Add tag to feature tags
+        if (!featureFile.feature.tags) {
+            featureFile.feature.tags = [];
+        }
+        let featureTagExists = featureFile.feature.tags.some(existingTag => existingTag.name === tag);
+        if (!featureTagExists && scenarioId === null) {
+            featureFile.feature.tags.push({ name: tag });
+            let featureIndex = featureFilesCopy.findIndex(file => file.featureId === featureId);
+            featureFilesCopy[featureIndex] = featureFile;
+            updateFeatureFilesCopy(featureFilesCopy);
+        }
+
+        // Add tag to scenario tags
         let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
         if (scenario) {
             let tagExists = scenario.scenario.tags.some(existingTag => existingTag.name === tag);
-            if (!tagExists) {
+            if (!tagExists && scenarioId !== null) {
                 scenario.scenario.tags.push({ name: tag });
                 let scenarioIndex = featureFile.feature.children.findIndex(child => child.scenario && child.scenario.id === scenarioId);
                 featureFile.feature.children[scenarioIndex] = scenario;
                 let featureIndex = featureFilesCopy.findIndex(file => file.featureId === featureId);
                 featureFilesCopy[featureIndex] = featureFile;
-                // Utilizza updateFeatureFilesCopy per aggiornare l'array originale dei file di funzionalità
                 updateFeatureFilesCopy(featureFilesCopy);
                 return true;
             }
@@ -202,11 +214,20 @@ function saveOnDisk() {
     }
 }
 
-// Works only if tag is present in scenario tags, need to be fixed and tested
 function deleteAllOccurencyOfTag(tag) {
     try {
         let tagFound = false;
-        getFeatureFilesCopy().forEach(featureFile => {
+        let featureFilesCopy = getFeatureFilesCopy();
+        featureFilesCopy.forEach(featureFile => {
+            // Remove tag from feature tags
+            if (featureFile.feature.tags) {
+                let tagIndex = featureFile.feature.tags.findIndex(t => t.name === tag);
+                if (tagIndex > -1) {
+                    featureFile.feature.tags.splice(tagIndex, 1);
+                    tagFound = true;
+                }
+            }
+            // Remove tag from scenario tags
             featureFile.feature.children.forEach(child => {
                 if (child.scenario) {
                     let tagIndex = child.scenario.tags.findIndex(t => t.name === tag);
@@ -217,6 +238,8 @@ function deleteAllOccurencyOfTag(tag) {
                 }
             });
         });
+        // Update the original feature files array
+        updateFeatureFilesCopy(featureFilesCopy);
         return tagFound ? true : null;
     } catch (error) {
         console.error(`Error deleting tag: ${error}`);
@@ -228,7 +251,22 @@ function deleteAllOccurencyOfTag(tag) {
 function updateAllOccurencyOfTag(tag, newTag) {
     let tagExists = false;
     let newTagExists = false;
-    getFeatureFilesCopy().forEach(featureFile => {
+    let featureFilesCopy = getFeatureFilesCopy();
+    featureFilesCopy.forEach(featureFile => {
+        // Update tag in feature tags
+        if (featureFile.feature.tags) {
+            let tagIndex = featureFile.feature.tags.findIndex(t => t.name === tag);
+            if (tagIndex > -1) {
+                tagExists = true;
+                let newTagIndex = featureFile.feature.tags.findIndex(t => t.name === newTag);
+                if (newTagIndex > -1) {
+                    newTagExists = true;
+                } else {
+                    featureFile.feature.tags[tagIndex].name = newTag;
+                }
+            }
+        }
+        // Update tag in scenario tags
         featureFile.feature.children.forEach(child => {
             if (child.scenario) {
                 let tagIndex = child.scenario.tags.findIndex(t => t.name === tag);
@@ -244,6 +282,8 @@ function updateAllOccurencyOfTag(tag, newTag) {
             }
         });
     });
+    // Update the original feature files array
+    updateFeatureFilesCopy(featureFilesCopy);
     return tagExists && !newTagExists ? true : null;
 }
 

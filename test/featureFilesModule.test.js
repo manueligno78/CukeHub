@@ -307,6 +307,7 @@ describe('featureFilesModule', function () {
             const featureFile = {
                 featureId,
                 feature: {
+                    tags: [{ name: tag }],
                     children: [
                         {
                             scenario: {
@@ -323,6 +324,7 @@ describe('featureFilesModule', function () {
             const featureFileCopy = featureFilesCopy.find(file => file.featureId === featureId);
             const scenario = featureFileCopy.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
             assert.strictEqual(scenario.scenario.tags.length, 0);
+            assert.strictEqual(featureFileCopy.feature.tags.length, 1);
         });
 
         it('should remove a tag from a feature and its related object on featureFilesCopy', function () {
@@ -346,6 +348,7 @@ describe('featureFilesModule', function () {
             const featureFilesCopy = getFeatureFilesCopy();
             const featureFileCopy = featureFilesCopy.find(file => file.featureId === featureId);
             assert.strictEqual(featureFileCopy.feature.tags.length, 0);
+            assert.strictEqual(featureFileCopy.feature.children[0].scenario.tags.length, 1);
         });
     });
 
@@ -395,6 +398,7 @@ describe('featureFilesModule', function () {
             const scenario = featureFileCopy.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
             assert.strictEqual(scenario.scenario.tags.length, 1);
             assert.strictEqual(scenario.scenario.tags[0].name, tag);
+            assert.strictEqual(featureFileCopy.feature.tags.length, 0);
         });
 
         it('should add a tag to a feature and its related object on featureFilesCopy', function () {
@@ -419,6 +423,7 @@ describe('featureFilesModule', function () {
             const featureFileCopy = featureFilesCopy.find(file => file.featureId === featureId);
             assert.strictEqual(featureFileCopy.feature.tags.length, 1);
             assert.strictEqual(featureFileCopy.feature.tags[0].name, tag);
+            assert.strictEqual(featureFileCopy.feature.children[0].scenario.tags.length, 0);
         });
     });
 
@@ -441,29 +446,8 @@ describe('featureFilesModule', function () {
             const result = deleteAllOccurencyOfTag(tag);
             assert.strictEqual(result, true);
         });
-        it('should delete all occurencies of a tag and its scenario related object on featureFilesCopy', function () {
-            const tag = '@tag';
-            const featureFile = {
-                featureId: 'file.feature',
-                feature: {
-                    children: [
-                        {
-                            scenario: {
-                                tags: [{ name: tag }]
-                            }
-                        }
-                    ]
-                }
-            };
-            updateFeatureFilesCopy([featureFile]);
-            deleteAllOccurencyOfTag(tag);
-            const featureFilesCopy = getFeatureFilesCopy();
-            const featureFileCopy = featureFilesCopy.find(file => file.featureId === 'file.feature');
-            const scenario = featureFileCopy.feature.children.find(child => child.scenario);
-            assert.deepStrictEqual(scenario.scenario.tags, []);
-        });
 
-        it('should delete all occurencies of a tag and its feature related object on featureFilesCopy', function () {
+        it('should delete all occurencies of a tag and its feature and scenarios related object on featureFilesCopy', function () {
             const tag = '@tag';
             const featureFile = {
                 featureId: 'file.feature',
@@ -483,6 +467,8 @@ describe('featureFilesModule', function () {
             const featureFilesCopy = getFeatureFilesCopy();
             const featureFileCopy = featureFilesCopy.find(file => file.featureId === 'file.feature');
             assert.deepStrictEqual(featureFileCopy.feature.tags, []);
+            const scenario = featureFileCopy.feature.children.find(child => child.scenario);
+            assert.deepStrictEqual(scenario.scenario.tags, []);
         });
 
         it('should return false if tag is not found', function () {
@@ -526,30 +512,7 @@ describe('featureFilesModule', function () {
             assert.strictEqual(result, true);
         });
 
-        it('should update all occurencies of a tag and its scenario related object on featureFilesCopy', function () {
-            const tag = '@tag';
-            const newTag = '@newTag';
-            const featureFile = {
-                featureId: 'file.feature',
-                feature: {
-                    children: [
-                        {
-                            scenario: {
-                                tags: [{ name: tag }]
-                            }
-                        }
-                    ]
-                }
-            };
-            updateFeatureFilesCopy([featureFile]);
-            updateAllOccurencyOfTag(tag, newTag);
-            const featureFilesCopy = getFeatureFilesCopy();
-            const featureFileCopy = featureFilesCopy.find(file => file.featureId === 'file.feature');
-            const scenario = featureFileCopy.feature.children.find(child => child.scenario);
-            assert.strictEqual(scenario.scenario.tags[0].name, newTag);
-        });
-
-        it('should update all occurencies of a tag and its feature related object on featureFilesCopy', function () {
+        it('should update all occurencies of a tag and its feature and scenarios related object on featureFilesCopy', function () {
             const tag = '@tag';
             const newTag = '@newTag';
             const featureFile = {
@@ -570,6 +533,8 @@ describe('featureFilesModule', function () {
             const featureFilesCopy = getFeatureFilesCopy();
             const featureFileCopy = featureFilesCopy.find(file => file.featureId === 'file.feature');
             assert.strictEqual(featureFileCopy.feature.tags[0].name, newTag);
+            const scenario = featureFileCopy.feature.children.find(child => child.scenario);
+            assert.strictEqual(scenario.scenario.tags[0].name, newTag);
         });
 
         it('should return null if tag is not found', function () {
