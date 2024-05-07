@@ -159,6 +159,7 @@ function removeTag(featureId, scenarioId, tag) {
 
 // TODO: Actually add Tag only to scenario, need to add tag to feature tags too (add test also)
 function addTag(featureId, scenarioId, tag) {
+    let result = null;
     let featureFilesCopy = getFeatureFilesCopy();
     let featureFile = featureFilesCopy.find(file => file.featureId === featureId);
     if (featureFile) {
@@ -172,8 +173,8 @@ function addTag(featureId, scenarioId, tag) {
             let featureIndex = featureFilesCopy.findIndex(file => file.featureId === featureId);
             featureFilesCopy[featureIndex] = featureFile;
             updateFeatureFilesCopy(featureFilesCopy);
+            result = true;
         }
-
         // Add tag to scenario tags
         let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
         if (scenario) {
@@ -185,11 +186,11 @@ function addTag(featureId, scenarioId, tag) {
                 let featureIndex = featureFilesCopy.findIndex(file => file.featureId === featureId);
                 featureFilesCopy[featureIndex] = featureFile;
                 updateFeatureFilesCopy(featureFilesCopy);
-                return true;
+                result = true;
             }
         }
     }
-    return null;
+    return result;
 }
 
 // Following function needs to be tested
