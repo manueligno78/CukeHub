@@ -124,12 +124,11 @@ function updateFeatureFile(featureId, field, newValue) {
 }
 
 function removeTag(featureId, scenarioId, tag) {
-    console.log('scenarioId: ', scenarioId);
     let featureFile = getFeatureFilesCopy().find(file => file.featureId === featureId);
     let result = null;
     if (featureFile) {
         // Remove tag from feature tags
-        if (featureFile.feature.tags && featureFile.feature.tags.length > 0 && scenarioId === null) {
+        if (featureFile.feature.tags && featureFile.feature.tags.length > 0 && !scenarioId) {
             let tagIndex = featureFile.feature.tags.findIndex(t => t.name === tag);
             if (tagIndex > -1) {
                 featureFile.feature.tags.splice(tagIndex, 1);
@@ -139,7 +138,7 @@ function removeTag(featureId, scenarioId, tag) {
             }
         }
         // Remove tag from scenario tags
-        if (featureFile.feature.children && featureFile.feature.children.length > 0 && scenarioId !== null) {
+        if (featureFile.feature.children && featureFile.feature.children.length > 0 && scenarioId) {
             let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
             if (scenario) {
                 let tagIndex = scenario.scenario.tags.findIndex(t => t.name === tag);
