@@ -126,21 +126,35 @@ function updateFeatureFile(featureId, field, newValue) {
 // TODO: Actually remove tag only from scenario, need to remove from feature tags too (add test also)
 function removeTag(featureId, scenarioId, tag) {
     let featureFile = getFeatureFilesCopy().find(file => file.featureId === featureId);
+    let result = null;
     if (featureFile) {
-        let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
-        if (scenario) {
-            let tagIndex = scenario.scenario.tags.findIndex(t => t.name === tag);
+        // Remove tag from feature tags
+        if (featureFile.feature.tags && featureFile.feature.tags.length > 0) {
+            let tagIndex = featureFile.feature.tags.findIndex(t => t.name === tag);
             if (tagIndex > -1) {
-                scenario.scenario.tags.splice(tagIndex, 1);
-                let scenarioIndex = featureFile.feature.children.findIndex(child => child.scenario && child.scenario.id === scenarioId);
-                featureFile.feature.children[scenarioIndex] = scenario;
+                featureFile.feature.tags.splice(tagIndex, 1);
                 let featureIndex = getFeatureFilesCopy().findIndex(file => file.featureId === featureId);
                 getFeatureFilesCopy()[featureIndex] = featureFile;
-                return true;
+                result = true;
+            }
+        }
+        // Remove tag from scenario tags
+        if (featureFile.feature.children && featureFile.feature.children.length > 0) {
+            let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
+            if (scenario) {
+                let tagIndex = scenario.scenario.tags.findIndex(t => t.name === tag);
+                if (tagIndex > -1) {
+                    scenario.scenario.tags.splice(tagIndex, 1);
+                    let scenarioIndex = featureFile.feature.children.findIndex(child => child.scenario && child.scenario.id === scenarioId);
+                    featureFile.feature.children[scenarioIndex] = scenario;
+                    let featureIndex = getFeatureFilesCopy().findIndex(file => file.featureId === featureId);
+                    getFeatureFilesCopy()[featureIndex] = featureFile;
+                    result = true;
+                }
             }
         }
     }
-    return null;
+    return result;
 }
 
 // TODO: Actually add Tag only to scenario, need to add tag to feature tags too (add test also)
