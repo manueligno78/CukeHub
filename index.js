@@ -6,7 +6,7 @@ const http = require('http');
 const featureFilesModule = require('./featureFilesModule.js');
 const app = express();
 const server = http.createServer(app);
-const { initializeWebSocket, notifyClients } = require('./websocket.js');
+const { initializeWebSocket, handleReset } = require('./websocket.js');
 const wss = initializeWebSocket(server);
 let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
@@ -64,11 +64,7 @@ app.post('/save-settings', (req, res) => {
 });
 
 function reset() {
-  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
-  const directoryPath = config.directoryPath;
-  let featureFiles = featureFilesModule.getFiles(directoryPath);
-  featureFilesModule.updateFeatureFilesCopy(JSON.parse(JSON.stringify(featureFiles)));
-  notifyClients(JSON.stringify({ action: 'reset' }));
+  handleReset();
 }
 
 server.listen(3000, () => {

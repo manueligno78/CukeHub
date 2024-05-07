@@ -1,5 +1,4 @@
 Feature: Guess the word
-
   The word guess game is a turn-based game for two players.
   The Maker makes a word for the Breaker to guess. The game
   is over when the Breaker guesses the Maker's word.
@@ -15,9 +14,7 @@ Feature: Guess the word
     Then the Breaker must guess a word with 5 characters
 
   Scenario: Multiple Tags
-
-    This is the scenario description
-
+  This is the scenario description
     Given one thing
     And another thing
     And yet another thing

@@ -1,5 +1,19 @@
 const assert = require('assert');
-const { updateFeatureFilesCopy, getFeatureFilesCopy, getFiles, parseGherkinContent } = require('../featureFilesModule');
+const sinon = require('sinon');
+const fs = require('fs');
+const { updateFeatureFilesCopy,
+    getFeatureFilesCopy,
+    getFiles,
+    getScenarios,
+    parseGherkinContent,
+    reset,
+    updateFeatureFile,
+    removeTag,
+    addTag,
+    saveOnDisk,
+    deleteAllOccurencyOfTag,
+    updateAllOccurencyOfTag
+} = require('../featureFilesModule');
 
 describe('featureFilesModule', function () {
     describe('#updateFeatureFilesCopy()', function () {
@@ -29,6 +43,14 @@ describe('featureFilesModule', function () {
             files.forEach(file => {
                 assert(file.name.endsWith('.feature'));
             });
+        });
+    });
+
+    describe('#getScenarios()', function () {
+        it('should return scenarios from a file', function () {
+            const filePath = './test/resources/file.feature';
+            const scenarios = getScenarios(filePath);
+            assert(Array.isArray(scenarios.feature.children));
         });
     });
 
@@ -233,6 +255,341 @@ describe('featureFilesModule', function () {
             assert.strictEqual(scenario.name, 'Some determinable business situation');
             assert.strictEqual(scenario.numberOfSteps, 8);
             assert.strictEqual(scenario.steps[7].dataTable.rows.length, 3);
+        });
+    });
+
+    describe('reset()', function () {
+        it('should reset featureFilesCopy', function () {
+            updateFeatureFilesCopy(['data']);
+            reset();
+            assert.deepStrictEqual(getFeatureFilesCopy(), ['data']);
+        });
+    });
+
+    describe('updateFeatureFile()', function () {
+        it('should update a feature file', function () {
+            const featureId = 'file.feature';
+            const field = 'feature.name';
+            const newValue = 'new name';
+            const featureFile = { featureId, feature: { name: 'old name' } };
+            updateFeatureFilesCopy([featureFile]);
+            const updatedFeatureFile = updateFeatureFile(featureId, field, newValue);
+            assert.strictEqual(updatedFeatureFile.feature.name, newValue);
+        });
+    });
+
+    describe('removeTag()', function () {
+        it('should remove a tag from a scenario and return true', function () {
+            const featureId = 'file.feature';
+            const scenarioId = 'scenario1';
+            const tag = '@tag';
+            const featureFile = {
+                featureId,
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                id: scenarioId,
+                                tags: [{ name: tag }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            const result = removeTag(featureId, scenarioId, tag);
+            assert.strictEqual(result, true);
+        });
+        it('should remove a tag from a scenario and its related object on featureFilesCopy', function () {
+            const featureId = 'file.feature';
+            const scenarioId = 'scenario1';
+            const tag = '@tag';
+            const featureFile = {
+                featureId,
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                id: scenarioId,
+                                tags: [{ name: tag }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            removeTag(featureId, scenarioId, tag);
+            const featureFilesCopy = getFeatureFilesCopy();
+            const featureFileCopy = featureFilesCopy.find(file => file.featureId === featureId);
+            const scenario = featureFileCopy.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
+            assert.strictEqual(scenario.scenario.tags.length, 0);
+        });
+
+        it('should remove a tag from a feature and its related object on featureFilesCopy', function () {
+            const featureId = 'file.feature';
+            const tag = '@tag';
+            const featureFile = {
+                featureId,
+                feature: {
+                    tags: [{ name: tag }],
+                    children: [
+                        {
+                            scenario: {
+                                tags: [{ name: tag }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            removeTag(featureId, null, tag);
+            const featureFilesCopy = getFeatureFilesCopy();
+            const featureFileCopy = featureFilesCopy.find(file => file.featureId === featureId);
+            assert.strictEqual(featureFileCopy.feature.tags.length, 0);
+        });
+    });
+
+    describe('addTag()', function () {
+        it('should add a tag to a scenario', function () {
+            const featureId = 'file.feature';
+            const scenarioId = 'scenario1';
+            const tag = '@tag';
+            const featureFile = {
+                featureId,
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                id: scenarioId,
+                                tags: []
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            const result = addTag(featureId, scenarioId, tag);
+            assert.strictEqual(result, true);
+        });
+        it('should add a tag to a scenario and its related object on featureFilesCopy', function () {
+            const featureId = 'file.feature';
+            const scenarioId = 'scenario1';
+            const tag = '@tag';
+            const featureFile = {
+                featureId,
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                id: scenarioId,
+                                tags: []
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            addTag(featureId, scenarioId, tag);
+            const featureFilesCopy = getFeatureFilesCopy();
+            const featureFileCopy = featureFilesCopy.find(file => file.featureId === featureId);
+            const scenario = featureFileCopy.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
+            assert.strictEqual(scenario.scenario.tags.length, 1);
+            assert.strictEqual(scenario.scenario.tags[0].name, tag);
+        });
+
+        it('should add a tag to a feature and its related object on featureFilesCopy', function () {
+            const featureId = 'file.feature';
+            const tag = '@tag';
+            const featureFile = {
+                featureId,
+                feature: {
+                    tags: [],
+                    children: [
+                        {
+                            scenario: {
+                                tags: []
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            addTag(featureId, null, tag);
+            const featureFilesCopy = getFeatureFilesCopy();
+            const featureFileCopy = featureFilesCopy.find(file => file.featureId === featureId);
+            assert.strictEqual(featureFileCopy.feature.tags.length, 1);
+            assert.strictEqual(featureFileCopy.feature.tags[0].name, tag);
+        });
+    });
+
+    describe('deleteAllOccurencyOfTag()', function () {
+        it('should delete all occurencies of a tag', function () {
+            const tag = '@tag';
+            const featureFile = {
+                featureId: 'file.feature',
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                tags: [{ name: tag }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            const result = deleteAllOccurencyOfTag(tag);
+            assert.strictEqual(result, true);
+        });
+        it('should delete all occurencies of a tag and its scenario related object on featureFilesCopy', function () {
+            const tag = '@tag';
+            const featureFile = {
+                featureId: 'file.feature',
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                tags: [{ name: tag }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            deleteAllOccurencyOfTag(tag);
+            const featureFilesCopy = getFeatureFilesCopy();
+            const featureFileCopy = featureFilesCopy.find(file => file.featureId === 'file.feature');
+            const scenario = featureFileCopy.feature.children.find(child => child.scenario);
+            assert.deepStrictEqual(scenario.scenario.tags, []);
+        });
+
+        it('should delete all occurencies of a tag and its feature related object on featureFilesCopy', function () {
+            const tag = '@tag';
+            const featureFile = {
+                featureId: 'file.feature',
+                feature: {
+                    tags: [{ name: tag }],
+                    children: [
+                        {
+                            scenario: {
+                                tags: [{ name: tag }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            deleteAllOccurencyOfTag(tag);
+            const featureFilesCopy = getFeatureFilesCopy();
+            const featureFileCopy = featureFilesCopy.find(file => file.featureId === 'file.feature');
+            assert.deepStrictEqual(featureFileCopy.feature.tags, []);
+        });
+
+        it('should return false if tag is not found', function () {
+            const tag = '@tag';
+            const featureFile = {
+                featureId: 'file.feature',
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                tags: [{ name: '@anotherTag' }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            const result = deleteAllOccurencyOfTag(tag);
+            assert.strictEqual(result, null);
+        });
+    });
+
+    describe('updateAllOccurencyOfTag()', function () {
+        it('should update all occurencies of a tag', function () {
+            const tag = '@tag';
+            const newTag = '@newTag';
+            const featureFile = {
+                featureId: 'file.feature',
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                tags: [{ name: tag }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            const result = updateAllOccurencyOfTag(tag, newTag);
+            assert.strictEqual(result, true);
+        });
+
+        it('should update all occurencies of a tag and its scenario related object on featureFilesCopy', function () {
+            const tag = '@tag';
+            const newTag = '@newTag';
+            const featureFile = {
+                featureId: 'file.feature',
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                tags: [{ name: tag }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            updateAllOccurencyOfTag(tag, newTag);
+            const featureFilesCopy = getFeatureFilesCopy();
+            const featureFileCopy = featureFilesCopy.find(file => file.featureId === 'file.feature');
+            const scenario = featureFileCopy.feature.children.find(child => child.scenario);
+            assert.strictEqual(scenario.scenario.tags[0].name, newTag);
+        });
+
+        it('should update all occurencies of a tag and its feature related object on featureFilesCopy', function () {
+            const tag = '@tag';
+            const newTag = '@newTag';
+            const featureFile = {
+                featureId: 'file.feature',
+                feature: {
+                    tags: [{ name: tag }],
+                    children: [
+                        {
+                            scenario: {
+                                tags: [{ name: tag }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            updateAllOccurencyOfTag(tag, newTag);
+            const featureFilesCopy = getFeatureFilesCopy();
+            const featureFileCopy = featureFilesCopy.find(file => file.featureId === 'file.feature');
+            assert.strictEqual(featureFileCopy.feature.tags[0].name, newTag);
+        });
+
+        it('should return null if tag is not found', function () {
+            const tag = '@tag';
+            const newTag = '@newTag';
+            const featureFile = {
+                featureId: 'file.feature',
+                feature: {
+                    children: [
+                        {
+                            scenario: {
+                                tags: [{ name: '@anotherTag' }]
+                            }
+                        }
+                    ]
+                }
+            };
+            updateFeatureFilesCopy([featureFile]);
+            const result = updateAllOccurencyOfTag(tag, newTag);
+            assert.strictEqual(result, null);
         });
     });
 });
