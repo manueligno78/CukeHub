@@ -145,17 +145,20 @@ function removeTag(featureId, scenarioId, tag) {
 
 // TODO: Actually add Tag only to scenario, need to add tag to feature tags too (add test also)
 function addTag(featureId, scenarioId, tag) {
-    let featureFile = getFeatureFilesCopy().find(file => file.featureId === featureId);
+    let featureFilesCopy = getFeatureFilesCopy();
+    let featureFile = featureFilesCopy.find(file => file.featureId === featureId);
     if (featureFile) {
         let scenario = featureFile.feature.children.find(child => child.scenario && child.scenario.id === scenarioId);
         if (scenario) {
-            let tagExists = scenario.scenario.tags.some(tag => tag.name === tag);
+            let tagExists = scenario.scenario.tags.some(existingTag => existingTag.name === tag);
             if (!tagExists) {
                 scenario.scenario.tags.push({ name: tag });
                 let scenarioIndex = featureFile.feature.children.findIndex(child => child.scenario && child.scenario.id === scenarioId);
                 featureFile.feature.children[scenarioIndex] = scenario;
-                let featureIndex = getFeatureFilesCopy().findIndex(file => file.featureId === featureId);
-                getFeatureFilesCopy()[featureIndex] = featureFile;
+                let featureIndex = featureFilesCopy.findIndex(file => file.featureId === featureId);
+                featureFilesCopy[featureIndex] = featureFile;
+                // Utilizza updateFeatureFilesCopy per aggiornare l'array originale dei file di funzionalità
+                updateFeatureFilesCopy(featureFilesCopy);
                 return true;
             }
         }

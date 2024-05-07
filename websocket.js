@@ -108,5 +108,13 @@ function gitStatus() {
 module.exports = {
     initializeWebSocket,
     notifyClients,
-    handleReset
+    handleReset,
+    handleRunTests,
+    handleUpdateFeature,
+    handleRemoveTag,
+    handleAddTag,
+    handleSaveOnDisk,
+    handleDeleteAllOccurencyOfTag,
+    handleUpdateAllOccurencyOfTag,
+    handleGitStatus
 };
