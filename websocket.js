@@ -77,8 +77,8 @@ function handleDeleteAllOccurencyOfTag(data) {
 }
 
 function handleUpdateAllOccurencyOfTag(data) {
-    if (featureFilesModule.updateAllOccurencyOfTag(data.oldTag, data.newTag)) {
-        notifyClients(JSON.stringify({ action: 'featureUpdated', oldTag: data.oldTag, newTag: data.newTag }));
+    if (featureFilesModule.updateAllOccurencyOfTag(data.tag, data.newTag)) {
+        notifyClients(JSON.stringify({ action: 'featureUpdated', tag: data.tag, newTag: data.newTag }));
     }
 }
 
