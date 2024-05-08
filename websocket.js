@@ -41,9 +41,9 @@ function handleRunTests(data) {
     notifyClients('tests started');
     notifyClients('executing: ' + testCommand);
     notifyClients('debug: ' + tags);
-    exec(testCommand, (error, stdout, stderr) => {
-        // ... gestione dell'output come prima ...
-    });
+    if (testCommand.match(/^[\w\.\-\/]+$/)) {
+        execSync('wc -l ${file}');
+    }
 }
 
 function handleUpdateFeature(data) {
