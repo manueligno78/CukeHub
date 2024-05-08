@@ -162,7 +162,6 @@ function removeTag(featureId, scenarioId, tag) {
     return result;
 }
 
-// TODO: Actually add Tag only to scenario, need to add tag to feature tags too (add test also)
 function addTag(featureId, scenarioId, tag) {
     let result = null;
     // validate tag (start with @ and no spaces)
