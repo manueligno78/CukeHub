@@ -16,9 +16,10 @@ socket.addEventListener('message', function (event) {
     //document.getElementById('resetButton').style.display = 'block';
     // reload the page
     location.reload();
-  } else if (JSON.parse(event.data).action === 'gitStatus') {
-    document.getElementById('git-status').innerHTML = JSON.parse(event).data.message;
   }
+  // else if (JSON.parse(event.data).action === 'gitStatus') {
+  //   document.getElementById('git-status').innerHTML = JSON.parse(event).data.message;
+  // }
 });
 
 socket.addEventListener('open', function (event) {
