@@ -6,10 +6,17 @@ const http = require('http');
 const featureFilesModule = require('./featureFilesModule.js');
 const app = express();
 const server = http.createServer(app);
+const rateLimit = require("express-rate-limit");
 const { initializeWebSocket, handleReset } = require('./websocket.js');
 const wss = initializeWebSocket(server);
 let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minutes
+  max: 100
+});
+
+app.use(limiter);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: false }));
