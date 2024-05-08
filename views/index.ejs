@@ -99,7 +99,9 @@
                                       <span
                                         class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
                                         <a href="#" class="addTagInput" contentEditable="true"
-                                          onblur="addTag('<%= featureFile.featureId %>', null, this.innerText,this)">
+                                          onclick="this.innerText = '@'"
+                                          onblur="if (isValidTag(this.innerText)) addTag('<%= featureFile.featureId %>', null, this.innerText, this); else this.innerText = '+ add tag'"
+                                          onkeydown="if (event.key === 'Enter') { event.preventDefault(); if (isValidTag(this.innerText)) addTag('<%= featureFile.featureId %>', null, this.innerText, this); else this.innerText = '+ add tag'}">
                                           + add tag
                                         </a>
                                       </span>
@@ -155,7 +157,9 @@
                                                 <span
                                                   class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
                                                   <a href="#" class="addTagInput" contentEditable="true"
-                                                    onblur="addTag('<%= featureFile.featureId %>', '<%= featureFile.feature.children[index].scenario.id %>', this.innerText,this)">
+                                                    onclick="this.innerText = '@'"
+                                                    onblur="if (isValidTag(this.innerText)) addTag('<%= featureFile.featureId %>', '<%= featureFile.feature.children[index].scenario.id %>', this.innerText, this); else this.innerText = '+ add tag'"
+                                                    onkeydown="if (event.key === 'Enter') { event.preventDefault(); if (isValidTag(this.innerText)) addTag('<%= featureFile.featureId %>', '<%= featureFile.feature.children[index].scenario.id %>', this.innerText, this); else this.innerText = '+ add tag'}">
                                                     + add tag
                                                   </a>
                                                 </span>

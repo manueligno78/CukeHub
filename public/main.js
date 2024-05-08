@@ -147,10 +147,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
   }
 });
 
-// $(function() {
-//   var taglist = $("#tagsInput").data("tags").split(",");
-//   autocompleteInputTags(taglist, "#tagsInput");
-// });
+function isValidTag(tag) {
+  // A tag is valid if it is a string, it is not empty and it does not contain spaces and starts with @ and length > 2
+  return typeof tag === 'string' && tag.trim() !== '' && !tag.includes(' ') && tag.startsWith('@') && tag.length > 2;
+}
 
 $(document).ready(function () {
   $('#dataTable').DataTable();
