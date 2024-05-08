@@ -24,7 +24,7 @@ function initializeWebSocket(server) {
         ws.on('message', message => {
             const data = JSON.parse(message);
             const actionHandler = actionHandlers[data.action];
-            if (actionHandler) {
+            if (actionHandler && data !== null && typeof data === 'object') {
                 actionHandler(data);
             } else {
                 console.error('Unknown action:', data.action);
