@@ -50,7 +50,7 @@ function gherkinDocumentToString(gherkinDocument) {
                 // Check if the step has a datatable
                 if (step.dataTable) {
                     step.dataTable.rows.forEach(row => {
-                        gherkinText += '\n\t\t\t| ' + row.cells.map(cell => cell.value).join(' | ') + ' |';
+                        gherkinText += '\n\t\t\t| ' + row.cells.map(cell => cell.value.replace(/\|/g, '\\|')).join(' | ') + ' |';
                     });
                 }
                 if (stepIndex < child.scenario.steps.length) {
@@ -66,7 +66,8 @@ function gherkinDocumentToString(gherkinDocument) {
                     gherkinText += `\t\t\t| ${header} |\n`;
                     // Add the table rows
                     example.tableBody.forEach((row, rowIndex) => {
-                        const rowText = row.cells.map(cell => cell.value).join(' | ');
+                        // fix bug: escape pipe character
+                        const rowText = row.cells.map(cell => cell.value.replace(/\|/g, '\\|')).join(' | ');
                         gherkinText += `\t\t\t| ${rowText} |`;
                         if (rowIndex < example.tableBody.length) {
                             gherkinText += '\n';
