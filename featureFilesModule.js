@@ -97,7 +97,7 @@ function parseGherkinContent(content) {
             ...gherkinDocument
         };
     } catch (error) {
-        console.error(`Error parsing gherkin content: ${error}`);
+        console.error('Error parsing gherkin content:' + error);
         return null;
     }
 }
