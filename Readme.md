@@ -1,5 +1,7 @@
 # CukeHub Project
 
+![alt text](./public/TCM_Logo.png "Home dashboard") 
+
 CukeHub is a Node.js-based application for managing Gherkin Cucumber features, scenarios, and tags. It provides a user-friendly and flexible interface for viewing and editing your feature files and the scenarios they contain.
 
 
@@ -63,8 +65,18 @@ This will start the server of CukeHub application on localhost:3000.
 
 Once the CukeHub server is running, you can access the application by opening a web browser and navigating to `http://localhost:3000`.
 
+![alt text](./public/readme/sample_home.png "Home dashboard")
+
 The main interface presents a list of your feature files. You can click on a feature to view its scenarios and tags. To edit a feature or scenario, click on its name, make your changes, and then click outside of the text field to save your changes.
 
-Tags can be added to a scenario by clicking on the 'Add Tag' button, entering the tag name, and pressing enter. To remove a tag, click on the 'x' next to the tag name.
+Tags can be added to a feature or a scenario by clicking on the 'Add Tag' button, entering the tag name, and pressing enter. To remove a tag, click on the 'x' next to the tag name. 
 
-Remember to save your changes before leaving the page or they will be lost. If you encounter any issues while using CukeHub, please report them on the project's GitHub page.
+### Tag Cloud Component
+
+The `TagCloud` component is used to display all the tags present across all feature files.
+
+![alt text](./public/readme/sample_tagCloud.png "Home dashboard")
+
+It provides an overview of all the tags used in your project. You can delete or change the value of a tag directly from the `TagCloud`. When you modify a tag, the change will affect all feature files and scenarios that use that tag. This allows you to manage and organize your tags efficiently and consistently.
+
+Remember to export your changes before leaving the page or they will be lost. If you encounter any issues while using CukeHub, please report them on the project's GitHub page.
