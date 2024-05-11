@@ -1,4 +1,7 @@
 
+// ghernkinDocumentToString: converts a gherkin document to a string,
+// used to export the document to a file
+
 function gherkinDocumentToString(gherkinDocument) {
     //console.log('gherkinDocument:', JSON.stringify(gherkinDocument, null, 2));
     // Check if the document contains a feature otherwise return an error
