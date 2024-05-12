@@ -1,4 +1,4 @@
-# Contributing to [Your Project Name]
+# Contributing to Cukehub
 
 First off, thank you for considering contributing to CukeHub. It's people like you that make CukeHub such a great tool.
 
