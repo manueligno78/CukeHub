@@ -1,0 +1,38 @@
+<% var tagFrequency={}; var maxFrequency=1; featureFiles.forEach(function(featureFile) { if (featureFile &&
+  featureFile.path) { if (featureFile.feature.tags) { featureFile.feature.tags.forEach(function(tag) {
+  if(tagFrequency[tag.name]) { tagFrequency[tag.name].count++;
+  tagFrequency[tag.name].features.push(featureFile.feature.name); if (tagFrequency[tag.name].count> maxFrequency) {
+  maxFrequency = tagFrequency[tag.name].count;
+  }
+  } else {
+  tagFrequency[tag.name] = { count: 1, scenarios: [], features: [featureFile.feature.name] };
+  }
+  });
+  }
+  featureFile.feature.children.forEach(function(child) {
+  if (child.scenario) {
+  child.scenario.tags.forEach(function(tag) {
+  if (tagFrequency[tag.name]) {
+  tagFrequency[tag.name].count++;
+  tagFrequency[tag.name].scenarios.push(child.scenario.name);
+  if (tagFrequency[tag.name].count > maxFrequency) {
+  maxFrequency = tagFrequency[tag.name].count;
+  }
+  } else {
+  tagFrequency[tag.name] = { count: 1, scenarios: [child.scenario.name], features: [] };
+  }
+  });
+  }
+  });
+  }
+  });
+  %>
+
+  <select class="form-control select2 addTagInput" multiple="multiple"
+    onblur="if (isValidTag(this.innerText)) addTag('<%= featureFile.featureId %>', null, this.innerText, this); else this.innerText = '+ add tag'">
+    <% for (var tag in tagFrequency) { %>
+      <option>
+        <%= tag %>
+      </option>
+      <% } %>
+  </select>

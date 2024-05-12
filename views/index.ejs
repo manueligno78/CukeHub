@@ -26,6 +26,11 @@
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
 
+  <!-- Select2  -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
   <!-- Bootstrap JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -98,12 +103,13 @@
                                     <% }); %>
                                       <span
                                         class="add-tag badge d-flex p-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
-                                        <a href="#" class="addTagInput" contentEditable="true"
+                                        <!-- <a href="#" class="addTagInput" contentEditable="true"
                                           onclick="this.innerText = '@'"
                                           onblur="if (isValidTag(this.innerText)) addTag('<%= featureFile.featureId %>', null, this.innerText, this); else this.innerText = '+ add tag'"
                                           onkeydown="if (event.key === 'Enter') { event.preventDefault(); if (isValidTag(this.innerText)) addTag('<%= featureFile.featureId %>', null, this.innerText, this); else this.innerText = '+ add tag'}">
                                           + add tag
-                                        </a>
+                                        </a> -->
+                                        <%- include('test.ejs', {featureFile: featureFile}); %>
                                       </span>
                                 </div>
                                 <h5 class="card-header" contentEditable="true"

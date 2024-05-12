@@ -237,3 +237,26 @@ function confirmReset() {
   }
 }
 
+
+//Select2
+$(document).ready(function () {
+  $('.select2').select2({
+    tags: true,
+    maximumSelectionLength: 1,
+    placeholder: '+ add tag',
+    allowClear: false,
+    createTag: function (params) {
+      // Don't offset to create a tag if there is no @ symbol
+      if (params.term.indexOf('@') === -1) {
+        // Return null to disable tag creation
+        return null;
+      }
+      console.log(params.term);
+      return {
+        id: params.term,
+        text: params.term
+      }
+    }
+  });
+});
+
