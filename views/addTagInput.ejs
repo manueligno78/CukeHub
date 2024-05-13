@@ -1,0 +1,73 @@
+<% var tagFrequency={}; var maxFrequency=1; featureFiles.forEach(function(featureFile) { if (featureFile &&
+  featureFile.path) { if (featureFile.feature.tags) { featureFile.feature.tags.forEach(function(tag) { if
+  (tagFrequency[tag.name]) { tagFrequency[tag.name].count++;
+  tagFrequency[tag.name].features.push(featureFile.feature.name); if (tagFrequency[tag.name].count> maxFrequency) {
+  maxFrequency = tagFrequency[tag.name].count;
+  }
+  } else {
+  tagFrequency[tag.name] = { count: 1, scenarios: [], features: [featureFile.feature.name] };
+  }
+  });
+  }
+  featureFile.feature.children.forEach(function(child) {
+  if (child.scenario) {
+  child.scenario.tags.forEach(function(tag) {
+  if (tagFrequency[tag.name]) {
+  tagFrequency[tag.name].count++;
+  tagFrequency[tag.name].scenarios.push(child.scenario.name);
+  if (tagFrequency[tag.name].count > maxFrequency) {
+  maxFrequency = tagFrequency[tag.name].count;
+  }
+  } else {
+  tagFrequency[tag.name] = { count: 1, scenarios: [child.scenario.name], features: [] };
+  }
+  });
+  }
+  });
+  }
+  });
+  %>
+
+  <script>
+    var tags = [
+      <% for (var tag in tagFrequency) { %>
+      '
+      <%= tag %>
+        ',
+        <% } %>
+        ];
+
+    accessibleAutocomplete({
+      element: document.querySelector('#autocomplete'),
+      id: 'autocomplete', // To match it to the existing <label>.
+      source: tags,
+      onConfirm: function (val) {
+        if (isValidTag(val)) {
+          // get data-bs-feature-id from the button that opened the modal
+          var featureId = document.activeElement.getAttribute('data-bs-feature-id');
+          addTag()
+          addTag(featureId, null, val, this);
+        } else {
+          this.value = '+ add tag';
+        }
+      }
+    });
+  </script>
+
+  <div class="modal fade" id="tagModal" tabindex="-1" aria-labelledby="tagModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tagModalLabel">Add/Edit Tag</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input class="form-control" id="autocomplete" type="text" name="myAutocomplete" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
