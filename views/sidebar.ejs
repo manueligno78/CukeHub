@@ -30,11 +30,6 @@
       <span>Settings</span></a>
   </li>
 
-  <li class="nav-item flex-wrap">
-    <div class="sidebar-heading m-1 p-1">Export path : <%= configuration.outputFolder %>
-    </div>
-  </li>
-
   <!-- Divider -->
   <hr class="sidebar-divider d-none d-md-block">
 
@@ -49,8 +44,7 @@
 
   <!-- Nav Item - Save -->
   <li class="nav-item" id="saveButton" style="display: block;">
-    <a class="nav-link" href="#" onclick="confirmExport()"
-      title="Export to folder <%= configuration.outputFolder %> , go to settings to change the export folder">
+    <a class="nav-link" href="#" onclick="confirmExport()" title="Save , go to settings to change the export folder">
       <i class="fas fa-fw fa-save"></i>
       <span>Export</span></a>
   </li>

@@ -7,7 +7,7 @@ const featureFilesModule = require('./featureFilesModule.js');
 const app = express();
 const server = http.createServer(app);
 const rateLimit = require("express-rate-limit");
-const { initializeWebSocket, handleReset } = require('./websocket.js');
+const { initializeWebSocket, handleReset, notifyClients } = require('./websocket.js');
 const wss = initializeWebSocket(server);
 let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
@@ -26,41 +26,56 @@ module.exports.server = server;
 
 app.get('/', (req, res) => {
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  const gitProjectUrl = config.gitProjectUrl;
   const directoryPath = config.directoryPath;
   if (!directoryPath) {
     res.redirect('/settings');
   } else {
+    // Check if the directory path is already a git repository
+    if (!fs.existsSync(path.join(directoryPath, '.git'))) {
+      if (gitProjectUrl) {
+        // Clone the git repository
+        const simpleGit = require('simple-git')(directoryPath);
+        simpleGit.clone(gitProjectUrl, directoryPath, (err, data) => {
+          if (err) {
+            console.error(err);
+            res.redirect('/settings');
+            notifyClients(wss, 'gitStatus', { message: 'Error cloning repository' + gitProjectUrl + ' to ' + directoryPath });
+          } else {
+            console.log('Cloned repository' + gitProjectUrl + ' to ' + directoryPath);
+            notifyClients(wss, 'gitStatus', { message: 'Cloned repository' + gitProjectUrl + ' to ' + directoryPath });
+          }
+        });
+      } else {
+        res.redirect('/settings');
+      }
+    }
+    // If the feature files have not been loaded yet, load them
     if (featureFilesModule.getFeatureFilesCopy().length === 0) {
       let featureFiles = featureFilesModule.getFiles(directoryPath);
       featureFilesModule.updateFeatureFilesCopy(JSON.parse(JSON.stringify(featureFiles)));
     }
-    res.render('index', { configuration: config, featureFiles: featureFilesModule.getFeatureFilesCopy(), runCommand: !!config.testCommand });
+    res.render('index', { configuration: config, featureFiles: featureFilesModule.getFeatureFilesCopy() });
   }
 });
 
 app.get('/settings', (req, res) => {
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   res.render('settings', {
+    gitProjectUrl: config.gitProjectUrl,
     directoryPath: config.directoryPath,
-    testCommand: config.testCommand,
-    folderToExclude: config.folderToExclude,
-    outputFolder: config.outputFolder,
-    keepFolderStructure: config.keepFolderStructure
+    folderToExclude: config.folderToExclude
   });
 });
 
 app.post('/save-settings', (req, res) => {
+  const newGitProjectUrl = req.body.gitProjectUrl;
   const newDirectoryPath = req.body.directoryPath;
-  const newTestCommand = req.body.testCommand;
   const newFolderToExclude = req.body.folderToExclude;
-  const newOutputFolder = req.body.outputFolder;
-  const newKeepFolderStructure = req.body.keepFolderStructure === 'on';
   const newConfig = {
+    gitProjectUrl: newGitProjectUrl,
     directoryPath: newDirectoryPath,
-    testCommand: newTestCommand,
     folderToExclude: newFolderToExclude,
-    outputFolder: newOutputFolder,
-    keepFolderStructure: newKeepFolderStructure
   };
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   if (JSON.stringify(config) !== JSON.stringify(newConfig)) {

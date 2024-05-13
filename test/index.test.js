@@ -29,10 +29,8 @@ describe('HTTP routes', () => {
       .post('/save-settings')
       .send({
         directoryPath: 'testDir',
-        testCommand: 'npm test',
+        gitProjectUrl: 'urlGit',
         folderToExclude: 'node_modules',
-        outputFolder: 'testoutput',
-        keepFolderStructure: 'on'
       });
     expect(response.statusCode).to.equal(302);
   });

@@ -7,7 +7,6 @@ let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'ut
 let wss;
 
 const actionHandlers = {
-    'run-tests': handleRunTests,
     'updateFeature': handleUpdateFeature,
     'removeTag': handleRemoveTag,
     'addTag': handleAddTag,
@@ -33,17 +32,6 @@ function initializeWebSocket(server) {
     });
 
     return wss;
-}
-
-function handleRunTests(data) {
-    const tags = data.tags;
-    const testCommand = config.testCommand.replace('@yourTag', tags);
-    notifyClients('tests started');
-    notifyClients('executing: ' + testCommand);
-    notifyClients('debug: ' + tags);
-    if (testCommand.match(/^[\w\.\-\/]+$/)) {
-        execSync('wc -l ${file}');
-    }
 }
 
 function handleUpdateFeature(data) {
@@ -109,7 +97,6 @@ module.exports = {
     initializeWebSocket,
     notifyClients,
     handleReset,
-    handleRunTests,
     handleUpdateFeature,
     handleRemoveTag,
     handleAddTag,

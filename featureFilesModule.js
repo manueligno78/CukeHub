@@ -205,17 +205,11 @@ function addTag(featureId, scenarioId, tag) {
 // Following function needs to be tested
 function saveOnDisk() {
     try {
-        const outputFolder = config.outputFolder;
-        const keepFolderStructure = config.keepFolderStructure;
         const directoryPath = config.directoryPath;
         getFeatureFilesCopy().forEach(featureFile => {
             const gherkinText = gherkinDocumentToString(featureFile);
-            let outputUrl = featureFile.path.replace(directoryPath, outputFolder);
-            if (keepFolderStructure) {
-                outputUrl = outputUrl.replace(/\\/g, '\\\\');
-            }
-            ensureDirectoryExistence(outputUrl);
-            fs.writeFileSync(outputUrl, gherkinText);
+            ensureDirectoryExistence(directoryPath);
+            fs.writeFileSync(directoryPath, gherkinText);
         });
         return true;
     } catch (error) {
