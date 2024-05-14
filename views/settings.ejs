@@ -25,18 +25,22 @@
                             </div>
                             <form action="/save-settings" method="POST" class="user">
                                 <div class="form-group">
-                                    <label for="directoryPath">Project source path containing .feature files (absolute
-                                        path):</label>
-                                    <input type="text" class="form-control form-control-user" id="directoryPath"
-                                        name="directoryPath" value="<%= directoryPath %>">
-                                </div>
-                                <div class="form-group">
                                     <label for="gitProjectUrl">Project git url:</label>
                                     <input type="text" class="form-control form-control-user" id="gitProjectUrl"
                                         name="gitProjectUrl" value="<%= gitProjectUrl %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="folderToExclude">Folder to exclude from source path scaffolding:</label>
+                                    <label for="gitBranch">Target branch:</label>
+                                    <input type="text" class="form-control form-control-user" id="gitBranch"
+                                        name="gitBranch" value="<%= gitBranch %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="directoryPath">Destination path containing .feature files:</label>
+                                    <input type="text" class="form-control form-control-user" id="directoryPath"
+                                        name="directoryPath" value="<%= directoryPath %>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="folderToExclude">Folder to exclude from scaffolding:</label>
                                     <input type="text" class="form-control form-control-user" id="folderToExclude"
                                         name="folderToExclude" value="<%= folderToExclude %>">
                                 </div>

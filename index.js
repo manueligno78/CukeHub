@@ -63,6 +63,7 @@ app.get('/settings', (req, res) => {
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   res.render('settings', {
     gitProjectUrl: config.gitProjectUrl,
+    gitBranch: config.gitBranch,
     directoryPath: config.directoryPath,
     folderToExclude: config.folderToExclude
   });
@@ -70,10 +71,12 @@ app.get('/settings', (req, res) => {
 
 app.post('/save-settings', (req, res) => {
   const newGitProjectUrl = req.body.gitProjectUrl;
+  const newGitBranch = req.body.gitBranch;
   const newDirectoryPath = req.body.directoryPath;
   const newFolderToExclude = req.body.folderToExclude;
   const newConfig = {
     gitProjectUrl: newGitProjectUrl,
+    gitBranch: newGitBranch,
     directoryPath: newDirectoryPath,
     folderToExclude: newFolderToExclude,
   };

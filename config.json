@@ -1,1 +1,6 @@
-{}
+{
+  "gitProjectUrl": "https://github.com/MireilleBF/cucumber-demo.git",
+  "gitBranch": "main",
+  "directoryPath": "C:\\Users\\manue\\Desktop\\outTest",
+  "folderToExclude": "*target*"
+}
