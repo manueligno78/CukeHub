@@ -77,7 +77,6 @@ function handleReset(data) {
 
 async function handleGitStatus(data) {
     message = await gitStatus();
-    console.log('message is: ' + message);
     notifyClients(JSON.stringify({ action: 'gitStatus', message: message }));
 }
 
