@@ -82,7 +82,8 @@
                                   <% featureFile.feature.tags.forEach(function(tag,tagIndex) { %>
                                     <span
                                       class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
-                                      id="tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>">
+                                      id="tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>"
+                                      data-name="<%= tag.name %>">
                                       <span contentEditable="true"
                                         onblur='updateFeature("<%= featureFile.featureId %>", "feature.tags[<%= tagIndex %>].name", this.innerText)'
                                         class="px-1">
@@ -140,7 +141,8 @@
                                             <% child.scenario.tags.forEach(function(tag,tagIndex) { %>
                                               <span
                                                 id='tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>-<%= featureFile.featureId %>-<%= featureFile.feature.children[index].scenario.id %>'
-                                                class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+                                                class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
+                                                data-name="<%= tag.name %>">
                                                 <span contentEditable="true"
                                                   onblur='updateFeature("<%= featureFile.featureId %>", "feature.children[<%= index %>].scenario.tags[<%= tagIndex %>].name", this.innerText)'
                                                   class="px-1">
