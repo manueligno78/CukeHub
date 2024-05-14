@@ -72,8 +72,6 @@
       var isChecked = document.getElementById('showAllTags').checked;
       var container = document.getElementById('tagCloud');
       var tags = Array.from(container.getElementsByClassName('tag-label'));
-
-      // Ordina i tag in base al conteggio se "Switch Sort" è selezionato, altrimenti in ordine alfabetico
       if (document.getElementById('sortCheckbox').checked) {
         document.getElementById('sortCheckboxLabel').innerText = 'Switch to alphabetical sorting';
         tags.sort(function (a, b) {
@@ -85,13 +83,9 @@
           return a.textContent.localeCompare(b.textContent);
         });
       }
-
-      // Assegna l'ordine corretto a ciascun tag dopo l'ordinamento
       tags.forEach(function (tag, index) {
         tag.style.order = index;
       });
-
-      // Mostra solo i primi 10 tag se "Show All" non è selezionato, altrimenti mostra tutti i tag
       for (var i = 0; i < tags.length; i++) {
         tags[i].style.display = isChecked || i < 10 ? 'block' : 'none';
       }
@@ -99,18 +93,14 @@
       isChecked ? document.getElementById('sortCheckboxContainer').style.display = 'block' : document.getElementById('sortCheckboxContainer').style.display = 'none';
     }
 
-    // Crea un nuovo oggetto Sortable per il tag cloud
     var sortable = Sortable.create(document.getElementById('tagCloud'), {
-      animation: 1000, // Durata dell'animazione in ms
-      onUpdate: sortAndShowTags // Funzione da chiamare quando l'ordine degli elementi cambia
+      animation: 1000,
+      onUpdate: sortAndShowTags
     });
 
-    // Ordina i tag immediatamente dopo aver creato l'oggetto Sortable
     sortAndShowTags();
 
-    // Quando il documento è pronto, limita il numero di tag mostrati ai primi 10 elementi con id tag-x
     $(document).ready(function () {
       sortAndShowTags();
     });
-
   </script>
