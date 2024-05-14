@@ -5,7 +5,6 @@
     justify-content: center;
   }
 </style>
-
 <% var tagFrequency={}; var maxFrequency=1; featureFiles.forEach(function(featureFile) { if (featureFile &&
   featureFile.path) { if (featureFile.feature.tags) { featureFile.feature.tags.forEach(function(tag) { if
   (tagFrequency[tag.name]) { tagFrequency[tag.name].count++;
@@ -65,42 +64,4 @@
     <label for="sortCheckbox" id="sortCheckboxLabel">Switch to alphabetical sorting</label>
     <input type="checkbox" id="sortCheckbox" onclick="sortAndShowTags()" checked>
   </span>
-
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js"></script>
-  <script>
-    function sortAndShowTags() {
-      var isChecked = document.getElementById('showAllTags').checked;
-      var container = document.getElementById('tagCloud');
-      var tags = Array.from(container.getElementsByClassName('tag-label'));
-      if (document.getElementById('sortCheckbox').checked) {
-        document.getElementById('sortCheckboxLabel').innerText = 'Switch to alphabetical sorting';
-        tags.sort(function (a, b) {
-          return b.getAttribute('data-count') - a.getAttribute('data-count');
-        });
-      } else {
-        document.getElementById('sortCheckboxLabel').innerText = 'Switch to frequency sorting';
-        tags.sort(function (a, b) {
-          return a.textContent.localeCompare(b.textContent);
-        });
-      }
-      tags.forEach(function (tag, index) {
-        tag.style.order = index;
-      });
-      for (var i = 0; i < tags.length; i++) {
-        tags[i].style.display = isChecked || i < 10 ? 'block' : 'none';
-      }
-
-      isChecked ? document.getElementById('sortCheckboxContainer').style.display = 'block' : document.getElementById('sortCheckboxContainer').style.display = 'none';
-    }
-
-    var sortable = Sortable.create(document.getElementById('tagCloud'), {
-      animation: 1000,
-      onUpdate: sortAndShowTags
-    });
-
-    sortAndShowTags();
-
-    $(document).ready(function () {
-      sortAndShowTags();
-    });
-  </script>
+  <script src="/tagCloud.js"></script>
