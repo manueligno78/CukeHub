@@ -75,8 +75,10 @@ function handleReset(data) {
     notifyClients(JSON.stringify({ action: 'reset' }));
 }
 
-function handleGitStatus(data) {
-    notifyClients(JSON.stringify({ action: 'gitStatus', message: gitStatus() }));
+async function handleGitStatus(data) {
+    message = await gitStatus();
+    console.log('message is: ' + message);
+    notifyClients(JSON.stringify({ action: 'gitStatus', message: message }));
 }
 
 function notifyClients(message) {
@@ -97,7 +99,6 @@ async function gitStatus() {
         console.error(err);
         status = 'Error getting git status';
     }
-    console.log('status is: ' + JSON.stringify(status));
     return status;
 }
 
