@@ -56,57 +56,60 @@
   </ul>
   <span
     class="badge d-flex p-2 mr-1 mb-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
-    <!-- TODO: Switch label from switch to alphabetical order/occurrency order -->
-    <span class="px-1"><input type="checkbox" id="showAllTags" onclick="showAllTags()">Show all</input>
+    <span class="px-1"><input type="checkbox" id="showAllTags" onclick="sortAndShowTags()">Show all</input>
     </span>
   </span>
   <span id="sortCheckboxContainer"
     class="badge p-2 mr-1 mb-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
-    <!-- TODO: Switch label from switch to alphabetical order/occurrency order -->
-    <span class="px-1"><input type="checkbox" id="sortCheckbox" onclick="sortTags()">+ Switch sort</input>
-    </span>
+    <label for="sortCheckbox" id="sortCheckboxLabel">Switch to alphabetical sorting</label>
+    <input type="checkbox" id="sortCheckbox" onclick="sortAndShowTags()" checked>
   </span>
 
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js"></script>
   <script>
-    function sortTags() {
+    function sortAndShowTags() {
+      var isChecked = document.getElementById('showAllTags').checked;
       var container = document.getElementById('tagCloud');
       var tags = Array.from(container.getElementsByClassName('tag-label'));
+
+      // Ordina i tag in base al conteggio se "Switch Sort" è selezionato, altrimenti in ordine alfabetico
       if (document.getElementById('sortCheckbox').checked) {
+        document.getElementById('sortCheckboxLabel').innerText = 'Switch to alphabetical sorting';
         tags.sort(function (a, b) {
           return b.getAttribute('data-count') - a.getAttribute('data-count');
         });
       } else {
+        document.getElementById('sortCheckboxLabel').innerText = 'Switch to frequency sorting';
         tags.sort(function (a, b) {
           return a.textContent.localeCompare(b.textContent);
         });
       }
+
+      // Assegna l'ordine corretto a ciascun tag dopo l'ordinamento
       tags.forEach(function (tag, index) {
         tag.style.order = index;
       });
+
+      // Mostra solo i primi 10 tag se "Show All" non è selezionato, altrimenti mostra tutti i tag
+      for (var i = 0; i < tags.length; i++) {
+        tags[i].style.display = isChecked || i < 10 ? 'block' : 'none';
+      }
+
+      isChecked ? document.getElementById('sortCheckboxContainer').style.display = 'block' : document.getElementById('sortCheckboxContainer').style.display = 'none';
     }
 
     // Crea un nuovo oggetto Sortable per il tag cloud
     var sortable = Sortable.create(document.getElementById('tagCloud'), {
       animation: 1000, // Durata dell'animazione in ms
-      onUpdate: sortTags // Funzione da chiamare quando l'ordine degli elementi cambia
+      onUpdate: sortAndShowTags // Funzione da chiamare quando l'ordine degli elementi cambia
     });
 
-    //sortTags();
+    // Ordina i tag immediatamente dopo aver creato l'oggetto Sortable
+    sortAndShowTags();
 
-    // when document is ready limit the number of tags shown to the first 10 elements with id tag-x
+    // Quando il documento è pronto, limita il numero di tag mostrati ai primi 10 elementi con id tag-x
     $(document).ready(function () {
-      sortTags();
-      showAllTags();
+      sortAndShowTags();
     });
-
-    function showAllTags() {
-      var isChecked = document.getElementById('showAllTags').checked;
-      var tags = document.getElementById('tagCloud').getElementsByClassName('tag-label');
-      for (var i = 0; i < tags.length; i++) {
-        tags[i].style.display = isChecked || i < 10 ? 'block' : 'none';
-      }
-      isChecked ? document.getElementById('sortCheckboxContainer').style.display = 'block' : document.getElementById('sortCheckboxContainer').style.display = 'none';
-    }
 
   </script>
