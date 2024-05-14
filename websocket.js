@@ -89,7 +89,7 @@ function notifyClients(message) {
 
 async function gitStatus() {
     const directoryPath = config.directoryPath;
-    const simpleGit = require('simple-git')(directoryPath);
+    const simpleGit = require('simple-git')(path.normalize(directoryPath));
     let status = '';
     try {
         status = await simpleGit.status();
