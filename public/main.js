@@ -119,7 +119,7 @@ function isLightColor(color) {
 
 document.addEventListener('DOMContentLoaded', (event) => {
   document.querySelectorAll('.tag-label').forEach(function (tag) {
-    var text = tag.textContent.trim();
+    var text = tag.attributes['data-name'].value;
     var hash = hashCode(text);
     var color = intToRGB(hash);
     tag.style.backgroundColor = "#" + color;
