@@ -42,7 +42,8 @@
           class="tag-label badge p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
           style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em"
           title="<%= tagFrequency[tag].scenarios.length > 0 ? 'This tag is present on: \n' + tagFrequency[tag].scenarios.join('\n ') : 'This tag is present at the feature level in: \n' + tagFrequency[tag].features.join('\n ') %>"
-          data-count="<%= tagFrequency[tag].count %>" onclick='addTagToDataTableSearchInput("<%= tag %>")'>
+          data-count="<%= tagFrequency[tag].count %>" onclick='addTagToDataTableSearchInput("<%= tag %>")'
+          data-name="<%= tag %>">
           <span contenteditable="true" onblur='updateAllOccurencyOfTag("<%= tag %>", this.innerText)' class="px-1">
             <%= tag %>
           </span>
