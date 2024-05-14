@@ -35,28 +35,35 @@
   }
   });
   %>
-
   <ul id="tagCloud">
-    <% for (var tag in tagFrequency) { %>
-      <li
-        class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
-        style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em"
-        title="<%= tagFrequency[tag].scenarios.length > 0 ? 'This tag is present on: \n' + tagFrequency[tag].scenarios.join('\n ') : 'This tag is present at the feature level in: \n' + tagFrequency[tag].features.join('\n ') %>"
-        data-count="<%= tagFrequency[tag].count %>" onclick='addTagToDataTableSearchInput("<%= tag %>")'>
-        <span contenteditable="true" onblur='updateAllOccurencyOfTag("<%= tag %>", this.innerText)' class="px-1">
-          <%= tag %>
-        </span>
-        <span class="badge badge-secondary badge-counter">
-          <%= tagFrequency[tag].count %>
-        </span>
-        <span class="badge badge-secondary badge-counter" onclick='deleteAllOccurencyOfTag("<%= tag %>")'>X</span>
-      </li>
-      <% } %>
+    <% var counter=0; %>
+      <% for (var tag in tagFrequency) { %>
+        <li id="tag<%= counter %>"
+          class="tag-label badge p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
+          style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em"
+          title="<%= tagFrequency[tag].scenarios.length > 0 ? 'This tag is present on: \n' + tagFrequency[tag].scenarios.join('\n ') : 'This tag is present at the feature level in: \n' + tagFrequency[tag].features.join('\n ') %>"
+          data-count="<%= tagFrequency[tag].count %>" onclick='addTagToDataTableSearchInput("<%= tag %>")'>
+          <span contenteditable="true" onblur='updateAllOccurencyOfTag("<%= tag %>", this.innerText)' class="px-1">
+            <%= tag %>
+          </span>
+          <span class="badge badge-secondary badge-counter">
+            <%= tagFrequency[tag].count %>
+          </span>
+          <span class="badge badge-secondary badge-counter" onclick='deleteAllOccurencyOfTag("<%= tag %>")'>X</span>
+        </li>
+        <% counter++; %>
+          <% } %>
   </ul>
   <span
     class="badge d-flex p-2 mr-1 mb-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
     <!-- TODO: Switch label from switch to alphabetical order/occurrency order -->
-    <span class="px-1"><input type="checkbox" id="sortCheckbox" onclick="sortTags()">+ Switch tag cloud order</input>
+    <span class="px-1"><input type="checkbox" id="showAllTags" onclick="showAllTags()">Show all</input>
+    </span>
+  </span>
+  <span id="sortCheckboxContainer"
+    class="badge p-2 mr-1 mb-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
+    <!-- TODO: Switch label from switch to alphabetical order/occurrency order -->
+    <span class="px-1"><input type="checkbox" id="sortCheckbox" onclick="sortTags()">+ Switch sort</input>
     </span>
   </span>
 
@@ -85,5 +92,21 @@
       onUpdate: sortTags // Funzione da chiamare quando l'ordine degli elementi cambia
     });
 
-    sortTags();
+    //sortTags();
+
+    // when document is ready limit the number of tags shown to the first 10 elements with id tag-x
+    $(document).ready(function () {
+      sortTags();
+      showAllTags();
+    });
+
+    function showAllTags() {
+      var isChecked = document.getElementById('showAllTags').checked;
+      var tags = document.getElementById('tagCloud').getElementsByClassName('tag-label');
+      for (var i = 0; i < tags.length; i++) {
+        tags[i].style.display = isChecked || i < 10 ? 'block' : 'none';
+      }
+      isChecked ? document.getElementById('sortCheckboxContainer').style.display = 'block' : document.getElementById('sortCheckboxContainer').style.display = 'none';
+    }
+
   </script>
