@@ -208,8 +208,7 @@ function saveOnDisk() {
         const directoryPath = config.directoryPath;
         getFeatureFilesCopy().forEach(featureFile => {
             const gherkinText = gherkinDocumentToString(featureFile);
-            ensureDirectoryExistence(directoryPath);
-            fs.writeFileSync(directoryPath, gherkinText);
+            fs.writeFileSync(featureFile.path, gherkinText);
         });
         return true;
     } catch (error) {

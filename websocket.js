@@ -87,10 +87,18 @@ function notifyClients(message) {
     });
 }
 
-function gitStatus() {
-    const gitStatusCommand = 'git status --porcelain';
-    const gitStatusOutput = execSync(gitStatusCommand, { cwd: config.directoryPath });
-    return gitStatusOutput.toString();
+async function gitStatus() {
+    const directoryPath = config.directoryPath;
+    const simpleGit = require('simple-git')(directoryPath);
+    let status = '';
+    try {
+        status = await simpleGit.status();
+    } catch (err) {
+        console.error(err);
+        status = 'Error getting git status';
+    }
+    console.log('status is: ' + JSON.stringify(status));
+    return status;
 }
 
 module.exports = {
