@@ -1,0 +1,35 @@
+<div class="container mt-5">
+    <table id="gitStatusTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">File Path</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody id="gitStatusBody">
+            <!-- Le righe della tabella saranno aggiunte qui dinamicamente -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Supponiamo che gitStatus sia l'oggetto JSON che contiene lo stato di Git
+    function updateGitStatusTable(gitStatus) {
+        var tbody = $('#gitStatusBody');
+        tbody.empty();
+
+        // Aggiungi una nuova riga per ogni file in gitStatus.files
+        gitStatus.files.forEach(file => {
+            var row = $('<tr>');
+            row.append($('<td>').text(file.path));
+            row.append($('<td>').text(file.index + file.working_dir));
+            tbody.append(row);
+        });
+
+        // Aggiorna la tabella con DataTable
+        $('#gitStatusTable').DataTable();
+    }
+
+    // Chiamare updateGitStatusTable quando ricevi un nuovo stato di Git
+    // updateGitStatusTable(newGitStatus);
+</script>
