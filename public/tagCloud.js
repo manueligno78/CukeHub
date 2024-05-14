@@ -1,3 +1,7 @@
+$(document).ready(function () {
+    sortAndShowTags();
+});
+
 function sortAndShowTags() {
     var isChecked = document.getElementById('showAllTags').checked;
     var container = document.getElementById('tagCloud');
@@ -22,9 +26,3 @@ function sortAndShowTags() {
 
     isChecked ? document.getElementById('sortCheckboxContainer').style.display = 'block' : document.getElementById('sortCheckboxContainer').style.display = 'none';
 }
-
-sortAndShowTags();
-
-$(document).ready(function () {
-    sortAndShowTags();
-});
