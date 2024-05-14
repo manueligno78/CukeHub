@@ -55,11 +55,15 @@
       <i class="fas fa-fw fa-undo"></i>
       <span>Reset</span></a>
   </li>
+  <!-- Nav Item - GitStatus -->
+  <li class="nav-item" style="display: block;">
+    <!-- Show git status -->
+    <div class="small" id="git-status">
+      <%- include('gitStatus.ejs') %> <!-- Include the gitStatus.ejs file -->
+    </div>
+  </li>
 </ul>
-<!-- Show git status -->
-<div class="small" id="git-status">
-  <%- include('gitStatus.ejs') %> <!-- Include the gitStatus.ejs file -->
-</div>
+
 
 <script>
   $(document).ready(function () {
