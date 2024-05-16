@@ -1,15 +1,12 @@
 const socket = new WebSocket('ws://localhost:3000');
 
 socket.addEventListener('message', function (event) {
-  console.log('Received message: ', event.data);
   if (JSON.parse(event.data).action === 'reset') {
     console.log('Resetting the page...');
     location.reload();
   } else if (JSON.parse(event.data).action === 'featureUpdated') {
-    // reload the page
     location.reload();
   } else if (JSON.parse(event.data).action === 'gitStatus') {
-    // call javascript function updateGitStatusTable(gitStatus) of git status table component (id="gitStatusTable") to update the table (the table is a DataTable component)
     var gitStatus = JSON.parse(event.data).message;
     updateGitStatusTable(gitStatus);
   }
