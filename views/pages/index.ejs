@@ -42,7 +42,7 @@
   <div id="wrapper">
     <!-- Sidebar -->
     <div id="sidebar-wrapper">
-      <%- include('sidebar.ejs') %>
+      <%- include('../partials/sidebar.ejs') %>
         <!-- End of Sidebar -->
     </div>
     <!-- Content Wrapper -->
@@ -52,7 +52,7 @@
         <nav class="navbar navbar-expand navbar-light bg-white mb-4 static-top shadow">
           <!-- Tags cloud-->
           <div class="container-fluid d-flex flex-wrap">
-            <%- include('tagCloud.ejs') %>
+            <%- include('../partials/tagCloud.ejs') %>
           </div>
         </nav>
         <!-- Begin Page Content -->
@@ -89,12 +89,9 @@
                                         class="px-1">
                                         <%= tag.name %>
                                       </span>
-                                      <button type="button" class="btn btn-link d-flex m-0 p-0"
-                                        onclick="removeTag('<%= featureFile.featureId %>', '<%= featureFile.feature.featureId %>', '<%= tag.name %>','tag-<%= tag.name %>','tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>')"></a>
-                                        <svg class="bi ms-1" width="16" height="16">
-                                          <use xlink:href="#x-circle-fill"></use>
-                                        </svg>
-                                      </button>
+                                      <button type="button" class="close" aria-label="Close"
+                                        onclick="removeTag('<%= featureFile.featureId %>', '<%= featureFile.feature.featureId %>', '<%= tag.name %>','tag-<%= tag.name %>','tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>')"><span
+                                          aria-hidden="true">&times;</span></button>
                                     </span>
                                     <% }); %>
                                       <span
@@ -148,12 +145,9 @@
                                                   class="px-1">
                                                   <%= tag.name %>
                                                 </span>
-                                                <button type="button" class="btn btn-link d-flex m-0 p-0"
+                                                <button type="button" class="close" aria-label="Close"
                                                   onclick="removeTag('<%= featureFile.featureId %>', '<%= featureFile.feature.children[index].scenario.id %>', '<%= tag.name %>','tag-<%= tag.name %>-featureCard-<%= featureFile.featureId %>-<%= featureFile.featureId %>-<%= featureFile.feature.children[index].scenario.id %>')">
-                                                  <svg class="tag-delete bi ms-1" width="16" height="16">
-                                                    <use xlink:href="#x-circle-fill"></use>
-                                                  </svg>
-                                                </button>
+                                                  <span aria-hidden="true">&times;</span></button>
                                               </span>
                                               <% }); %>
                                                 <span
@@ -299,7 +293,7 @@
         </div>
       </div>
       <footer class="sticky-footer bg-white">
-        <%- include('footer.ejs') %>
+        <%- include('../partials/footer.ejs') %>
       </footer>
       <!-- End of Content Wrapper -->
     </div>

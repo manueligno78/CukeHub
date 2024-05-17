@@ -13,7 +13,7 @@ const { updateFeatureFilesCopy,
     saveOnDisk,
     deleteAllOccurencyOfTag,
     updateAllOccurencyOfTag
-} = require('../featureFilesModule');
+} = require('../../../js/modules/featureFilesModule');
 
 describe('featureFilesModule', function () {
     describe('#updateFeatureFilesCopy()', function () {

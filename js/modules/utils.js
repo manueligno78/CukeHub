@@ -17,16 +17,6 @@ function setNestedProperty(obj, path, value) {
   }
 }
 
-function ensureDirectoryExistence(filePath) {
-  const dirname = path.dirname(filePath);
-  if (fs.existsSync(dirname)) {
-    return true;
-  }
-  ensureDirectoryExistence(dirname);
-  fs.mkdirSync(dirname);
-}
-
 module.exports = {
-  setNestedProperty,
-  ensureDirectoryExistence
+  setNestedProperty
 };

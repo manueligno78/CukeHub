@@ -1,12 +1,12 @@
 {
     "name": "CukeHub",
     "version": "1.0.0",
-    "description": "CukeHub is a Node.js-based application for managing Gherkin Cucumber features, scenarios, and tags.",
-    "main": "index.js",
+    "description": "CukeHub is a feaures manager system for gherkin files based on NodeJs",
+    "main": "app.js",
     "scripts": {
-        "start": "node index.js",
+        "start": "node app.js",
         "startwd": "nodemon --exec \"npm test && node index.js\"",
-        "test": "mocha"
+        "test": "mocha './test/**/*.js'"
     },
     "dependencies": {
         "@cucumber/gherkin": "^28.0.0",
@@ -17,6 +17,7 @@
         "express": "^4.17.1",
         "express-rate-limit": "^7.2.0",
         "gherkin": "^9.0.0",
+        "simple-git": "^3.24.0",
         "sinon": "^17.0.1",
         "ws": "^7.4.6"
     },

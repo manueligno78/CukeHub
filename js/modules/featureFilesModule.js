@@ -2,10 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const Gherkin = require('@cucumber/gherkin');
 const Messages = require('@cucumber/messages');
-const gherkinDocumentToString = require('./gherkinUtils');
+const gherkinDocumentToString = require('./gherkinUtils.js');
 const { setNestedProperty, ensureDirectoryExistence } = require('./utils.js');
 
-let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+let config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json'), 'utf8'));
 
 let featureFilesCopy = [];
 
@@ -103,7 +103,7 @@ function parseGherkinContent(content) {
 }
 
 function reset() {
-    config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+    config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json'), 'utf8'));
     const directoryPath = config.directoryPath;
     if (!directoryPath) {
         console.error('directoryPath non è definito nel file config.json');
@@ -205,17 +205,10 @@ function addTag(featureId, scenarioId, tag) {
 // Following function needs to be tested
 function saveOnDisk() {
     try {
-        const outputFolder = config.outputFolder;
-        const keepFolderStructure = config.keepFolderStructure;
         const directoryPath = config.directoryPath;
         getFeatureFilesCopy().forEach(featureFile => {
             const gherkinText = gherkinDocumentToString(featureFile);
-            let outputUrl = featureFile.path.replace(directoryPath, outputFolder);
-            if (keepFolderStructure) {
-                outputUrl = outputUrl.replace(/\\/g, '\\\\');
-            }
-            ensureDirectoryExistence(outputUrl);
-            fs.writeFileSync(outputUrl, gherkinText);
+            fs.writeFileSync(featureFile.path, gherkinText);
         });
         return true;
     } catch (error) {

@@ -5,6 +5,7 @@
     justify-content: center;
   }
 </style>
+
 <% var tagFrequency={}; var maxFrequency=1; featureFiles.forEach(function(featureFile) { if (featureFile &&
   featureFile.path) { if (featureFile.feature.tags) { featureFile.feature.tags.forEach(function(tag) { if
   (tagFrequency[tag.name]) { tagFrequency[tag.name].count++;
@@ -34,11 +35,13 @@
   }
   });
   %>
-  <ul id="tagCloud">
+
+  <div id="tagCloud" class="d-flex gap-2 justify-content-center flex-wrap">
+    <!-- Tags -->
     <% var counter=0; %>
       <% for (var tag in tagFrequency) { %>
-        <li id="tag<%= counter %>"
-          class="tag-label badge p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill"
+        <span id="tag<%= counter %>" class="tag-label badge d-flex p-2 mr-1 mb-1 align-items-center text-primary-emphasis bg-primary-subtle border
+          border-primary-subtle rounded-pill"
           style="font-size: <%= (1 + (tagFrequency[tag].count - 1) / (maxFrequency - 1))/1.5 %>em"
           title="<%= tagFrequency[tag].scenarios.length > 0 ? 'This tag is present on: \n' + tagFrequency[tag].scenarios.join('\n ') : 'This tag is present at the feature level in: \n' + tagFrequency[tag].features.join('\n ') %>"
           data-count="<%= tagFrequency[tag].count %>" onclick='addTagToDataTableSearchInput("<%= tag %>")'
@@ -46,14 +49,15 @@
           <span contenteditable="true" onblur='updateAllOccurencyOfTag("<%= tag %>", this.innerText)' class="px-1">
             <%= tag %>
           </span>
-          <span class="badge badge-secondary badge-counter">
+          <span class="badge badge-secondary badge-counter m-1">
             <%= tagFrequency[tag].count %>
           </span>
-          <span class="badge badge-secondary badge-counter" onclick='deleteAllOccurencyOfTag("<%= tag %>")'>X</span>
-        </li>
+          <button type="button" class="close" aria-label="Close" onclick='deleteAllOccurencyOfTag("<%= tag %>")'>
+            <span aria-hidden="true">×</span></button>
+        </span>
         <% counter++; %>
           <% } %>
-  </ul>
+  </div>
   <span
     class="badge d-flex p-2 mr-1 mb-2 align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-pill">
     <span class="px-1"><input type="checkbox" id="showAllTags" onclick="sortAndShowTags()">Show all</input>

@@ -19,6 +19,11 @@
   </li>
 
   <li class="nav-item flex-wrap">
+    <div class="sidebar-heading m-1 p-1">Git : <%= configuration.gitProjectUrl %>
+    </div>
+  </li>
+
+  <li class="nav-item flex-wrap">
     <div class="sidebar-heading m-1 p-1">Source path : <%= configuration.directoryPath %>
     </div>
   </li>
@@ -28,11 +33,6 @@
     <a class="nav-link" href="/settings">
       <i class="fas fa-fw fa-wrench"></i>
       <span>Settings</span></a>
-  </li>
-
-  <li class="nav-item flex-wrap">
-    <div class="sidebar-heading m-1 p-1">Export path : <%= configuration.outputFolder %>
-    </div>
   </li>
 
   <!-- Divider -->
@@ -49,8 +49,7 @@
 
   <!-- Nav Item - Save -->
   <li class="nav-item" id="saveButton" style="display: block;">
-    <a class="nav-link" href="#" onclick="confirmExport()"
-      title="Export to folder <%= configuration.outputFolder %> , go to settings to change the export folder">
+    <a class="nav-link" href="#" onclick="confirmExport()" title="Save , go to settings to change the export folder">
       <i class="fas fa-fw fa-save"></i>
       <span>Export</span></a>
   </li>
@@ -61,10 +60,15 @@
       <i class="fas fa-fw fa-undo"></i>
       <span>Reset</span></a>
   </li>
+  <!-- Nav Item - GitStatus -->
+  <li class="nav-item" style="display: block;">
+    <!-- Show git status -->
+    <div class="small" id="git-status">
+      <%- include('gitStatus.ejs') %> <!-- Include the gitStatus.ejs file -->
+    </div>
+  </li>
 </ul>
-<!-- Show git status -->
-<div class="small" id="git-status">
-</div>
+
 
 <script>
   $(document).ready(function () {

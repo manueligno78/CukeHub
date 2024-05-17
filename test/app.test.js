@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { server, getFiles, getScenarios } = require('../index.js');
+const { server, getFiles, getScenarios } = require('../app.js');
 const fs = require('fs');
 const path = require('path');
 
@@ -29,10 +29,8 @@ describe('HTTP routes', () => {
       .post('/save-settings')
       .send({
         directoryPath: 'testDir',
-        testCommand: 'npm test',
+        gitProjectUrl: 'urlGit',
         folderToExclude: 'node_modules',
-        outputFolder: 'testoutput',
-        keepFolderStructure: 'on'
       });
     expect(response.statusCode).to.equal(302);
   });

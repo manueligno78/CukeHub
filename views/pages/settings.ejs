@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Settings</title>
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 </head>
 
@@ -23,24 +25,24 @@
                             </div>
                             <form action="/save-settings" method="POST" class="user">
                                 <div class="form-group">
-                                    <label for="directoryPath">Project source path containing .feature files (absolute path):</label>
-                                    <input type="text" class="form-control form-control-user" id="directoryPath" name="directoryPath" value="<%= directoryPath %>">
+                                    <label for="gitProjectUrl">Project git url:</label>
+                                    <input type="text" class="form-control form-control-user" id="gitProjectUrl"
+                                        name="gitProjectUrl" value="<%= gitProjectUrl %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="testCommand">Run command (experimental):</label>
-                                    <input type="text" class="form-control form-control-user" id="testCommand" name="testCommand" value="<%= testCommand %>">
+                                    <label for="gitBranch">Target branch:</label>
+                                    <input type="text" class="form-control form-control-user" id="gitBranch"
+                                        name="gitBranch" value="<%= gitBranch %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="folderToExclude">Folder to exclude from source path scaffolding:</label>
-                                    <input type="text" class="form-control form-control-user" id="folderToExclude" name="folderToExclude" value="<%= folderToExclude %>">
+                                    <label for="directoryPath">Destination path containing .feature files:</label>
+                                    <input type="text" class="form-control form-control-user" id="directoryPath"
+                                        name="directoryPath" value="<%= directoryPath %>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="outputFolder">Export folder for modified feature files (absolute path):</label>
-                                    <input type="text" class="form-control form-control-user" id="outputFolder" name="outputFolder" value="<%= outputFolder %>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="keepFolderStructure">Keep source folder structure when exporting:</label>
-                                    <input type="checkbox" class="form-control form-control-user" id="keepFolderStructure" name="keepFolderStructure" <%= keepFolderStructure ? 'checked' : '' %>>
+                                    <label for="folderToExclude">Folder to exclude from scaffolding:</label>
+                                    <input type="text" class="form-control form-control-user" id="folderToExclude"
+                                        name="folderToExclude" value="<%= folderToExclude %>">
                                 </div>
                                 <input type="submit" value="Save" class="btn btn-primary btn-user btn-block">
                             </form>

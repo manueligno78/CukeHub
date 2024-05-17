@@ -1,25 +1,15 @@
 const socket = new WebSocket('ws://localhost:3000');
 
 socket.addEventListener('message', function (event) {
-  console.log('Received message: ', event.data);
-  if (event.data === 'tests started') {
-    showLoader();
-  } else if (event.data === 'tests finished') {
-    hideLoader();
-  } else if (JSON.parse(event.data).action === 'reset') {
+  if (JSON.parse(event.data).action === 'reset') {
     console.log('Resetting the page...');
     location.reload();
-    //document.getElementById('saveButton').style.display = 'none';
-    //document.getElementById('resetButton').style.display = 'none';
   } else if (JSON.parse(event.data).action === 'featureUpdated') {
-    //document.getElementById('saveButton').style.display = 'block';
-    //document.getElementById('resetButton').style.display = 'block';
-    // reload the page
     location.reload();
+  } else if (JSON.parse(event.data).action === 'gitStatus') {
+    var gitStatus = JSON.parse(event.data).message;
+    updateGitStatusTable(gitStatus);
   }
-  // else if (JSON.parse(event.data).action === 'gitStatus') {
-  //   document.getElementById('git-status').innerHTML = JSON.parse(event).data.message;
-  // }
 });
 
 socket.addEventListener('open', function (event) {

@@ -3,11 +3,10 @@ const fs = require('fs');
 const featureFilesModule = require('./featureFilesModule.js');
 const { exec, execSync } = require('child_process');
 const path = require('path');
-let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+let config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json'), 'utf8'));
 let wss;
 
 const actionHandlers = {
-    'run-tests': handleRunTests,
     'updateFeature': handleUpdateFeature,
     'removeTag': handleRemoveTag,
     'addTag': handleAddTag,
@@ -33,17 +32,6 @@ function initializeWebSocket(server) {
     });
 
     return wss;
-}
-
-function handleRunTests(data) {
-    const tags = data.tags;
-    const testCommand = config.testCommand.replace('@yourTag', tags);
-    notifyClients('tests started');
-    notifyClients('executing: ' + testCommand);
-    notifyClients('debug: ' + tags);
-    if (testCommand.match(/^[\w\.\-\/]+$/)) {
-        execSync('wc -l ${file}');
-    }
 }
 
 function handleUpdateFeature(data) {
@@ -87,8 +75,9 @@ function handleReset(data) {
     notifyClients(JSON.stringify({ action: 'reset' }));
 }
 
-function handleGitStatus(data) {
-    notifyClients(JSON.stringify({ action: 'gitStatus', message: gitStatus() }));
+async function handleGitStatus(data) {
+    message = await gitStatus();
+    notifyClients(JSON.stringify({ action: 'gitStatus', message: message }));
 }
 
 function notifyClients(message) {
@@ -99,17 +88,23 @@ function notifyClients(message) {
     });
 }
 
-function gitStatus() {
-    const gitStatusCommand = 'git status --porcelain';
-    const gitStatusOutput = execSync(gitStatusCommand, { cwd: config.directoryPath });
-    return gitStatusOutput.toString();
+async function gitStatus() {
+    const directoryPath = config.directoryPath;
+    const simpleGit = require('simple-git')(path.normalize(directoryPath));
+    let status = '';
+    try {
+        status = await simpleGit.status();
+    } catch (err) {
+        console.error(err);
+        status = 'Error getting git status';
+    }
+    return status;
 }
 
 module.exports = {
     initializeWebSocket,
     notifyClients,
     handleReset,
-    handleRunTests,
     handleUpdateFeature,
     handleRemoveTag,
     handleAddTag,
