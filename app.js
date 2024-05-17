@@ -3,11 +3,11 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const featureFilesModule = require('./featureFilesModule.js');
+const featureFilesModule = require('./js/modules/featureFilesModule.js');
 const app = express();
 const server = http.createServer(app);
 const rateLimit = require("express-rate-limit");
-const { initializeWebSocket, handleReset, notifyClients } = require('./websocket.js');
+const { initializeWebSocket, handleReset, notifyClients } = require('./js/modules/websocket.js');
 const wss = initializeWebSocket(server);
 let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
@@ -55,13 +55,13 @@ app.get('/', (req, res) => {
       let featureFiles = featureFilesModule.getFiles(directoryPath);
       featureFilesModule.updateFeatureFilesCopy(JSON.parse(JSON.stringify(featureFiles)));
     }
-    res.render('index', { configuration: config, featureFiles: featureFilesModule.getFeatureFilesCopy() });
+    res.render('pages/index', { configuration: config, featureFiles: featureFilesModule.getFeatureFilesCopy() });
   }
 });
 
 app.get('/settings', (req, res) => {
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
-  res.render('settings', {
+  res.render('pages/settings', {
     gitProjectUrl: config.gitProjectUrl,
     gitBranch: config.gitBranch,
     directoryPath: config.directoryPath,

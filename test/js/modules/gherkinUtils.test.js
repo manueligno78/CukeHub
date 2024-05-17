@@ -1,5 +1,5 @@
 const assert = require('assert');
-const gherkinDocumentToString = require('../gherkinUtils.js');
+const gherkinDocumentToString = require('../../../js/modules/gherkinUtils.js');
 
 describe('gherkinDocumentToString', function () {
     it('should return an error for an empty document', function () {

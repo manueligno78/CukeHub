@@ -3,7 +3,7 @@ const fs = require('fs');
 const featureFilesModule = require('./featureFilesModule.js');
 const { exec, execSync } = require('child_process');
 const path = require('path');
-let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+let config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json'), 'utf8'));
 let wss;
 
 const actionHandlers = {

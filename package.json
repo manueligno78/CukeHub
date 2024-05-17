@@ -6,7 +6,7 @@
     "scripts": {
         "start": "node app.js",
         "startwd": "nodemon --exec \"npm test && node index.js\"",
-        "test": "mocha"
+        "test": "mocha './test/**/*.js'"
     },
     "dependencies": {
         "@cucumber/gherkin": "^28.0.0",
