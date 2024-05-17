@@ -22,6 +22,7 @@
 
 <script>
     function updateGitStatusTable(gitStatus) {
+
         console.log('updateGitStatusTable', JSON.stringify(gitStatus));
         var gitStatusTable = document.getElementById('gitStatusTable');
         if (gitStatus.files.length > 0) {
@@ -44,6 +45,5 @@
             document.getElementById('revertButton').style.display = 'none';
             gitStatusTable.innerHTML = '<li class="list-group-item">No changes</li>';
         }
-
     }
 </script>
