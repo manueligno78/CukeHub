@@ -49,7 +49,7 @@
           <span contenteditable="true" onblur='updateAllOccurencyOfTag("<%= tag %>", this.innerText)' class="px-1">
             <%= tag %>
           </span>
-          <span class="badge badge-secondary badge-counter">
+          <span class="badge badge-secondary badge-counter m-1">
             <%= tagFrequency[tag].count %>
           </span>
           <button type="button" class="close" aria-label="Close" onclick='deleteAllOccurencyOfTag("<%= tag %>")'>
