@@ -27,7 +27,9 @@ module.exports.server = server;
 app.get('/', (req, res) => {
   config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
   const gitProjectUrl = config.gitProjectUrl;
+  const gitBranch = config.gitBranch;
   const directoryPath = config.directoryPath;
+
   if (!directoryPath) {
     res.redirect('/settings');
   } else {
@@ -42,8 +44,18 @@ app.get('/', (req, res) => {
             res.redirect('/settings');
             notifyClients(wss, 'gitStatus', { message: 'Error cloning repository' + gitProjectUrl + ' to ' + directoryPath });
           } else {
-            console.log('Cloned repository' + gitProjectUrl + ' to ' + directoryPath);
-            notifyClients(wss, 'gitStatus', { message: 'Cloned repository' + gitProjectUrl + ' to ' + directoryPath });
+            simpleGit.checkout(gitBranch, (err, data) => {
+              if (err) {
+                console.error(err);
+                res.redirect('/settings');
+                notifyClients(wss, 'gitStatus', { message: 'Error checking out branch ' + gitBranch + ' in ' + directoryPath });
+              }
+              else {
+                console.log('Cloned repository' + gitProjectUrl + ' to ' + directoryPath);
+                notifyClients(wss, 'gitStatus', { message: 'Cloned repository' + gitProjectUrl + ' to ' + directoryPath });
+              }
+            }
+            );
           }
         });
       } else {
