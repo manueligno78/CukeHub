@@ -118,6 +118,8 @@ async function commit() {
     const simpleGit = require('simple-git')(path.normalize(directoryPath));
     let message = '';
     try {
+        // commit -a -m "commit"
+        message = await simpleGit.add('./*');
         message = await simpleGit.commit('commit');
     } catch (err) {
         console.error(err);
