@@ -4,6 +4,20 @@
         <span>Changed:</span></a>
     <ul id="gitStatusTable" class="list-group small">
     </ul>
+    <ul>
+        <!-- Nav Item - Commit -->
+        <li class="nav-item" id="commitButton" style="display: block;">
+            <a class="nav-link" href="#" onclick="confirmCommit()" title="Commit current changes">
+                <i class="fas fa-fw fa-save"></i>
+                <span>Commit</span></a>
+        </li>
+        <!-- Nav Item - Revert -->
+        <li class="nav-item" id="revertButton" style="display: block;">
+            <a class="nav-link" href="#" onclick="confirmRevert()">
+                <i class="fas fa-fw fa-undo"></i>
+                <span>Revert changes</span></a>
+        </li>
+    </ul>
 </div>
 
 <script>

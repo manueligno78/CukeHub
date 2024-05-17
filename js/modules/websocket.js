@@ -14,7 +14,9 @@ const actionHandlers = {
     'deleteAllOccurencyOfTag': handleDeleteAllOccurencyOfTag,
     'updateAllOccurencyOfTag': handleUpdateAllOccurencyOfTag,
     'reset': handleReset,
-    'gitStatus': handleGitStatus
+    'gitStatus': handleGitStatus,
+    'commit': handleCommit,
+    'revert': handleRevert
 };
 
 function initializeWebSocket(server) {
@@ -80,6 +82,16 @@ async function handleGitStatus(data) {
     notifyClients(JSON.stringify({ action: 'gitStatus', message: message }));
 }
 
+async function handleCommit(data) {
+    message = await commit();
+    notifyClients(JSON.stringify({ action: 'commit', message: message }));
+}
+
+async function handleRevert(data) {
+    message = await revert();
+    notifyClients(JSON.stringify({ action: 'revert', message: message }));
+}
+
 function notifyClients(message) {
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
@@ -99,6 +111,30 @@ async function gitStatus() {
         status = 'Error getting git status';
     }
     return status;
+}
+
+async function commit() {
+    const directoryPath = config.directoryPath;
+    const simpleGit = require('simple-git')(path.normalize(directoryPath));
+    let message = '';
+    try {
+        message = await simpleGit.commit('commit');
+    } catch (err) {
+        console.error(err);
+        message = 'Error committing';
+    }
+}
+
+async function revert() {
+    const directoryPath = config.directoryPath;
+    const simpleGit = require('simple-git')(path.normalize(directoryPath));
+    let message = '';
+    try {
+        message = await simpleGit.reset('hard');
+    } catch (err) {
+        console.error(err);
+        message = 'Error reverting';
+    }
 }
 
 module.exports = {

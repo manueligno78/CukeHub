@@ -213,17 +213,50 @@ function confirmExport() {
   }
 }
 
-function reset() {
-  let message = JSON.stringify({
-    action: 'reset'
-  });
-  socket.send(message);
-}
-
 function confirmReset() {
   var confirmAction = confirm("Are you sure you want to reset your changes?");
   if (confirmAction) {
     reset();
   }
+}
+
+function confirmCommit() {
+  var confirmAction = confirm("Are you sure you want to commit current changes?");
+  if (confirmAction) {
+    commit();
+  }
+}
+
+function confirmRevert() {
+  var confirmAction = confirm("Are you sure you want to revert current changes?");
+  if (confirmAction) {
+    revert();
+  }
+}
+
+function reset() {
+  let message = JSON.stringify({
+    action: 'reset'
+  });
+  socket.send(message);
+  //send message "gitStutus" to update the git status table
+  message = JSON.stringify({
+    action: 'gitStatus'
+  });
+  socket.send(message);
+}
+
+function commit() {
+  let message = JSON.stringify({
+    action: 'commit'
+  });
+  socket.send(message);
+}
+
+function revert() {
+  let message = JSON.stringify({
+    action: 'revert'
+  });
+  socket.send(message);
 }
 
