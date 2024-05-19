@@ -9,6 +9,8 @@ socket.addEventListener('message', function (event) {
   } else if (JSON.parse(event.data).action === 'gitStatus') {
     var gitStatus = JSON.parse(event.data).message;
     updateGitStatusTable(gitStatus);
+  } else if (JSON.parse(event.data).action === 'revert') {
+    reset();
   }
 });
 
