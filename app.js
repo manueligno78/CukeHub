@@ -34,8 +34,9 @@ app.get('/', async (req, res) => {
     return;
   }
   console.log('Config check true, rendering pages/index');
-  const featureFiles = featureFilesModule.getFiles(config.directoryPath);
-  featureFilesModule.updateFeatureFilesCopy(JSON.parse(JSON.stringify(featureFiles)));
+  if (featureFilesModule.getFeatureFilesCopy().length === 0){
+    await updateFeatureFiles();
+  }
   res.render('pages/index', { configuration: config, featureFiles: featureFilesModule.getFeatureFilesCopy() });
 });
 
@@ -71,6 +72,7 @@ app.post('/save-settings', async (req, res) => {
   console.log("cloneSuccessful: " + cloneSuccessful);
   if (cloneSuccessful && folderCheckSuccessful) {
     console.log("Clone and folder success, redirecting to /");
+    updateFeatureFiles();
     res.redirect('/');
   } else {
     console.log("Clone or folder fail, redirecting to /settings");
@@ -94,6 +96,12 @@ async function createFolderIfNotExists(folderPath) {
 
 function loadConfig() {
   return JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+}
+
+async function updateFeatureFiles() {
+  const featureFiles = featureFilesModule.getFiles(config.directoryPath);
+  featureFilesModule.updateFeatureFilesCopy(JSON.parse(JSON.stringify(featureFiles)));
+  notifyClients(JSON.stringify({ action: 'featureFilesUpdated' }));
 }
 
 server.listen(3000, () => {
