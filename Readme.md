@@ -57,13 +57,23 @@ This will start the server of CukeHub application on localhost:3000.
 ## Running
 To run the application, navigate to the project directory in your terminal and execute the following command:
 ```bash
-node index.js
+node app.js
 ```
 This will start the server of CukeHub application on localhost:3000.
 
 ## Usage
-
 Once the CukeHub server is running, you can access the application by opening a web browser and navigating to `http://localhost:3000`.
+
+Upon first launch, the application will present a settings screen. Here, the user will be asked to specify the following:
+
+- A Git project, by providing its URL.
+- The branch to be checked out.
+- Any folders to be excluded, specified using regular expressions.
+- The full path of the folder where the user wishes to clone the project.
+
+Alternatively, the user can provide a folder where a Git clone of a project has already been performed.
+
+After configuration save ou will be redirected to the main interface of the app:
 
 ![alt text](./public/readme/sample_home.png "Home dashboard")
 
