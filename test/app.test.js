@@ -29,8 +29,10 @@ describe('HTTP routes', () => {
       .post('/save-settings')
       .send({
         directoryPath: 'testDir',
-        gitProjectUrl: 'urlGit',
+        gitProjectUrl: 'https://github.com/manueligno78/CukeHub.git',
+        gitBranch: 'main',
         folderToExclude: 'node_modules',
+        isConfigurated: true
       });
     expect(response.statusCode).to.equal(302);
   });
