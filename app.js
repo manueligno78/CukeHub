@@ -4,12 +4,14 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const featureFilesModule = require('./js/modules/featureFilesModule.js');
+const gitModule = require('./js/modules/gitModule.js'); // new module for git operations
 const app = express();
 const server = http.createServer(app);
 const rateLimit = require("express-rate-limit");
 const { initializeWebSocket, handleReset, notifyClients } = require('./js/modules/websocket.js');
+const { create } = require('domain');
 const wss = initializeWebSocket(server);
-let config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+let config = loadConfig(); // load config using a function
 
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minutes
@@ -24,55 +26,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 module.exports.server = server;
 
-app.get('/', (req, res) => {
-  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
-  const gitProjectUrl = config.gitProjectUrl;
-  const gitBranch = config.gitBranch;
-  const directoryPath = config.directoryPath;
-
-  if (!directoryPath) {
+app.get('/', async (req, res) => {
+  config = loadConfig(); // reload config
+  if (!config.isConfigurated) {
+    console.log('Config check failed, redirecting to /settings');
     res.redirect('/settings');
-  } else {
-    // Check if the directory path is already a git repository
-    if (!fs.existsSync(path.join(directoryPath, '.git'))) {
-      if (gitProjectUrl) {
-        // Clone the git repository
-        const simpleGit = require('simple-git')(directoryPath);
-        simpleGit.clone(gitProjectUrl, directoryPath, (err, data) => {
-          if (err) {
-            console.error(err);
-            res.redirect('/settings');
-            notifyClients(wss, 'gitStatus', { message: 'Error cloning repository' + gitProjectUrl + ' to ' + directoryPath });
-          } else {
-            simpleGit.checkout(gitBranch, (err, data) => {
-              if (err) {
-                console.error(err);
-                res.redirect('/settings');
-                notifyClients(wss, 'gitStatus', { message: 'Error checking out branch ' + gitBranch + ' in ' + directoryPath });
-              }
-              else {
-                console.log('Cloned repository' + gitProjectUrl + ' to ' + directoryPath);
-                notifyClients(wss, 'gitStatus', { message: 'Cloned repository' + gitProjectUrl + ' to ' + directoryPath });
-              }
-            }
-            );
-          }
-        });
-      } else {
-        res.redirect('/settings');
-      }
-    }
-    // If the feature files have not been loaded yet, load them
-    if (featureFilesModule.getFeatureFilesCopy().length === 0) {
-      let featureFiles = featureFilesModule.getFiles(directoryPath);
-      featureFilesModule.updateFeatureFilesCopy(JSON.parse(JSON.stringify(featureFiles)));
-    }
-    res.render('pages/index', { configuration: config, featureFiles: featureFilesModule.getFeatureFilesCopy() });
+    return;
   }
+  console.log('Config check true, rendering pages/index');
+  if (featureFilesModule.getFeatureFilesCopy().length === 0){
+    await updateFeatureFiles();
+  }
+  res.render('pages/index', { configuration: config, featureFiles: featureFilesModule.getFeatureFilesCopy() });
 });
 
 app.get('/settings', (req, res) => {
-  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  config = loadConfig();
   res.render('pages/settings', {
     gitProjectUrl: config.gitProjectUrl,
     gitBranch: config.gitBranch,
@@ -81,7 +50,7 @@ app.get('/settings', (req, res) => {
   });
 });
 
-app.post('/save-settings', (req, res) => {
+app.post('/save-settings', async (req, res) => {
   const newGitProjectUrl = req.body.gitProjectUrl;
   const newGitBranch = req.body.gitBranch;
   const newDirectoryPath = req.body.directoryPath;
@@ -91,17 +60,48 @@ app.post('/save-settings', (req, res) => {
     gitBranch: newGitBranch,
     directoryPath: newDirectoryPath,
     folderToExclude: newFolderToExclude,
+    isConfigurated: true
   };
-  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
-  if (JSON.stringify(config) !== JSON.stringify(newConfig)) {
-    fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(newConfig, null, 2), 'utf-8');
-    reset();
+  fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(newConfig, null, 2), 'utf-8');
+  config = newConfig;
+  console.log('Config saved.');
+  console.log('Create new directory if not exists');
+  const folderCheckSuccessful = await createFolderIfNotExists(newDirectoryPath);
+  const cloneSuccessful = await gitModule.cloneGitRepository(newGitProjectUrl, newGitBranch, newDirectoryPath, wss);
+  console.log("folederCheckSuccessful: " + folderCheckSuccessful);
+  console.log("cloneSuccessful: " + cloneSuccessful);
+  if (cloneSuccessful && folderCheckSuccessful) {
+    console.log("Clone and folder success, redirecting to /");
+    updateFeatureFiles();
+    res.redirect('/');
+  } else {
+    console.log("Clone or folder fail, redirecting to /settings");
+    res.redirect('/settings');
   }
-  res.redirect('/');
 });
 
-function reset() {
-  handleReset();
+async function createFolderIfNotExists(folderPath) {
+  try {
+    console.log(`Try creating folder at ${folderPath}`);
+    if (!fs.existsSync(folderPath)) {
+      console.log(`Creating folder at ${folderPath}`);
+      fs.mkdirSync(folderPath);
+    }
+    return true;
+  } catch (error) {
+    console.error(`Error creating folder at ${folderPath}: ${error}`);
+    return false;
+  }
+}
+
+function loadConfig() {
+  return JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+}
+
+async function updateFeatureFiles() {
+  const featureFiles = featureFilesModule.getFiles(config.directoryPath);
+  featureFilesModule.updateFeatureFilesCopy(JSON.parse(JSON.stringify(featureFiles)));
+  notifyClients(JSON.stringify({ action: 'featureFilesUpdated' }));
 }
 
 server.listen(3000, () => {

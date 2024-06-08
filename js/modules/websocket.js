@@ -3,8 +3,13 @@ const fs = require('fs');
 const featureFilesModule = require('./featureFilesModule.js');
 const { exec, execSync } = require('child_process');
 const path = require('path');
-let config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json'), 'utf8'));
+let config = loadConfig();
 let wss;
+
+
+function loadConfig() {
+    return JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json'), 'utf8'));
+}
 
 const actionHandlers = {
     'updateFeature': handleUpdateFeature,
@@ -101,6 +106,7 @@ function notifyClients(message) {
 }
 
 async function gitStatus() {
+    config = loadConfig();
     const directoryPath = config.directoryPath;
     const simpleGit = require('simple-git')(path.normalize(directoryPath));
     let status = '';
