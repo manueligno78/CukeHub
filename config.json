@@ -1,1 +1,7 @@
-{}
+{
+  "gitProjectUrl": "https://github.vodafone.com/VFIT-Digital/qa-automation-cybertronweb.git",
+  "gitBranch": "master",
+  "directoryPath": "C:\\Users\\manue\\Desktop\\empty",
+  "folderToExclude": "*target*",
+  "isConfigurated": true
+}

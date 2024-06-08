@@ -28,7 +28,7 @@ module.exports.server = server;
 
 app.get('/', async (req, res) => {
   config = loadConfig(); // reload config
-  if (!config.isConfigurated || !createFolderIfNotExists(config.directoryPath) || !(await gitModule.cloneGitRepository(config.gitProjectUrl, config.gitBranch, config.directoryPath, wss))) {
+  if (!config.isConfigurated) {
     console.log('Config check failed, redirecting to /settings');
     res.redirect('/settings');
     return;
